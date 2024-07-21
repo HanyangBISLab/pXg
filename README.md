@@ -6,6 +6,8 @@
 - [Usage](#usage)
   - [Input format](#input-format)
   - [Output format](#output-format)
+    - [pXg result](#pxg-result)
+    - [Unknown sequences](#unknown-sequences)
   - [Command-line interface](#command-line-interface)
     - [List of parameters](#list-of-parameters)
     - [Basic command](#basic-command)
@@ -50,6 +52,12 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 
 *Although the pXg result contains PSM information with corresponding RNA-Seq counts, it is not suitable for visualization. <br>
  Two output files (matched reads and peptides) are available for direct use in <a href="https://software.broadinstitute.org/software/igv/" target="_blank">IGV</a>, making visualization easier.
+
+ #### pXg Result
+ Nothing here.
+
+ #### Unknown sequences
+ Nothing here.
 
 ### Command-line interface
 #### List of Parameters
