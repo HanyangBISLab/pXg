@@ -54,7 +54,42 @@ It was developed for the reliable identification of noncanonical MAPs from de no
  Two output files (matched reads and peptides) are available for direct use in <a href="https://software.broadinstitute.org/software/igv/" target="_blank">IGV</a>, making visualization easier.
 
  #### pXg Result
- Nothing here.
+|Field    | Description    | Value   |
+| :---:   | :---:       | :---:     | :---:       |
+| SpecID | Identifier of a spectrum | String         |
+| GenomicID | Identifier of genomic sequence | Integer         |
+| Label | Target (1) and decoy (-1) labels | 1 or -1         |
+| DeltaScore | Difference between main scores of current rank and top-rank peptides | Float       |
+| Rank | Rank of candidate peptides | Integer       |
+| GenomicLociCount | The number of genomic locations | Integer       |
+| InferredPeptide | Translated nucleotide sequence | String       |
+| GenomicLoci | Genomic location of the peptide | String       |
+| Strand | Strand of matched sequence | + or -       |
+| ObservedLeftFlankNucleotide | Nucleotide sequence of the left flank of the peptide | String       |
+| ObservedNucleotide | Nucleotide sequence of the peptide | String       |
+| ObservedRightFlankNucleotide | Nucleotide sequence of the right flank of the peptide | String       |
+| ReferenceLeftFlankNucleotide | Reference nucleotide sequence of the left flank of the peptide | String       |
+| ReferenceNucleotide | Reference nucleotide sequence of the peptide | String       |
+| ReferenceRightFlankNucleotide | Reference nucleotide sequence of the right flank of the peptide | String       |
+| Mutations | Genomic information of mutations in the peptide | String       |
+| MutationStatus | Indication of alteration caused by the mutations | Altered or Same    |
+| TranscriptIDs | Matched transcript IDs | String    |
+| GeneIDs | Matched gene IDs | String    |
+| GeneIDCount | The number of matched gene IDs | Integer    |
+| GeneNames | Matched gene names | String    |
+| GeneNameCount | The number of matched gene names | Integer    |
+| PercentFullDistance | Proportion of start genomic loci in the longest transcripts (exons + introns) | Float    |
+| PercentExonDistance | Proportion of start genomic loci in the longest transcripts (exons) |  Float    |
+| PercentCDSDistance | Proportion of start genomic loci in the longest transcripts (CDSs) |  Float    |
+| FromCDSStartSite | Distance from the start site |  String    |
+| FromCDSStopSite | Distance from the stop site |  String    |
+| Events | Type of identified feature |  String    |
+| EventCount | The number of events |  Integer    |
+| FastaIDs | Matched identifiers in a given fasta sequences |  String   |
+| FastaIDCount | The number of FastaIDs |  Integer   |
+| Reads | The number of matched reads |  Integer   |
+| MeanQScore | Mean of Phred scores |  Float   |
+| IsCanonical | Canonical (true) or nocanonical (false) status |  true or false  |
 
  #### Unknown sequences
  Nothing here.
