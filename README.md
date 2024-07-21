@@ -55,7 +55,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 
  #### pXg Result
 |Field    | Description    | Value   |
-| :---:   | :---:       | :---:     | :---:       |
+| :---:   | :---:       | :---:     |
 | SpecID | Identifier of a spectrum | String         |
 | GenomicID | Identifier of genomic sequence | Integer         |
 | Label | Target (1) and decoy (-1) labels | 1 or -1         |
