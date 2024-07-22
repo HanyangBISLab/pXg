@@ -261,7 +261,7 @@ public class Worker extends Thread {
 					BW.append("(").append(output.getAARegionAnnotation(i)).append(";")
 					.append(senseMarker).append(";")
 					.append(frame).append(";")
-					.append(as).append(";")
+					.append(as)
 					.append(")");
 
 				}
