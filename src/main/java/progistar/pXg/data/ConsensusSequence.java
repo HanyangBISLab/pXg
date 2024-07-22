@@ -148,6 +148,13 @@ public class ConsensusSequence {
 			rightConsensusSequence.append(getIdxToChar(bestIdx));
 		}
 		
+		if(leftConsensusSequence.length() == 0) {
+			leftConsensusSequence.append(Constants.ID_NULL);
+		}
+		if(rightConsensusSequence.length() == 0) {
+			rightConsensusSequence.append(Constants.ID_NULL);
+		}
+		
 		return new String[] {leftConsensusSequence.toString(), rightConsensusSequence.toString()};
 	}
 	
