@@ -208,15 +208,7 @@ public class XBlock {
 		Hashtable<String, String> geneNames = toGeneNames();
 		Hashtable<String, String> events = toEvents();
 		Hashtable<String, String> fastaIDs = toFastaIDs();
-
-		int transCount = 0;
-		String[] transcripts = tAnnotations.split("\\|");
-		for(String transcript : transcripts) {
-			if(!transcript.startsWith(Constants.EVENT_INTERGENIC) &&
-					!transcript.startsWith(Constants.EVENT_UNKNOWN)) {
-				transCount++;
-			}
-		}
+		Hashtable<String, String> transcriptIDs = toTranscriptIDs();
 
 		String lfs = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx).length() == 0 ?
 				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx);
@@ -250,7 +242,7 @@ public class XBlock {
 					+"\t"+rfsRef
 					+"\t"+mutations
 					+"\t"+mutationStatus
-					+"\t"+tAnnotations+"\t"+transCount
+					+"\t"+transcriptIDs.get("key")+"\t"+transcriptIDs.get("count")
 					+"\t"+geneIDs.get("key")+"\t"+geneIDs.get("count")
 					+"\t"+geneNames.get("key")+"\t"+geneNames.get("count")
 					+"\t"+this.toDist()
@@ -274,7 +266,7 @@ public class XBlock {
 					+"\t"+rfsRef
 					+"\t"+mutations
 					+"\t"+mutationStatus
-					+"\t"+tAnnotations+"\t"+transCount
+					+"\t"+transcriptIDs.get("key")+"\t"+transcriptIDs.get("count")
 					+"\t"+geneIDs.get("key")+"\t"+geneIDs.get("count")
 					+"\t"+geneNames.get("key")+"\t"+geneNames.get("count")
 					+"\t"+this.toDist()
@@ -495,6 +487,41 @@ public class XBlock {
 		} else {
 			String annotation = gRegions.substring(1).toString();
 			mapper.put("key", annotation);
+			mapper.put("count", annotation.split("\\|").length+"");
+		}
+
+		return mapper;
+	}
+	
+	/**
+	 * The return value is hashtable consisting of "key" and "count"<br>
+	 * "key" represents the annotation of matched transcript IDs. <br>
+	 * "count" represents the number of transcript IDs. <br>
+	 *
+	 * @return
+	 */
+	private Hashtable<String, String> toTranscriptIDs () {
+		Hashtable<String, String> mapper = new Hashtable<>();
+		StringBuilder gRegions = new StringBuilder();
+		String[] tRegions = tAnnotations.split("\\|");
+
+		Hashtable<String, Boolean> isDuplicated = new Hashtable<>();
+		for(String tRegion : tRegions) {
+			String transcriptID = tRegion.split("\\(")[0];
+
+			if(isDuplicated.get(transcriptID) == null) {
+				isDuplicated.put(transcriptID, true);
+				gRegions.append("|").append(transcriptID);
+			}
+		}
+
+		// if either unknown or intergenic, the annotation begins with 
+		String annotation = gRegions.substring(1).toString();
+		mapper.put("key", annotation);
+		if(annotation.startsWith(Constants.EVENT_INTERGENIC) ||
+			annotation.startsWith(Constants.EVENT_UNKNOWN)) {
+			mapper.put("count", "0");
+		} else {
 			mapper.put("count", annotation.split("\\|").length+"");
 		}
 
