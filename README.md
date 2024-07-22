@@ -91,6 +91,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | MeanQScore | Mean of Phred scores |  Float   |
 | IsCanonical | Canonical (true) or nocanonical (false) status |  true or false  |
 
+
  #### Unknown sequences
  Unknown sequences include sequence information from "unknown" events. The header line begins with ">[PEPTIDE]". Following the header line is the matched read information, which includes the sequence identifier, genomic location (if available), full sequence, and matched sequence.
 
