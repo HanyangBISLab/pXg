@@ -153,16 +153,15 @@ public class Output {
 	private String getMatchedRefNucleotide (String nucleotide, int startPosInNGS) {
 		StringBuilder matchedNucleotide = new StringBuilder(nucleotide);
 		StringBuilder refNucleotide = new StringBuilder();
-		ArrayList<Mutation> mutations = this.getMutations();
-
+		//TODO:
+		// the range should be optimized.
+		ArrayList<Mutation> mutations = this.gSeq.getMutationsByPositionInNGS(0, Integer.MAX_VALUE);
 
 		for(int i=0; i<matchedNucleotide.length(); i++) {
-
 			Mutation insOrDelMutation = null;
 			// SNP
 			for(Mutation mutation : mutations) {
 				int mPos = mutation.relPos - startPosInNGS;
-
 				if(mPos == i) {
 					if(mutation.type == Constants.SNP) {
 						matchedNucleotide.setCharAt(i, mutation.refSeq.toLowerCase().charAt(0));

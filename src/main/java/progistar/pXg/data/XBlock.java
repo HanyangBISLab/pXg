@@ -43,10 +43,12 @@ public class XBlock {
 	public ArrayList<XBlock> siblingXBlocks	= new ArrayList<>();
 
 	/**
+	 * @deprecated
 	 * Jan. 26, 2024
 	 * Get consensus XBlock based on left and right flank sequences.
 	 *
 	 * @return
+	 * 
 	 */
 	public XBlock getConsensusSequenceXBlock () {
 		XBlock consensusXBlock = this;
@@ -57,7 +59,7 @@ public class XBlock {
 		int maxLeftSize = 0;
 		int maxRightSize = 0;
 		for(XBlock xBlock : list) {
-			String leftFlankSequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankRefSequenceIdx);
+			String leftFlankSequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankSequenceIdx);
 			String rightFlankSequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.rightFlankSequenceIdx);
 
 			maxLeftSize = Math.max(leftFlankSequence.length(), maxLeftSize);
@@ -78,7 +80,7 @@ public class XBlock {
 		// calculate score matrix
 		for(XBlock xBlock : list) {
 			// left
-			String sequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankRefSequenceIdx);
+			String sequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankSequenceIdx);
 			int idx = maxLeftSize-1;
 			for(int i=sequence.length()-1; i>=0; i--) {
 				char nt = sequence.charAt(i);
@@ -117,12 +119,12 @@ public class XBlock {
 				}
 			}
 		}
-
+		
 		int bestScore = 0;
 		for(XBlock xBlock : list) {
 			int score = 0;
 			// left
-			String sequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankRefSequenceIdx);
+			String sequence = Global.SEQUENCE_ARRAYLIST.get(xBlock.leftFlankSequenceIdx);
 			int idx = maxLeftSize-1;
 			for(int i=sequence.length()-1; i>=0; i--) {
 				char nt = sequence.charAt(i);
@@ -203,13 +205,14 @@ public class XBlock {
 	 *
 	 */
 	public String toString (byte psmStatus) {
-		XBlock consensusXBlock = this.getConsensusSequenceXBlock();
+		
 		Hashtable<String, String> geneIDs = toGeneIDs();
 		Hashtable<String, String> geneNames = toGeneNames();
 		Hashtable<String, String> events = toEvents();
 		Hashtable<String, String> fastaIDs = toFastaIDs();
 		Hashtable<String, String> transcriptIDs = toTranscriptIDs();
-
+		/*
+		XBlock consensusXBlock = this.getConsensusSequenceXBlock();
 		String lfs = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx).length() == 0 ?
 				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx);
 
@@ -220,7 +223,9 @@ public class XBlock {
 				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankRefSequenceIdx);
 
 		String rfsRef = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankRefSequenceIdx).length() == 0 ?
-				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankRefSequenceIdx);
+				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankRefSequenceIdx);*/
+		
+		ConsensusSequence consensusSequence = new ConsensusSequence(this);
 
 		String genomicSequence = Global.SEQUENCE_ARRAYLIST.get(this.genomicSequenceIdx);
 		String referenceSequence = Global.SEQUENCE_ARRAYLIST.get(this.referenceSequenceIdx);
@@ -234,12 +239,12 @@ public class XBlock {
 
 			return new StringBuilder(peptideSequence).reverse().toString() +"\t"+genomicLocus+"\t"
 					+strand
-					+"\t"+lfs
+					+"\t"+consensusSequence.leftFlankConsensus
 					+"\t"+genomicSequence
-					+"\t"+rfs
-					+"\t"+lfsRef
+					+"\t"+consensusSequence.rightFlankConsensus
+					+"\t"+consensusSequence.leftFlankRefConsensus
 					+"\t"+referenceSequence
-					+"\t"+rfsRef
+					+"\t"+consensusSequence.rightFlankRefConsensus
 					+"\t"+mutations
 					+"\t"+mutationStatus
 					+"\t"+transcriptIDs.get("key")+"\t"+transcriptIDs.get("count")
@@ -258,12 +263,12 @@ public class XBlock {
 
 			return peptideSequence +"\t"+genomicLocus+"\t"
 					+strand
-					+"\t"+lfs
+					+"\t"+consensusSequence.leftFlankConsensus
 					+"\t"+genomicSequence
-					+"\t"+rfs
-					+"\t"+lfsRef
+					+"\t"+consensusSequence.rightFlankConsensus
+					+"\t"+consensusSequence.leftFlankRefConsensus
 					+"\t"+referenceSequence
-					+"\t"+rfsRef
+					+"\t"+consensusSequence.rightFlankRefConsensus
 					+"\t"+mutations
 					+"\t"+mutationStatus
 					+"\t"+transcriptIDs.get("key")+"\t"+transcriptIDs.get("count")
