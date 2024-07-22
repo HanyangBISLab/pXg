@@ -92,7 +92,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | IsCanonical | Canonical (true) or nocanonical (false) status |  true or false  |
 
  #### Unknown sequences
- Nothing here.
+ Unknown sequences include sequence information from "unknown" events. The header line begins with ">[PEPTIDE]". Following the header line is the matched read information, which includes the sequence identifier, genomic location (if available), full sequence, and matched sequence.
 
 ### Command-line interface
 #### List of Parameters
