@@ -190,9 +190,9 @@ public class XBlock {
 		Hashtable<String, String> events = toEvents();
 		String event = events.get("key");
 		if(event.contains(Constants.EVENT_UNKNOWN)) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public String getKey () {

@@ -169,20 +169,23 @@ public class PxGAnnotation {
 			// calculate genomic ID
 			// The combination of genomic loci + strand + nucleotide sequence is mapping to unique gneomic ID.
 			Hashtable<String, Integer> genomicIDMapper = new Hashtable<>();
+			boolean[] isTarget = new boolean[1];
 			for(PBlock pBlock : pBlocks) {
 				// peptide sequence without I/L consideration
 				String key = pBlock.getPeptideSequence();
 
 				// for target
+				isTarget[0] = true;
 				Hashtable<String, XBlock> xBlocksTmp = this.targetXBlockMapper.get(key);
 				if(xBlocksTmp == null && Parameters.isDecoyOut) {
 					xBlocksTmp = this.decoyXBlockMapper.get(key);
+					isTarget[0] = false;
 				}
 
 				// for final state
 				Hashtable<String, XBlock> xBlocks = xBlocksTmp;
 
-				// there is no available mapping.
+				// there is a mapping.
 				if(xBlocks != null) {
 					xBlocks.forEach((pSeq, xBlock) -> {
 						try {
@@ -198,7 +201,7 @@ public class PxGAnnotation {
 
 							// we treated unmapped reads as '0' genomic loci count.
 							String gLociCount = "0";
-							if(xBlock.isMappedAmbiguous()) {
+							if(!xBlock.isMappedAmbiguous()) {
 								gLociCount = xBlocks.size()+"";
 							}
 
@@ -211,8 +214,12 @@ public class PxGAnnotation {
 							.append("\t"+pBlock.isCannonical);
 							BW.newLine();
 
+							// Jul 23, 2024
+							// For additional information, 
+							// decoy information is neglected.
+							
 							// if this is unmapped, then store.
-							if(!xBlock.isMappedAmbiguous()) {
+							if(xBlock.isMappedAmbiguous() && isTarget[0]) {
 								ArrayList<XBlock> unmappedXBlocks = new ArrayList<>();
 								unmappedXBlocks.add(xBlock);
 								unmappedXBlocks.addAll(xBlock.siblingXBlocks);
@@ -225,7 +232,7 @@ public class PxGAnnotation {
 									.append(Global.SEQUENCE_ARRAYLIST.get(thisXBlock.genomicSequenceIdx));
 									BWUnmapped.newLine();
 								}
- 							} else {
+ 							} else if(isTarget[0]){
  								// SAM ID Mapper
  								if(Parameters.EXPORT_SAM) {
  									if(		(Parameters.EXPORT_CANONICAL && pBlock.isCannonical) ||
