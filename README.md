@@ -87,9 +87,10 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | EventCount | The number of events |  Integer    |
 | FastaIDs | Matched identifiers in a given fasta sequences |  String   |
 | FastaIDCount | The number of FastaIDs |  Integer   |
-| Reads | The number of matched reads |  Integer   |
+| Reads | Sum of matched reads from all SAM/BAM files |  Integer   |
 | MeanQScore | Mean of Phred scores |  Float   |
 | IsCanonical | Canonical (true) or nocanonical (false) status |  true or false  |
+| SAM/BAM file name | The number of matched reads in each SAM/BAM file |  Integer  |
 
 
  #### Unknown sequences
