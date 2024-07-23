@@ -12,6 +12,14 @@ public class ConsensusSequence {
 	public String leftFlankRefConsensus = Constants.ID_NULL;
 	public String rightFlankRefConsensus = Constants.ID_NULL;
 	
+	/**
+	 * 
+	 * Possible characters:
+	 * A, C, T, G, a, c, t, g, ID_NULL, and others (such as N)
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public int getCharToIdx (char n) {
 		if(n == 'A') {
 			return 0;
@@ -31,11 +39,21 @@ public class ConsensusSequence {
 			return 7;
 		} else if(n == Constants.ID_NULL.charAt(0)) {
 			return 8;
+		} else if(n == 'N'){
+			return 9;
 		} else {
+			System.out.println("Unexpected nucleotide was detected: "+n);
+			System.out.println("Treated as N");
 			return 9;
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param idx
+	 * @return
+	 */
 	public char getIdxToChar (int idx) {
 		if(idx == 0) {
 			return 'A';
