@@ -85,7 +85,7 @@ public class Parameters {
 	public static final String CMD_CANDIDATE_RANK	=	"--rank".toLowerCase();
 	public static int psmRank						=	100;
 
-	public static final String pParserRegExr		=	"aareg".toLowerCase();
+	public static final String pParserRegExr		=	"--aareg".toLowerCase();
 	public static String peptideParserRegExr		=	"[A-Z]"; // read sequence matched to the RegExr.
 	// Note that
 	// comment is different from field.
