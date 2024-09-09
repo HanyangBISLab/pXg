@@ -82,6 +82,14 @@ public class GTFParser {
 					String geneName = getGtfAttr(attr, "gene_name");
 					String geneType = getGtfAttr(attr, "gene_type");
 
+					// Null check
+					if(transcriptID == null)	transcriptID = Constants.ID_NULL;
+					if(transcriptName == null)	transcriptName = Constants.ID_NULL;
+					if(transcriptType == null)	transcriptType = Constants.ID_NULL;
+					if(geneID == null)			geneID = Constants.ID_NULL;
+					if(geneName == null)		geneName = Constants.ID_NULL;
+					if(geneType == null)		geneType = Constants.ID_NULL;
+					
 					boolean strand = fields[strandIndex].equalsIgnoreCase("-") ? false : true;
 
 					String chr = fields[chrIndex];
