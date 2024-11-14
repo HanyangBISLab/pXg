@@ -21,7 +21,7 @@ import progistar.pXg.data.PxGAnnotation;
 import progistar.pXg.data.parser.GTFParser;
 import progistar.pXg.data.parser.PeptideParser;
 import progistar.pXg.data.parser.ResultParser;
-import progistar.pXg.data.parser.SamParser;
+import progistar.pXg.utils.CheckStrandedness;
 import progistar.pXg.utils.Codon;
 import progistar.pXg.utils.IndexConvertor;
 
@@ -34,7 +34,7 @@ public class Master {
 	private static int[] chrIndices = null;
 	private static int[] startPositions = null;
 	private static boolean[] assignedArray = null;
-	private static String[] reads = null;
+	private static SAMRecord[] reads = null;
 
 	private Master() {}
 
@@ -58,10 +58,13 @@ public class Master {
 		chrIndices = new int[Parameters.readSize];
 		startPositions = new int[Parameters.readSize];
 		assignedArray = new boolean[Parameters.readSize];
-		reads = new String[Parameters.readSize];
+		reads = new SAMRecord[Parameters.readSize];
 
 		// loading Codon.
 		Codon.mapping();
+		
+		
+		CheckStrandedness.detect(SAM_FILE);
 	}
 
 
@@ -83,19 +86,16 @@ public class Master {
 
 				// initialize
 				Vector<Task> taskQueue = new Vector<>(); // for synchronized
-				String lineSeparator = System.getProperty("line.separator");
 				int readCount = 0;
 				long readPartitionSize = Parameters.readSize;
 
 	        	// get records
 	            for (SAMRecord samRecord : samReader) {
 	                // Process each SAMRecord as needed
-	            	String record = samRecord.getSAMString().replace(lineSeparator, "");
-	            	reads[readCount] =record;
+	            	reads[readCount] =samRecord;
 
-	            	String[] fields = record.split("\\s");
-	            	String chr = fields[SamParser.CHR_IDX];
-	            	Integer startPosition = Integer.parseInt(fields[SamParser.START_POS_IDX]);
+	            	String chr = samRecord.getReferenceName();
+	            	int startPosition = samRecord.getAlignmentStart();
 
 					// the index for that chr is automatically assigned by auto-increment key.
 					IndexConvertor.putChrIndexer(chr);
@@ -112,7 +112,6 @@ public class Master {
 						Arrays.fill(assignedArray, false);
 						// assign tasks to workers
 						while(!assignTasks(taskQueue, workers, readCount)) {
-							;
 						}
 						// once give the tasks, remove reads
 						RunInfo.totalProcessedReads += readCount;
@@ -263,7 +262,7 @@ public class Master {
 			}
 		}
 
-		ArrayList<String> readPartition = new ArrayList<>();
+		ArrayList<SAMRecord> readPartition = new ArrayList<>();
 
 		for(int i=0; i<gSeqSize; i++) {
 			// already treated sequence

@@ -2,12 +2,13 @@ package progistar.pXg.processor;
 
 import java.util.ArrayList;
 
+import htsjdk.samtools.SAMRecord;
 import progistar.pXg.data.GenomicAnnotation;
 
 public class Task {
 	protected int[][] genomicAnnotationIndex;
 	protected GenomicAnnotation genomicAnnotation;
-	protected ArrayList<String> samReads = new ArrayList<>();
+	protected ArrayList<SAMRecord> samReads = new ArrayList<>();
 	protected int gIndexStart;
 	protected boolean isAssigned = false;
 	protected int taskID;
@@ -22,7 +23,7 @@ public class Task {
 	public Task() {}
 
 	public Task(int[][] genomicAnnotationIndex, GenomicAnnotation genomicAnnotation,
-			ArrayList<String> samReads, int start, int taskID, int taskType) {
+			ArrayList<SAMRecord> samReads, int start, int taskID, int taskType) {
 		super();
 		this.genomicAnnotationIndex = genomicAnnotationIndex;
 		this.genomicAnnotation = genomicAnnotation;

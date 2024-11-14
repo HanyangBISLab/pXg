@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMTag;
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.utils.Codon;
@@ -29,7 +31,8 @@ public class GenomicSequence {
 	 *
 	 *
 	 */
-	private Pattern EACH_MD_REGEX = Pattern.compile("(([0-9]+)|([A-Z]+|\\^[A-Z]+))");
+	private static final Pattern EACH_MD_REGEX = Pattern.compile("(([0-9]+)|([A-Z]+|\\^[A-Z]+))");
+	private static final Pattern EACH_CIGAR_REGEX = Pattern.compile("([0-9]+)([MINDSHPX=])");
 
 	public String uniqueID;
 	public int chrIndex;
@@ -38,7 +41,8 @@ public class GenomicSequence {
 	public String mdString;
 	public ArrayList<Cigar> cigars;
 	public double meanQScore;
-
+	public int flags;
+	public boolean isPrimary = true;
 
 	// annotation
 	// if there is no model on the mapped region, then it means this read maps on intergenic region only.
@@ -51,36 +55,46 @@ public class GenomicSequence {
 
 	// default is three frame translation.
 	// it has a specific translation frame as if it can infer from annotation.
-	/**
-	 *
-	 * Deprecated:: Assume that known peptides are filtered in advance. (known peptides are not our interest)
-	 *
-	 * Frame decision problem.
-	 * If we can find in-frame, then we should give an option of in-frame translation.
-	 * To do so, we MUST decide when/how/what in-frame.
-	 *
-	 * Non-coding: three-frame
-	 * == if the transcript is non-coding such as pseudogene, lncRNA something like that.
-	 *
-	 * Coding: three-frame or in-frame
-	 * == in-frame: if we can reasonably infer in-frame...
-	 * ==== Of course, at least, the transcript is coding.
-	 * ==== Assume that translation gets started from up-stream.
-	 * ==== However, read can be aligned on UTRs or Intergenic as the first region.
-	 * ==== In above case, frame follows the CDS closest to up-stream.
-	 *
-	 */
+
 	//public byte[] 	transFrames; // byte[sizeOfTranscripts]
 	// In case of intergenic (it implies that this sequence cannot be explained by annotations), transFrames = new byte[1].
 
-	public GenomicSequence (String uniqueID, int chrIndex, int startPosition, ArrayList<Cigar> cigars, String mdStr, double meanQScore) {
-		this.uniqueID = uniqueID;
-		this.chrIndex = chrIndex;
-		this.startPosition = startPosition;
-		this.cigars = cigars;
-		this.mdString = mdStr;
+	public GenomicSequence (SAMRecord read) {
+		
+		// TODO: unmapped reads cannot have genomic position information.
+		// In case of unmapped read,  must consider it!
+		String phred33 = read.getBaseQualityString();
+		// average of phred33 QScore
+		int length = phred33.length();
+		this.meanQScore = 0;
+		for(int i=0; i<length; i++) {
+			char qChar = phred33.charAt(i);
+			if(qChar != '*') {
+				this.meanQScore += (qChar-33);
+			}
+		}
+		this.meanQScore /= length;
+
+		// Note that
+		// Chr of unmapped reads are marked as *
+		// From this, we can recognize unmapped reads
+
+		// Cigar has nucleotides and relative positions to the start position.
+		this.cigars = parseCigarString(read.getCigarString(), read.getReadString());
+		
+		// find MD string
+		Object mdStr = read.getAttribute(SAMTag.MD);
+		if(mdStr == null) {
+			this.mdString = null;
+		} else {
+			this.mdString = (String) mdStr;
+		}
+		
+		this.chrIndex = IndexConvertor.chrToIndex(read.getReferenceName());
+		this.uniqueID = read.getReadName();
+		this.startPosition = read.getAlignmentStart();
 		this.endPosition = startPosition;
-		this.meanQScore = meanQScore;
+		this.flags = read.getFlags();
 
 		for(Cigar cigar : this.cigars) {
 			char op = cigar.operation;
@@ -96,6 +110,11 @@ public class GenomicSequence {
     		default :
     			break;
 	    	}
+		}
+		
+		// set primary
+		if(read.isSecondaryAlignment()) {
+			this.isPrimary = false;
 		}
 	}
 
@@ -374,4 +393,167 @@ public class GenomicSequence {
 		}
 		return peptides.toString();
 	}
+	
+	private static ArrayList<Cigar> parseCigarString (String cigarString, String nucleotides) {
+		Matcher matcher = EACH_CIGAR_REGEX.matcher(cigarString);
+		ArrayList<Cigar> results = new ArrayList<>();
+		ArrayList<Cigar> filterResults = new ArrayList<>();
+
+		// unmapped reads have no matcher...!
+	    while (matcher.find()) {
+	      int markerSize = Integer.parseInt(matcher.group(1));
+	      char operation = matcher.group(2).charAt(0);
+
+	      results.add(new Cigar(markerSize, operation));
+	    }
+
+	    // Unmapped read checker
+	    if(results.size() == 0 && cigarString.equalsIgnoreCase("*")) {
+	    	// add unmapped read cigar
+	    	results.add(new Cigar(nucleotides.length(), '*'));
+	    }
+
+	    int ntIndex = 0;
+	    int relPos = 0;
+	    int[] relativePositions = null;
+	    // drop all cigars without MIND
+	    for(int i=0; i<results.size(); i++) {
+	    	Cigar cigar = results.get(i);
+	    	char op = cigar.operation;
+
+	    	switch (op) {
+	    	case 'M': // match or mismatch
+	    		cigar.nucleotides = nucleotides.substring(ntIndex, ntIndex + cigar.markerSize);
+	    		ntIndex += cigar.markerSize;
+
+	    		relativePositions = new int[cigar.markerSize];
+	    		for(int j=0; j<relativePositions.length; j++) {
+	    			relativePositions[j] = relPos++;
+	    		}
+
+	    		cigar.relativePositions = relativePositions;
+	    		filterResults.add(cigar);
+	    		break;
+
+	    	case 'S': // soft clip
+	    		cigar.nucleotides = nucleotides.substring(ntIndex, ntIndex + cigar.markerSize);
+	    		ntIndex += cigar.markerSize;
+
+	    		relativePositions = new int[cigar.markerSize];
+	    		for(int j=0; j<relativePositions.length; j++) {
+	    			relativePositions[j] = relPos; // relPos is not changed... consistent!
+	    		}
+
+	    		cigar.relativePositions = relativePositions;
+	    		filterResults.add(cigar);
+	    		break;
+
+	    	case 'I': // insertion
+	    		cigar.nucleotides = nucleotides.substring(ntIndex, ntIndex + cigar.markerSize);
+	    		ntIndex += cigar.markerSize;
+
+	    		relativePositions = new int[cigar.markerSize];
+	    		for(int j=0; j<relativePositions.length; j++) {
+	    			relativePositions[j] = relPos; // relPos is not changed... consistent!
+	    		}
+
+	    		cigar.relativePositions = relativePositions;
+	    		filterResults.add(cigar);
+	    		break;
+
+	    	case 'D': // deletion
+	    		relativePositions = new int[cigar.markerSize];
+	    		for(int j=0; j<relativePositions.length; j++) {
+	    			relativePositions[j] = relPos++;
+	    		}
+
+	    		cigar.relativePositions = relativePositions;
+	    		filterResults.add(cigar);
+	    		break;
+
+	    	case 'N': // skip (ex> exon junction)
+	    		relPos += cigar.markerSize;
+	    		filterResults.add(cigar);
+	    		break;
+
+	    	case '*': // unmapped
+	    		cigar.nucleotides = nucleotides;
+	    		relativePositions = new int[cigar.markerSize];
+	    		for(int j=0; j<relativePositions.length; j++) {
+	    			relativePositions[j] = relPos++;
+	    		}
+	    		cigar.relativePositions = relativePositions;
+
+	    		filterResults.add(cigar);
+	    		break;
+	    	}
+	    }
+
+	    return filterResults;
+	}
+	
+
+	public ArrayList<Character> getStrandedness () {
+		ArrayList<Character> strands = new ArrayList<Character>();
+		boolean isFirstSegment = (0x40 & this.flags) == 0x40 ? true : false;
+		boolean isForward = (0x10 & this.flags) == 0x10 ? false : true;
+		
+		// non-stranded
+		if(Parameters.strandedness.equalsIgnoreCase(Constants.NON_STRANDED)) {
+			strands.add('+');
+			strands.add('-');
+		}  
+		// Single-end
+		else if(Parameters.strandedness.equalsIgnoreCase(Constants.F_STRANDED)) {
+			if(isForward) {
+				strands.add('+');
+			} else {
+				strands.add('-');
+			}
+		} else if(Parameters.strandedness.equalsIgnoreCase(Constants.R_STRANDED)) {
+			if(isForward) {
+				strands.add('-');
+			} else {
+				strands.add('+');
+			}
+		} 
+		// Paired-end
+		else {
+			// R1
+			if(isFirstSegment) {
+				if(Parameters.strandedness.equalsIgnoreCase(Constants.FR_STRANDED)) {
+					if(isForward) {
+						strands.add('+');
+					} else {
+						strands.add('-');
+					}
+				} else if(Parameters.strandedness.equalsIgnoreCase(Constants.RF_STRANDED)) {
+					if(isForward) {
+						strands.add('-');
+					} else {
+						strands.add('+');
+					}
+				}
+			} 
+			// R2
+			else {
+				if(Parameters.strandedness.equalsIgnoreCase(Constants.FR_STRANDED)) {
+					if(isForward) {
+						strands.add('-');
+					} else {
+						strands.add('+');
+					}
+				} else if(Parameters.strandedness.equalsIgnoreCase(Constants.RF_STRANDED)) {
+					if(isForward) {
+						strands.add('+');
+					} else {
+						strands.add('-');
+					}
+				} 
+			}
+		}
+		
+		return strands;
+	}
+	
 }

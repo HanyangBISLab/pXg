@@ -151,6 +151,11 @@ public class Parameters {
 	// hidden parameters for revision
 	public static String CMD_PHRED_CAL					=	"--cal_phred";
 	public static String PHRED_CAL						=	Constants.CAL_PHRED_AVG;
+	
+	
+	// Primary count
+	public static boolean COUNT_PRIMARY_ONLY			=	false;
+	public static String strandedness					=	Constants.AUTO_STRANDED;
 
 
 

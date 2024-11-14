@@ -129,4 +129,32 @@ public class Constants {
 	public static final String CAL_PHRED_MIN				=	"min";
 	public static final String CAL_PHRED_MAX				=	"max";
 	public static final String CAL_PHRED_AVG				=	"avg";
+	
+	// strandedness
+	// Strand-specific
+	public static final String NON_STRANDED			=	"non";
+	/**
+	 * FR_STRANDED: fr-second strand, direct stranded
+	 * the first read: forward
+	 * the second read: reverse
+	 */
+	public static final String FR_STRANDED			=	"fr";
+	/**
+	 * RF_STRANDED: fr-first strand, reverse stranded
+	 * the first read: reverse
+	 * the second read: forward
+	 */
+	public static final String RF_STRANDED			=	"rf";
+	/**
+	 * F_STRANDED: forward - single-end
+	 */
+	public static final String F_STRANDED			=	"f";
+	/**
+	 * R_STRANDED: reverse - single-end
+	 */
+	public static final String R_STRANDED			=	"r";
+	/**
+	 * Determine strand-specific using XS and FLAGs
+	 */
+	public static final String AUTO_STRANDED			=	"auto";
 }

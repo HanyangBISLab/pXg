@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import htsjdk.samtools.SAMRecord;
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.constants.RunInfo;
@@ -13,7 +14,6 @@ import progistar.pXg.data.Mutation;
 import progistar.pXg.data.Output;
 import progistar.pXg.data.PeptideAnnotation;
 import progistar.pXg.data.TBlock;
-import progistar.pXg.data.parser.SamParser;
 
 public class Worker extends Thread {
 
@@ -55,10 +55,14 @@ public class Worker extends Thread {
 		BufferedWriter BW = Master.getOutputBW(this.tmpOutput.getAbsolutePath());
 		// task for mapping genomic annotation
 		if(this.task.taskType == Constants.TASK_G_MAP) {
-			for(String samRead : this.task.samReads) {
+			for(SAMRecord samRead : this.task.samReads) {
 				RunInfo.workerProcessedReads[this.workerID] ++; // increase a number of processed reads
 
-				GenomicSequence genomicSequence = SamParser.parseSam(samRead);
+				GenomicSequence genomicSequence = new GenomicSequence(samRead);
+				// if consider only primary count?
+				if(Parameters.COUNT_PRIMARY_ONLY && !genomicSequence.isPrimary) {
+					continue;
+				}
 				ArrayList<Output> matches = PeptideAnnotation.find(genomicSequence);
 
 				/**
