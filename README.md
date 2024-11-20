@@ -1,5 +1,5 @@
 # pXg: proteomics X genomics
-<img src="https://github.com/progistar/pXg/blob/main/img/intro.png"/>
+<img src="https://github.com/progistar/pXg/blob/main/img/logo.svg" style="display: block; margin: 0 auto;"/>
 
 ---
 - [About pXg](#about-pxg)
