@@ -1,6 +1,6 @@
 # pXg: proteomics X genomics
-<img src="https://github.com/progistar/pXg/blob/main/img/logo.svg" style="display: block; margin: 0 auto;"/>
-
+<img src="https://github.com/HanyangBISLab/pXg/blob/main/img/logo.svg" style="display: block; margin: 0 auto;"/>
+Thank you, Dr. Jongmin Choi, for designing the logo!
 ---
 - [About pXg](#about-pxg)
 - [Usage](#usage)
