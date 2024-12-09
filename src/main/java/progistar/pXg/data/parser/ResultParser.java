@@ -91,35 +91,32 @@ public class ResultParser {
 							 * Antisense event is not allowed.
 							 * TODO: More events can be added in future.
 							 */
-							if(Parameters.translationMethod == Constants.THREE_FRAME) {
-
-								String[] transcripts = xBlock.tAnnotations.split("\\|");
-								Boolean[] bans = new Boolean[transcripts.length];
-								for(int i=0; i<transcripts.length; i++) {
-									String transcript = transcripts[i];
-									if(!transcript.contains(";antisense;")) {
-										if(transcriptsWithOutBANlist.length() != 0) {
-											transcriptsWithOutBANlist.append("|");
-										}
-										transcriptsWithOutBANlist.append(transcript);
-										bans[i] = false;
-									} else {
-										bans[i] = true;
+							String[] transcripts = xBlock.tAnnotations.split("\\|");
+							Boolean[] bans = new Boolean[transcripts.length];
+							for(int i=0; i<transcripts.length; i++) {
+								String transcript = transcripts[i];
+								if(!transcript.contains(";antisense;")) {
+									if(transcriptsWithOutBANlist.length() != 0) {
+										transcriptsWithOutBANlist.append("|");
 									}
+									transcriptsWithOutBANlist.append(transcript);
+									bans[i] = false;
+								} else {
+									bans[i] = true;
 								}
+							}
 
-								// If all transcripts were discarded, then it means only possible interpretation is antisense
-								// in this case, we accept antisense even three-frame translation.
-								if(transcriptsWithOutBANlist.length() != 0) {
-									xBlock.tAnnotations = transcriptsWithOutBANlist.toString();
+							// If all transcripts were discarded, then it means only possible interpretation is antisense
+							// in this case, we accept antisense even three-frame translation.
+							if(transcriptsWithOutBANlist.length() != 0) {
+								xBlock.tAnnotations = transcriptsWithOutBANlist.toString();
 
-									exonLengths = getWithoutBanList(exonLengths, bans);
-									percentFullDistances = getWithoutBanList(percentFullDistances, bans);
-									percentExonDistances = getWithoutBanList(percentExonDistances, bans);
-									percentCDSDistances = getWithoutBanList(percentCDSDistances, bans);
-									fromStartDistances = getWithoutBanList(fromStartDistances, bans);
-									fromStopDistances = getWithoutBanList(fromStopDistances, bans);
-								}
+								exonLengths = getWithoutBanList(exonLengths, bans);
+								percentFullDistances = getWithoutBanList(percentFullDistances, bans);
+								percentExonDistances = getWithoutBanList(percentExonDistances, bans);
+								percentCDSDistances = getWithoutBanList(percentCDSDistances, bans);
+								fromStartDistances = getWithoutBanList(fromStartDistances, bans);
+								fromStopDistances = getWithoutBanList(fromStopDistances, bans);
 							}
 
 							if(xBlock.strand == '+') {

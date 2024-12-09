@@ -63,8 +63,9 @@ public class Master {
 		// loading Codon.
 		Codon.mapping();
 		
-		
-		CheckStrandedness.detect(SAM_FILE);
+		if(Parameters.strandedness.equalsIgnoreCase(Constants.AUTO_STRANDED)) {
+			CheckStrandedness.detect(SAM_FILE);
+		}
 	}
 
 
@@ -124,7 +125,7 @@ public class Master {
 	            	Arrays.fill(assignedArray, false);
 					// assign tasks to workers
 					while(!assignTasks(taskQueue, workers, readCount)) {
-						;
+						
 					}
 					// once give the tasks, remove reads
 					RunInfo.totalProcessedReads += readCount;

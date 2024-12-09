@@ -42,7 +42,13 @@ public class ParameterParser {
 				System.out.println("  --add_feat_cols       : Specify the indices for additional features to generate PIN file. One-based!");
 				System.out.println("                          Several features can be added by comma separator. ex> 5,6,7");
 				System.out.println("  --sep                 : Specify the column separator. Possible values are csv or tsv. Default is tsv");
-				System.out.println("  --mode                : Specify the method of translation nucleotides. 3 for three-frame and 6 for six-frame. Default is 3");
+				System.out.println("  --mode                : Specify strandedness (default is auto).");
+				System.out.println("                          auto: auto-detection. only available in paired-ends.");
+				System.out.println("                          fr: first-forward second-reverse.");
+				System.out.println("                          rf: first-reverse second-forward.");
+				System.out.println("                          r: reverse single end.");
+				System.out.println("                          f: forward single end.");
+				System.out.println("                          none: non-strandedness.");
 				System.out.println("  --ileq                : Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true.");
 				System.out.println("  --lengths             : Range of peptide length to consider. Default is 8-15");
 				System.out.println("                          You can write in this way (min-max, both inclusive) : 8-13");
@@ -133,15 +139,18 @@ public class ParameterParser {
 					Parameters.sepType = args[i+1];
 				}
 				// --mode (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_TRANSLATION)) {
-					String sixFT= String.valueOf(Constants.SIX_FRAME);
-					String threeFT= String.valueOf(Constants.THREE_FRAME);
-					if(!args[i+1].equalsIgnoreCase(sixFT) && !args[i+1].equalsIgnoreCase(threeFT)) {
+				else if(option.equalsIgnoreCase(Parameters.CMD_STRANDEDNESS)) {
+					
+					if(!args[i+1].equalsIgnoreCase(Constants.NON_STRANDED) && 
+					   !args[i+1].equalsIgnoreCase(Constants.F_STRANDED) &&
+					   !args[i+1].equalsIgnoreCase(Constants.R_STRANDED) &&
+					   !args[i+1].equalsIgnoreCase(Constants.RF_STRANDED) &&
+					   !args[i+1].equalsIgnoreCase(Constants.FR_STRANDED) &&
+					   !args[i+1].equalsIgnoreCase(Constants.AUTO_STRANDED)) {
 						System.out.println(args[i+1] +" is wrong value. Enforce to three-frame translation.");
-						args[i+1] = threeFT;
 					}
 
-					Parameters.translationMethod = Integer.parseInt(args[i+1]);
+					Parameters.strandedness = args[i+1];
 				}
 				// --fasta_file (optional)
 				else if(option.equalsIgnoreCase(Parameters.CMD_PROTEIN_SEQUENCE_PATH)) {
@@ -387,13 +396,7 @@ public class ParameterParser {
 		System.out.println(" SAM: "+samPaths);
 		System.out.println("  SAM_PARTITION_SIZE: "+Parameters.readSize);
 
-		String translation = "NA";
-		if(Parameters.translationMethod == Constants.THREE_FRAME) {
-			translation = "three-frame translation";
-		} else if(Parameters.translationMethod == Constants.SIX_FRAME) {
-			translation = "six-frame translation";
-		}
-		System.out.println("  TRANSLATION_MODE: "+Parameters.translationMethod +" ("+translation+")");
+		System.out.println("  STRANDEDNESS_MODE: "+Parameters.strandedness);
 		if(Parameters.proteinFastaPath != null) {
 			System.out.println(" PROTEIN_DB: "+Parameters.proteinFastaPath);
 		}
@@ -446,7 +449,7 @@ public class ParameterParser {
 		Logger.newLine();
 		Logger.append("  SAM_PARTITION_SIZE: "+Parameters.readSize);
 		Logger.newLine();
-		Logger.append("  TRANSLATION_MODE: "+Parameters.translationMethod +" ("+translation+")");
+		Logger.append("  STRANDEDNESS_MODE: "+Parameters.strandedness);
 		Logger.newLine();
 		if(Parameters.proteinFastaPath != null) {
 			Logger.append(" PROTEIN_DB: "+Parameters.proteinFastaPath);
