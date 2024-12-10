@@ -233,10 +233,10 @@ public class pXgParser {
 					}
 				}
 				
-				fields[infPeptideIdx] = peptide;
+				fields[infPeptideIdx] = searchPeptide.toString();
 				BW.append(fields[0]);
-				for(String field : fields) {
-					BW.append("\t").append(field);
+				for(int i=1; i<fields.length; i++) {
+					BW.append("\t").append(fields[i]);
 				}
 				
 				BW.newLine();
