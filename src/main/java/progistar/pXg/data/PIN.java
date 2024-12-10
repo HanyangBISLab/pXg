@@ -17,7 +17,7 @@ public class PIN {
 	 *
 	 * ScanNr is actually acting as scan index
 	 */
-	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads";
+	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	private static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
 	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", "InferredPeptide"};
@@ -118,10 +118,37 @@ public class PIN {
 				String mainScore = fields[Parameters.scoreColumnIndex + indexShiftSize];
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
 				StringBuilder searchPeptide = new StringBuilder(fields[Parameters.peptideColumnIndex + indexShiftSize]);
+				String peptide = fields[infPeptIdx];
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
-
+				int pLen = peptide.length();
 				pinOutput.append(specId+"\t"+label+"\t"+scanNr+"\t"+mainScore+"\t"+log2Reads);
+				
+				// append length
+				if(pLen == 6) {
+					pinOutput.append("\t1");
+				} else {
+					pinOutput.append("\t0");
+				}
+				
+				if(pLen == 7) {
+					pinOutput.append("\t1");
+				} else {
+					pinOutput.append("\t0");
+				}
+				
+				if(pLen == 8) {
+					pinOutput.append("\t1");
+				} else {
+					pinOutput.append("\t0");
+				}
+				
+				if(pLen > 8) {
+					pinOutput.append("\t1");
+				} else {
+					pinOutput.append("\t0");
+				}
+				
 				// append charge
 				for(int c=minCharge; c<=maxCharge; c++) {
 					if(c == charge) {
@@ -141,14 +168,14 @@ public class PIN {
 				// pXg default features
 				String deltaScore = fields[deltaScoreIdx];
 				String meanQScore = fields[meanQScoreIdx];
-				String peptide = fields[infPeptIdx];
+				
 				
 				// TODO: More universal PTM annotation!
 				// It determines I/L characters based on genomic information
 				// If a peptide sequence from search engine contains PTM annotations, 
 				// only mass-shift is allowed.
 				int len = searchPeptide.length();
-				int pLen = peptide.length();
+				
 				int pIdx = 0;
 				for(int i=0; i<len; i++) {
 					if(searchPeptide.charAt(i) == 'I' || searchPeptide.charAt(i) == 'L') {
@@ -175,7 +202,7 @@ public class PIN {
 				} else {
 					pinOutput.append("\tXXX_"+genomicId);
 				}
-
+				
 				pinRecords.add(pinOutput.toString());
 			}
 
