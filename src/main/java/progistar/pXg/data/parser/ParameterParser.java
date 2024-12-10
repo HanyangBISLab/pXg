@@ -108,7 +108,7 @@ public class ParameterParser {
 				.desc("Specify the column separator. Possible values are csv or tsv. Default is tsv.")
 				.build();
 		Option optionIL = Option.builder("il")
-				.longOpt("il_equivalence").argName("optional, true|false")
+				.longOpt("il_equivalent").argName("optional, true|false")
 				.hasArg()
 				.required(false)
 				.desc("Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true.")
