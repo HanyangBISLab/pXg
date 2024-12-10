@@ -542,6 +542,16 @@ public class ParameterParser {
 		    	Parameters.readSize = Integer.parseInt(cmd.getOptionValue("bps"));
 		    }
 		    
+		    // --bam_partition_size
+		    if(cmd.hasOption("f")) {
+		    	Parameters.proteinFastaPath = cmd.getOptionValue("f");
+				if(!isExist(Parameters.proteinFastaPath)) {
+					printNoSuchFileOrDirectory(Parameters.proteinFastaPath);
+					isFail = true;
+				}
+		    }
+		    
+		    
 		    // --threads
 		    if(cmd.hasOption("t")) {
 		    	Parameters.nThreads = Integer.parseInt(cmd.getOptionValue("t"));
