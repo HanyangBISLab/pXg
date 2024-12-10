@@ -1,7 +1,14 @@
 package progistar.pXg.data.parser;
 
 import java.io.File;
+import java.util.Comparator;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 
 import progistar.pXg.constants.Constants;
@@ -17,336 +24,550 @@ public class ParameterParser {
 	 * @return
 	 */
 	public static int parseParams (String[] args) {
+		System.out.println(Constants.VERSION+" "+Constants.RELEASE);
+		System.out.println(Constants.INTRODUCE);
+		System.out.println();
+
+		
+		CommandLine cmd = null;
+		
+		
+		// Mandatory
+		Option optionPSM = Option.builder("p")
+				.longOpt("psm").argName("madatory, tsv|csv")
+				.hasArg()
+				.required(true)
+				.desc("PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine.")
+				.build();
+		Option optionBAM = Option.builder("b")
+				.longOpt("bam").argName("mandatory, bam|sam")
+				.hasArg()
+				.required(true)
+				.desc("SAM/BAM file path. The sam/bam file must be sorted by coordinate. Multiple SAM/BAM files should be separated by comma (,).")
+				.build();
+		Option optionGTF = Option.builder("g")
+				.longOpt("gtf").argName("mandatory, gtf")
+				.hasArg()
+				.required(true)
+				.desc("GTF file path. We recommand to use the same gtf corresponding to alignment.")
+				.build();
+		Option optionOutput = Option.builder("o")
+				.longOpt("output").argName("mandatory, string")
+				.hasArg()
+				.required(true)
+				.desc("Output file path of pXg.")
+				.build();
+		
+		Option optionPeptideIdx = Option.builder("pi")
+				.longOpt("peptide_index").argName("mandatory, integer")
+				.hasArg()
+				.required(true)
+				.desc("Peptide column index in the psm file (one-based).")
+				.build();
+		Option optionIdIdx = Option.builder("idi")
+				.longOpt("identifier_index").argName("madatory, integer")
+				.hasArg()
+				.required(true)
+				.desc("PSM identifier indicies (one-based). One or more indicies can be specified by comma separated. ex> 3,5,7")
+				.build();
+		Option optionChargeIdx = Option.builder("ci")
+				.longOpt("charge_index").argName("madatory, integer")
+				.hasArg()
+				.required(true)
+				.desc("Charge state index (one-based).")
+				.build();
+		Option optionScoreIdx = Option.builder("si")
+				.longOpt("score_index").argName("madatory, integer")
+				.hasArg()
+				.required(true)
+				.desc("Main search score index (one-based).")
+				.build();
+		
+		Option optionAdditionalFeatures = Option.builder("ai")
+				.longOpt("add_index").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Specify the indices for additional features to generate PIN file (one-based). Several features can be added by comma separator. ex> 8,10,12")
+				.build();
+		Option optionMode = Option.builder("m")
+				.longOpt("mode").argName("optional, auto|fr|rf|r|f|none")
+				.hasArg()
+				.required(false)
+				.desc("Specify strandedness (default is auto). "
+						+ "auto: auto-detection. only available in paired-ends. "
+						+ "fr: first-forward second-reverse. "
+						+ "rf: first-reverse second-forward. "
+						+ "r: reverse single end. "
+						+ "f: forward single end. "
+						+ "none: non-strandedness.")
+				.build();
+		Option optionSeparator = Option.builder("s")
+				.longOpt("sep").argName("optional, tsv|csv")
+				.hasArg()
+				.required(false)
+				.desc("Specify the column separator. Possible values are csv or tsv. Default is tsv.")
+				.build();
+		Option optionIL = Option.builder("il")
+				.longOpt("il_equivalence").argName("optional, true|false")
+				.hasArg()
+				.required(false)
+				.desc("Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true.")
+				.build();
+		Option optionLengths = Option.builder("l")
+				.longOpt("lengths").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13.")
+				.build();
+		Option optionMaxFlankSize = Option.builder("fs")
+				.longOpt("flank_size").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Specify to print maximum flank nuleotides from the matched sequence. Default is 1,000.")
+				.build();
+		Option optionFasta = Option.builder("f")
+				.longOpt("fasta").argName("optional, fasta|fa")
+				.hasArg()
+				.required(false)
+				.desc("Canonical sequence database to avoid ambiguous assignment of noncanonical peptides.")
+				.build();
+		Option optionRank = Option.builder("r")
+				.longOpt("rank").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("How many candidates will be considered per scan. Default is 100 (in other words, use all candidates).")
+				.build();
+		Option optionOutputSAM = Option.builder("os")
+				.longOpt("output_sam").argName("optional, true|false")
+				.hasArg()
+				.required(false)
+				.desc("Report matched reads as SAM format (true or false). Default is false.")
+				.build();
+		Option optionOutputNoncanonical = Option.builder("on")
+				.longOpt("output_noncanonical").argName("optional, true|false")
+				.hasArg()
+				.required(false)
+				.desc("Report noncaonical peptides for SAM and/or GTF formats (true or false). Default is true.")
+				.build();
+		Option optionOutputCanonical = Option.builder("oc")
+				.longOpt("output_canonical").argName("optional, true|false")
+				.hasArg()
+				.required(false)
+				.desc("Report caonical peptides for SAM and/or GTF formats (true or false). Default is true.")
+				.build();
+		Option optionPenaltyMutation = Option.builder("pm")
+				.longOpt("penalty_mutation").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty per a mutation. Default is 1.")
+				.build();
+		Option optionPenaltyAlternativeSplicing = Option.builder("pas")
+				.longOpt("penalty_alternative_splicing").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for alternative splicing. Default is 10.")
+				.build();
+		Option optionPenalty5UTR = Option.builder("p5")
+				.longOpt("penalty_5utr").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for 5`-UTR. Default is 20.")
+				.build();
+		Option optionPenalty3UTR = Option.builder("p3")
+				.longOpt("penalty_3utr").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for 3`-UTR. Default is 20.")
+				.build();
+		Option optionPenaltyncRNA = Option.builder("pn")
+				.longOpt("penalty_ncrna").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for noncoding RNA. Default is 20.")
+				.build();
+		Option optionPenaltyncFS = Option.builder("pf")
+				.longOpt("penalty_frameshift").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for frame shift. Default is 20.")
+				.build();
+		Option optionPenaltyncIR = Option.builder("pir")
+				.longOpt("penalty_intron_retention").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for intron region. Default is 30.")
+				.build();
+		Option optionPenaltyncIGR = Option.builder("pigr")
+				.longOpt("penalty_intergenic_region").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for intergenic region. Default is 30.")
+				.build();
+		Option optionPenaltyncasRNA = Option.builder("pa")
+				.longOpt("penalty_intergenic_region").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for antisense RNA. Default is 30.")
+				.build();
+		Option optionPenaltyncSoftClip = Option.builder("ps")
+				.longOpt("penalty_softclip").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for softclip reads. Default is 50.")
+				.build();
+		Option optionPenaltyncUnknown = Option.builder("pu")
+				.longOpt("penalty_unknown").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("Penalty for unmapped reads. Default is 100.")
+				.build();
+		Option optionGTFPartitionSize = Option.builder("gps")
+				.longOpt("gtf_partition_size").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("The block size of loading genomic region at once. Default is 10000000.")
+				.build();
+		Option optionBAMPartitionSize = Option.builder("bps")
+				.longOpt("bam_partition_size").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("The number of loading reads at once. Default is 1000000.")
+				.build();
+		Option optionThreads = Option.builder("t")
+				.longOpt("threads").argName("optional, integer")
+				.hasArg()
+				.required(false)
+				.desc("The number of threads. Default is 4.")
+				.build();
+		
+		
+		Options options = new Options();
+		options
+		.addOption(optionPSM)
+		.addOption(optionBAM)
+		.addOption(optionGTF)
+		.addOption(optionOutput)
+		.addOption(optionPeptideIdx)
+		.addOption(optionIdIdx)
+		.addOption(optionChargeIdx)
+		.addOption(optionScoreIdx)
+		
+		.addOption(optionAdditionalFeatures)
+		.addOption(optionFasta)
+		.addOption(optionMode)
+		.addOption(optionSeparator)
+		.addOption(optionIL)
+		.addOption(optionLengths)
+		.addOption(optionMaxFlankSize)
+		.addOption(optionRank)
+		.addOption(optionOutputSAM)
+		.addOption(optionOutputNoncanonical)
+		.addOption(optionOutputCanonical)
+		.addOption(optionPenaltyMutation)
+		.addOption(optionPenaltyAlternativeSplicing)
+		.addOption(optionPenalty5UTR)
+		.addOption(optionPenalty3UTR)
+		.addOption(optionPenaltyncRNA)
+		.addOption(optionPenaltyncFS)
+		.addOption(optionPenaltyncIR)
+		.addOption(optionPenaltyncIGR)
+		.addOption(optionPenaltyncasRNA)
+		.addOption(optionPenaltyncSoftClip)
+		.addOption(optionPenaltyncUnknown)
+		.addOption(optionGTFPartitionSize)
+		.addOption(optionBAMPartitionSize)
+		.addOption(optionThreads);
+		
+		
+		CommandLineParser parser = new DefaultParser();
+	    boolean isFail = false;
+
 		try {
-			System.out.println(Constants.VERSION+" "+Constants.RELEASE);
-			System.out.println(Constants.INTRODUCE);
-			System.out.println();
+		    cmd = parser.parse(options, args);
+		    
+		    // --bam
+		    if(cmd.hasOption("b")) {
+		    	String[] paths = cmd.getOptionValue("b").split(",");
+				Parameters.NUM_OF_SAM_FILES = paths.length;
+				Parameters.sequenceFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
+				Parameters.unmappedFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
+				Parameters.exportSAMPaths	 = new String[Parameters.NUM_OF_SAM_FILES];
+				Parameters.tmpOutputFilePaths= new String[Parameters.NUM_OF_SAM_FILES];
 
-			// print parameter description
-			if(args.length == 0) {
-				System.out.println("Usage");
-				System.out.println();
-				System.out.println("Mandatory Fields");
-				System.out.println("  --gtf_file            : GTF file path. We recommand to use the same gtf corresponding to alignment.");
-				System.out.println("  --sam_file            : SAM/BAM file path. The sam/bam file must be sorted by coordinate.");
-				System.out.println("                          Multiple sam/bam files should be separated by comma (,).");
-				System.out.println("  --psm_file            : PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine.");
-				System.out.println("  --pept_col            : Peptide column index in the psm file. One-based!");
-				System.out.println("  --scan_col            : Scan number index (the value is expected as integer > 0). One-based!");
-				System.out.println("  --score_col           : Main score index. One-based!");
-				System.out.println("  --file_col            : File name index. One-based!");
-				System.out.println("  --charge_col          : Charge state index. One-based!");
-				System.out.println("  --output              : Output file name of pXg.");
-				System.out.println();
-				System.out.println("Optional Fields");
-				System.out.println("  --add_feat_cols       : Specify the indices for additional features to generate PIN file. One-based!");
-				System.out.println("                          Several features can be added by comma separator. ex> 5,6,7");
-				System.out.println("  --sep                 : Specify the column separator. Possible values are csv or tsv. Default is tsv");
-				System.out.println("  --mode                : Specify strandedness (default is auto).");
-				System.out.println("                          auto: auto-detection. only available in paired-ends.");
-				System.out.println("                          fr: first-forward second-reverse.");
-				System.out.println("                          rf: first-reverse second-forward.");
-				System.out.println("                          r: reverse single end.");
-				System.out.println("                          f: forward single end.");
-				System.out.println("                          none: non-strandedness.");
-				System.out.println("  --ileq                : Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true.");
-				System.out.println("  --lengths             : Range of peptide length to consider. Default is 8-15");
-				System.out.println("                          You can write in this way (min-max, both inclusive) : 8-13");
-				System.out.println("  --max_flank_size      : Specify to print maximum flank nuleotides from matched sequence. Default is 1,000");
-				System.out.println("  --fasta_file          : Canonical sequence database to avoid ambiguous assignment of noncanonical peptides");
-				System.out.println("  --rank                : How many candidates will be considered per a scan. Default is 100 (in other words, use all ranked candidates)");
-				System.out.println("  --out_sam             : Report matched reads as SAM format (true or false). Default is false.");
-				System.out.println("  --out_noncanonial     : Report noncaonical peptides for SAM and/or GTF formats (true or false). Default is true.");
-				System.out.println("  --out_canonial        : Report caonical peptides for SAM and/or GTF formats (true or false). Default is true.");
-				System.out.println("  --penalty_mutation    : Penalty per a mutation. Default is 1.");
-				System.out.println("  --penalty_AS          : Penalty for alternative splicing. Default is 10.");
-				System.out.println("  --penalty_5UTR        : Penalty for 5`-UTR. Default is 20.");
-				System.out.println("  --penalty_3UTR        : Penalty for 3`-UTR. Default is 20.");
-				System.out.println("  --penalty_ncRNA       : Penalty for noncoding RNA. Default is 20.");
-				System.out.println("  --penalty_FS          : Penalty for frame shift. Default is 20.");
-				System.out.println("  --penalty_IR          : Penalty for intron region. Default is 30.");
-				System.out.println("  --penalty_IGR         : Penalty for intergenic region. Default is 30.");
-				System.out.println("  --penalty_asRNA       : Penalty for antisense RNA. Default is 30.");
-				System.out.println("  --penalty_softclip    : Penalty for softclip reads. Default is 50.");
-				System.out.println("  --penalty_unknown     : Penalty for unmapped reads. Default is 100.");
-				System.out.println("  --gtf_partition_size  : The size of treating genomic region at once. Default is 10000000");
-				System.out.println("  --sam_partition_size  : The size of treating number of reads at once. Default is 1000000");
-				System.out.println("  --threads             : The number of threads. Default is 4");
-				System.out.println();
-				System.out.println("Example1");
-				System.out.println("java -Xmx30G -jar pXg.jar --gtf_file gencode.gtf --sam_file aligned_1.sorted.bam,aligned_2.sorted.bam --psm_file peaks.result --scan_col 5 --file_col 2 --pept_col 4 --charge_col 11 --score_col 8 --add_feat_cols 14,15  --out_canonical false --out test");
-				System.out.println("Example2");
-				System.out.println("java -Xmx30G -jar pXg.jar --gtf_file gencode.gtf --sam_file aligned.sorted.sam -psm_file peaks.result --scan_col 5 --file_col 2 --pept_col 4 --charge_col 11 --score_col 8 --add_feat_cols 14,15 --lengths 8-11 --out test");
-				return -1;
-			}
-
-			// sam file first
-			for(int i=0; i<args.length; i+=2) {
-				String option = args[i].toLowerCase();
-				// --sam_file (mandatory)
-				if(option.equalsIgnoreCase(Parameters.CMD_GENOMIC_SEQUENCE_PATH)) {
-					String[] paths = args[i+1].split(",");
-					Parameters.NUM_OF_SAM_FILES = paths.length;
-					Parameters.sequenceFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
-					Parameters.unmappedFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
-					Parameters.exportSAMPaths	 = new String[Parameters.NUM_OF_SAM_FILES];
-					Parameters.tmpOutputFilePaths= new String[Parameters.NUM_OF_SAM_FILES];
-
-					for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
-						Parameters.sequenceFilePaths[idx] = paths[idx];
-						if(!(Parameters.sequenceFilePaths[idx].toLowerCase().endsWith(".bam") ||
-								Parameters.sequenceFilePaths[idx].toLowerCase().endsWith(".sam"))) {
-							System.out.println(Parameters.sequenceFilePaths[idx] +" must be .sam or .bam file.");
-							return -1;
-						}
-
-						if(!isExist(Parameters.sequenceFilePaths[idx])) {
-							printNoSuchFileOrDirectory(Parameters.sequenceFilePaths[idx]);
-							return -1;
-						}
-						
-						int lastIdx = Parameters.sequenceFilePaths[idx].lastIndexOf(".");
-						
-						Parameters.unmappedFilePaths[idx] = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".unknown.seq";
-						Parameters.exportSAMPaths[idx]	  = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".ided.sam";
-						Parameters.tmpOutputFilePaths[idx]= Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + "."+Constants.UNIQUE_RUN_ID;
-						
-					}
-				}
-			}
-
-			for(int i=0; i<args.length; i+=2) {
-				String option = args[i].toLowerCase();
-
-				// --gtf_file (mandatory)
-				if(option.equalsIgnoreCase(Parameters.CMD_GENOMIC_ANNOTATION_PATH)) {
-					Parameters.genomicAnnotationFilePath = args[i+1];
-					if(!isExist(Parameters.genomicAnnotationFilePath)) {
-						printNoSuchFileOrDirectory(Parameters.genomicAnnotationFilePath);
-						return -1;
-					}
-				}
-				// --psm_file (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PEPTIDE_ANNOTATION_PATH)) {
-					Parameters.peptideFilePath = args[i+1];
-					if(!isExist(Parameters.peptideFilePath)) {
-						printNoSuchFileOrDirectory(Parameters.peptideFilePath);
-						return -1;
-					}
-				}
-				// --sep (optional)
-				else if(option.equalsIgnoreCase(Parameters.SEP_TYPE)) {
-					Parameters.sepType = args[i+1];
-				}
-				// --mode (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_STRANDEDNESS)) {
-					
-					if(!args[i+1].equalsIgnoreCase(Constants.NON_STRANDED) && 
-					   !args[i+1].equalsIgnoreCase(Constants.F_STRANDED) &&
-					   !args[i+1].equalsIgnoreCase(Constants.R_STRANDED) &&
-					   !args[i+1].equalsIgnoreCase(Constants.RF_STRANDED) &&
-					   !args[i+1].equalsIgnoreCase(Constants.FR_STRANDED) &&
-					   !args[i+1].equalsIgnoreCase(Constants.AUTO_STRANDED)) {
-						System.out.println(args[i+1] +" is wrong value. Enforce to three-frame translation.");
+				for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
+					Parameters.sequenceFilePaths[idx] = paths[idx];
+					if(!(Parameters.sequenceFilePaths[idx].toLowerCase().endsWith(".bam") ||
+							Parameters.sequenceFilePaths[idx].toLowerCase().endsWith(".sam"))) {
+						System.out.println(Parameters.sequenceFilePaths[idx] +" must be .sam or .bam file.");
+						isFail = true;
 					}
 
-					Parameters.strandedness = args[i+1];
-				}
-				// --fasta_file (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PROTEIN_SEQUENCE_PATH)) {
-					Parameters.proteinFastaPath = args[i+1];
-					if(!isExist(Parameters.proteinFastaPath)) {
-						printNoSuchFileOrDirectory(Parameters.proteinFastaPath);
-						return -1;
-					}
-				}
-				// --output (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_OUTPUT_PATH)) {
-					Parameters.outputFilePath = args[i+1] +".pXg";
-					Parameters.pinFilePath = Parameters.outputFilePath +".pin";
-					if(isExist(Parameters.outputFilePath)) {
-						printAlreadyExistFileOrDirectory(Parameters.outputFilePath);
-						return -1;
+					if(!isExist(Parameters.sequenceFilePaths[idx])) {
+						printNoSuchFileOrDirectory(Parameters.sequenceFilePaths[idx]);
+						isFail = true;
 					}
 					
-					File baseFile = new File(Parameters.outputFilePath);
-					String basePath = FilenameUtils.getFullPathNoEndSeparator(baseFile.getAbsolutePath());
-					if(basePath == null) {
-						basePath = "";
-					}
-					// relocation of sam/bam-related outputs
-					for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
-						
-						File file = new File(Parameters.unmappedFilePaths[idx]);
-						Parameters.unmappedFilePaths[idx] = basePath +"/"+file.getName();
-						
-						file = new File(Parameters.exportSAMPaths[idx]);
-						Parameters.exportSAMPaths[idx] = basePath +"/"+file.getName();
-						
-						file = new File(Parameters.tmpOutputFilePaths[idx]);
-						Parameters.tmpOutputFilePaths[idx] = basePath +"/"+file.getName();
-						
-						System.out.println(Parameters.unmappedFilePaths[idx]);
-						System.out.println(Parameters.exportSAMPaths[idx]);
-						System.out.println(Parameters.tmpOutputFilePaths[idx]);
-					}
+					int lastIdx = Parameters.sequenceFilePaths[idx].lastIndexOf(".");
+					
+					Parameters.unmappedFilePaths[idx] = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".unknown.seq";
+					Parameters.exportSAMPaths[idx]	  = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".ided.sam";
+					Parameters.tmpOutputFilePaths[idx]= Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + "."+Constants.UNIQUE_RUN_ID;
+					
 				}
-				// -ileq (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_IL)) {
-					if(args[i+1].equalsIgnoreCase("false")) {
-						Parameters.leucineIsIsoleucine = false;
-					}
+		    }
+		    // --gtf
+		    if(cmd.hasOption("g")) {
+		    	Parameters.genomicAnnotationFilePath = cmd.getOptionValue("g");
+				if(!isExist(Parameters.genomicAnnotationFilePath)) {
+					printNoSuchFileOrDirectory(Parameters.genomicAnnotationFilePath);
+					return -1;
 				}
-				// -pept_col (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PEPTIDE_COLUMN_INDEX)) {
-					Parameters.peptideColumnIndex = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --psm
+		    if(cmd.hasOption("p")) {
+		    	Parameters.peptideFilePath = cmd.getOptionValue("p");
+				if(!isExist(Parameters.peptideFilePath)) {
+					printNoSuchFileOrDirectory(Parameters.peptideFilePath);
+					return -1;
 				}
-				// -scan_col (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_SCAN_COLUMN_INDEX)) {
-					Parameters.scanColumnIndex = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --peptide_index
+		    if(cmd.hasOption("pi")) {
+		    	Parameters.peptideColumnIndex = Integer.parseInt(cmd.getOptionValue("pi"));
+		    }
+		    
+		    // --identifier_index
+		    if(cmd.hasOption("idi")) {
+		    	String[] indicies = cmd.getOptionValue("idi").split(",");
+		    	
+		    	Parameters.identifierColumnIndicies = new int[indicies.length];
+		    	for(int i=0; i<indicies.length; i++) {
+		    		Parameters.identifierColumnIndicies[i] = Integer.parseInt(indicies[i]);
+		    	}
+		    }
+		    
+		    // --charge_index
+		    if(cmd.hasOption("ci")) {
+		    	Parameters.chargeColumnIndex = Integer.parseInt(cmd.getOptionValue("ci"));
+		    }
+		    
+		    // --score_index
+		    if(cmd.hasOption("si")) {
+		    	Parameters.scoreColumnIndex = Integer.parseInt(cmd.getOptionValue("si"));
+		    }
+		    
+		    // --output
+		    if(cmd.hasOption("o")) {
+		    	Parameters.outputFilePath = cmd.getOptionValue("o") +".pXg";
+				Parameters.pinFilePath = Parameters.outputFilePath +".pin";
+				if(isExist(Parameters.outputFilePath)) {
+					printAlreadyExistFileOrDirectory(Parameters.outputFilePath);
+					isFail = true;
 				}
-				// -file_col (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_FILE_COLUMN_INDEX)) {
-					Parameters.fileColumnIndex = Integer.parseInt(args[i+1]);
+				
+				File baseFile = new File(Parameters.outputFilePath);
+				String basePath = FilenameUtils.getFullPathNoEndSeparator(baseFile.getAbsolutePath());
+				if(basePath == null) {
+					basePath = "";
 				}
-				// -charge_col (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_CHARGE_COLUMN_INDEX)) {
-					Parameters.chargeColumnIndex = Integer.parseInt(args[i+1]);
+				// relocation of sam/bam-related outputs
+				for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
+					
+					File file = new File(Parameters.unmappedFilePaths[idx]);
+					Parameters.unmappedFilePaths[idx] = basePath +"/"+file.getName();
+					
+					file = new File(Parameters.exportSAMPaths[idx]);
+					Parameters.exportSAMPaths[idx] = basePath +"/"+file.getName();
+					
+					file = new File(Parameters.tmpOutputFilePaths[idx]);
+					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+file.getName();
+					
+					System.out.println(Parameters.unmappedFilePaths[idx]);
+					System.out.println(Parameters.exportSAMPaths[idx]);
+					System.out.println(Parameters.tmpOutputFilePaths[idx]);
 				}
-				// -add_feat_cols (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_ADD_FEAT_COLUMN_INDICES)) {
-					String[] indicies = args[i+1].split("\\,");
-					Parameters.additionalFeatureIndices = new int[indicies.length];
-					for(int idx=0; idx<indicies.length; idx++) {
-						Parameters.additionalFeatureIndices[idx] = Integer.parseInt(indicies[idx]);
-					}
+		    }
+		    
+		    // --add_index
+		    if(cmd.hasOption("ai")) {
+		    	String[] indicies = cmd.getOptionValue("ai").split(",");
+				Parameters.additionalFeatureIndices = new int[indicies.length];
+				for(int idx=0; idx<indicies.length; idx++) {
+					Parameters.additionalFeatureIndices[idx] = Integer.parseInt(indicies[idx]);
 				}
-				// -score_col (mandatory)
-				else if(option.equalsIgnoreCase(Parameters.CMD_SCORE_COLUMN_INDEX)) {
-					Parameters.scoreColumnIndex = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --sep
+		    if(cmd.hasOption("s")) {
+		    	Parameters.sepType = cmd.getOptionValue("s");
+		    }
+		    
+		    // --mode
+		    if(cmd.hasOption("m")) {
+		    	String mode = cmd.getOptionValue("m");
+		    	if(!mode.equalsIgnoreCase(Constants.NON_STRANDED) && 
+				   !mode.equalsIgnoreCase(Constants.F_STRANDED) &&
+				   !mode.equalsIgnoreCase(Constants.R_STRANDED) &&
+				   !mode.equalsIgnoreCase(Constants.RF_STRANDED) &&
+				   !mode.equalsIgnoreCase(Constants.FR_STRANDED) &&
+				   !mode.equalsIgnoreCase(Constants.AUTO_STRANDED)) {
+					System.out.println(mode +" is not supported value.");
+					isFail = true;
+				} else {
+					Parameters.strandedness = mode;
 				}
-				// -rank (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_CANDIDATE_RANK)) {
-					Parameters.psmRank = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --il_equivalence
+		    if(cmd.hasOption("il")) {
+		    	if(cmd.getOptionValue("il").equalsIgnoreCase("false")) {
+					Parameters.leucineIsIsoleucine = false;
 				}
-				// -length (optional)
-				// >example: 8-15
-				else if(option.equalsIgnoreCase(Parameters.CMD_LENGTH)) {
-					String[] range = args[i+1].split("\\-");
-					Parameters.minPeptLen = Integer.parseInt(range[0]);
-					Parameters.maxPeptLen = Integer.parseInt(range[1]);
+		    }
+		    
+		    // --lengths
+		    if(cmd.hasOption("l")) {
+		    	String[] range = cmd.getOptionValue("l").split("\\-");
+				Parameters.minPeptLen = Integer.parseInt(range[0]);
+				Parameters.maxPeptLen = Integer.parseInt(range[1]);
+		    }
+		    
+		    // --flank_size
+		    if(cmd.hasOption("fs")) {
+		    	Integer mFlankSize = Integer.parseInt(cmd.getOptionValue("fs"));
+				Parameters.maxFlankNSize= mFlankSize;
+		    }
+		    
+		    // --rank
+		    if(cmd.hasOption("r")) {
+		    	Parameters.psmRank = Integer.parseInt(cmd.getOptionValue("r"));
+		    }
+		    
+		    // --output_sam
+		    if(cmd.hasOption("os")) {
+		    	if(cmd.getOptionValue("os").equalsIgnoreCase("true")) {
+					Parameters.EXPORT_SAM = true;
 				}
-				// -gtf_partition_size (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_GENOMIC_ANNOTATION_PARTITION_SIZE)) {
-					Parameters.partitionSize = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --output_noncanonical
+		    if(cmd.hasOption("on")) {
+		    	if(cmd.getOptionValue("on").equalsIgnoreCase("false")) {
+					Parameters.EXPORT_NONCANONICAL = false;
 				}
-				// -sam_partition_size (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_GENOMIC_SEQUENCE_PARTITION_SIZE)) {
-					Parameters.readSize = Integer.parseInt(args[i+1]);
+		    }
+		    
+		    // --output_canonical
+		    if(cmd.hasOption("oc")) {
+		    	if(cmd.getOptionValue("oc").equalsIgnoreCase("false")) {
+					Parameters.EXPORT_CANONICAL= false;
 				}
-				// -sam_partition_size (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_THREADS)) {
-					Parameters.nThreads = Integer.parseInt(args[i+1]);
-				}
-				// -out_sam (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_SAM_FORMAT)) {
-					if(args[i+1].equalsIgnoreCase("true")) {
-						Parameters.EXPORT_SAM = true;
-					}
-				}
-				// -out_sam (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_UNMAPPED)) {
-					if(args[i+1].equalsIgnoreCase("false")) {
-						Parameters.EXPORT_SAM = false;
-					}
-				}
-				// -out_canonical (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_CANONICAL)) {
-					if(args[i+1].equalsIgnoreCase("false")) {
-						Parameters.EXPORT_CANONICAL = false;
-					}
-				}
-				// -out_noncanonical (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_NONCANONICAL)) {
-					if(args[i+1].equalsIgnoreCase("false")) {
-						Parameters.EXPORT_NONCANONICAL = false;
-					}
-				}
-				// -pMut (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_MUTATION)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_MUTATION = penalty;
-				}
-				// -pAS (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_AS)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_AS = penalty;
-				}
-				// -p5UTR (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_5UTR)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_5UTR = penalty;
-				}
-				// -p3UTR (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_3UTR)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_3UTR = penalty;
-				}
-				// -pncRNA (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_ncRNA)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_ncRNA= penalty;
-				}
-				// -pFS (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_FS)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_FS = penalty;
-				}
-				// -pIR (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_IR)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_IR= penalty;
-				}
-				// -pIGR (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_IGR)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_IGR= penalty;
-				}
-				// -pasRNA (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_asRNA)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_asRNA = penalty;
-				}
-				// -punmap (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_UNMAP)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_UNMAP= penalty;
-				}
-				// -punmap (optional)
-				else if(option.equalsIgnoreCase(Parameters.CMD_PENALTY_SOFTCLIP)) {
-					Double penalty = Double.parseDouble(args[i+1]);
-					Parameters.PENALTY_SOFTCLIP= penalty;
-				}
-				else if(option.equalsIgnoreCase(Parameters.CMD_MAX_FLANK_SIZE)) {
-					Integer mFlankSize = Integer.parseInt(args[i+1]);
-					Parameters.maxFlankNSize= mFlankSize;
-				}
-				// hidden parameters for revision
-				else if(option.equalsIgnoreCase(Parameters.CMD_PHRED_CAL)) {
-					Parameters.PHRED_CAL = args[i+1].toLowerCase();
-					System.out.println("!!Hidden parameter phred cal: "+Parameters.PHRED_CAL);
-				}
-
-			}
-		}catch(Exception e) {
-			System.out.println("Wrong parameter was detected. Please check the parameters.");
-			return -1;
+		    }
+		    
+		    // --penalty_mutation
+		    if(cmd.hasOption("pm")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pm"));
+				Parameters.PENALTY_MUTATION = penalty;
+		    }
+		    
+		    // --penalty_alternative_splicing
+		    if(cmd.hasOption("pas")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pas"));
+				Parameters.PENALTY_AS = penalty;
+		    }
+		    
+		    // --penalty_5utr
+		    if(cmd.hasOption("p5")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("p5"));
+				Parameters.PENALTY_5UTR = penalty;
+		    }
+		    
+		    // --penalty_3utr
+		    if(cmd.hasOption("p3")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("p3"));
+				Parameters.PENALTY_3UTR = penalty;
+		    }
+		    
+		    // --penalty_ncrna
+		    if(cmd.hasOption("pn")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pn"));
+				Parameters.PENALTY_ncRNA = penalty;
+		    }
+		    
+		    // --penalty_frameshift
+		    if(cmd.hasOption("pf")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pf"));
+				Parameters.PENALTY_FS = penalty;
+		    }
+		    
+		    // --penalty_intron_retention
+		    if(cmd.hasOption("pir")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pir"));
+				Parameters.PENALTY_IR = penalty;
+		    }
+		    
+		    // --penalty_intergenic_region
+		    if(cmd.hasOption("pigr")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pigr"));
+				Parameters.PENALTY_IGR = penalty;
+		    }
+		    
+		    // --penalty_asRNA
+		    if(cmd.hasOption("pa")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pa"));
+				Parameters.PENALTY_asRNA = penalty;
+		    }
+		    
+		    // --penalty_softclip
+		    if(cmd.hasOption("ps")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("ps"));
+				Parameters.PENALTY_SOFTCLIP = penalty;
+		    }
+		    
+		    // --penalty_unknown
+		    if(cmd.hasOption("pu")) {
+	    		Double penalty = Double.parseDouble(cmd.getOptionValue("pu"));
+				Parameters.PENALTY_UNMAP = penalty;
+		    }
+		    
+		    // --gtf_partition_size
+		    if(cmd.hasOption("gps")) {
+		    	Parameters.partitionSize = Integer.parseInt(cmd.getOptionValue("gps"));
+		    }
+		    
+		    // --bam_partition_size
+		    if(cmd.hasOption("bps")) {
+		    	Parameters.readSize = Integer.parseInt(cmd.getOptionValue("bps"));
+		    }
+		    
+		    // --threads
+		    if(cmd.hasOption("t")) {
+		    	Parameters.nThreads = Integer.parseInt(cmd.getOptionValue("t"));
+		    }
+		    
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+			isFail = true;
 		}
-
-
-		if(!isMandatoryOkay()) {
-			return -1;
+		
+		if(isFail) {
+			System.out.println("Usage:");
+		    for(Option option : options.getOptions()) {
+		    	System.out.println("-"+option.getOpt()+", --"+option.getLongOpt()+" <"+option.getArgName()+">");
+		    	System.out.println("\t"+option.getDescription());
+		    	System.out.println();
+		    }
+		    
+		    System.out.println("Example1");
+			System.out.println("java -Xmx30G -jar pXg.jar --gtf gencode.gtf --bam aligned_1.sorted.bam,aligned_2.sorted.bam --psm peaks.result --identifier_index 2,5 --peptide_index 4 --charge_index 11 --score_index 8 --add_index 14,15  --output test");
+			System.out.println("Example2");
+			System.out.println("java -Xmx30G -jar pXg.jar --gtf gencode.gtf --bam aligned.sorted.sam -psm peaks.result --identifier_index 2,5 --peptide_index 4 --charge_index 11 --score_index 8 --add_index 14,15 --lengths 8-11 --output test");
+			
+		    System.exit(0);
 		}
+	
 
 		// open logger
     	Logger.create(Parameters.outputFilePath+".log");
@@ -356,9 +577,11 @@ public class ParameterParser {
 		// change one-based to zero-based
 		Parameters.peptideColumnIndex--;
 		Parameters.scoreColumnIndex--;
-		Parameters.scanColumnIndex--;
 		Parameters.chargeColumnIndex--;
-		Parameters.fileColumnIndex--;
+		
+		for(int i=0; i<Parameters.identifierColumnIndicies.length; i++) {
+			Parameters.identifierColumnIndicies[i]--;
+		}
 		if(Parameters.additionalFeatureIndices != null) {
 			for(int i=0; i<Parameters.additionalFeatureIndices.length; i++) {
 				Parameters.additionalFeatureIndices[i]--;
@@ -367,7 +590,22 @@ public class ParameterParser {
 
 		return 0;
 	}
+	
+	private static class OptionCompartor implements Comparator<Option> {
 
+		@Override
+		public int compare(Option o1, Option o2) {
+			if(o1.isRequired()) {
+				return -1;
+			} else if(o2.isRequired()) {
+				return 1;
+			}
+			
+			return 0;
+		}
+		
+	}
+	
 	/**
 	 * GTF
 	 * SAM
@@ -401,10 +639,15 @@ public class ParameterParser {
 			System.out.println(" PROTEIN_DB: "+Parameters.proteinFastaPath);
 		}
 		System.out.println(" PSM: "+Parameters.peptideFilePath);
+		String identifierIndex = "";
+		for(int identifier : Parameters.identifierColumnIndicies) {
+			identifierIndex += "," + identifier;
+		}
+		identifierIndex = identifierIndex.substring(1);
+		System.out.println("  IDENTIFIER_COLS: "+identifierIndex);
 		System.out.println("  PEPT_COL: "+Parameters.peptideColumnIndex);
 		System.out.println("  SCORE_COL: "+Parameters.scoreColumnIndex);
-		System.out.println("  SCAN_COL: "+Parameters.scanColumnIndex);
-		System.out.println("  FILE_COL: "+Parameters.fileColumnIndex);
+		
 		System.out.println("  CHARGE_COL: "+Parameters.chargeColumnIndex);
 		// to display array
 		String addFeatCols = "NA";
@@ -457,6 +700,8 @@ public class ParameterParser {
 		}
 		Logger.append(" PSM: "+Parameters.peptideFilePath);
 		Logger.newLine();
+		Logger.append("  IDENTIFIER_COLS: "+identifierIndex);
+		Logger.newLine();
 		Logger.append("  PEPT_COL: "+Parameters.peptideColumnIndex);
 		Logger.newLine();
 		Logger.append("  SCORE_COL: "+Parameters.scoreColumnIndex);
@@ -503,58 +748,6 @@ public class ParameterParser {
 		Logger.newLine();
 		Logger.append(" THREADS: "+Parameters.nThreads);
 		Logger.newLine();
-	}
-
-	private static boolean isMandatoryOkay () {
-		boolean pass = true;
-
-		// --gtf_file
-		if(Parameters.genomicAnnotationFilePath == null) {
-			System.out.println("mandatory option --gtf_file is missing...");
-			pass = false;
-		}
-		// --sam_file
-		if(Parameters.sequenceFilePaths == null) {
-			System.out.println("mandatory option --sam_file is missing...");
-			pass = false;
-		}
-		// --psm_file
-		if(Parameters.peptideFilePath == null) {
-			System.out.println("mandatory option --psm_file is missing...");
-			pass = false;
-		}
-		// --out_file
-		if(Parameters.outputFilePath == null) {
-			System.out.println("mandatory option --out_file is missing...");
-			pass = false;
-		}
-		// -pept_col
-		if(Parameters.peptideColumnIndex == -1) {
-			System.out.println("mandatory option --pept_col is missing...");
-			pass = false;
-		}
-		// -score_col
-		if(Parameters.scoreColumnIndex == -1) {
-			System.out.println("mandatory option --score_col is missing...");
-			pass = false;
-		}
-		// -scan_col
-		if(Parameters.scanColumnIndex == -1) {
-			System.out.println("mandatory option --scan_col is missing...");
-			pass = false;
-		}
-		// -file_col
-		if(Parameters.fileColumnIndex == -1) {
-			System.out.println("mandatory option --file_col is missing...");
-			pass = false;
-		}
-		// -charge_col
-		if(Parameters.chargeColumnIndex == -1) {
-			System.out.println("mandatory option --charge_col is missing...");
-			pass = false;
-		}
-
-		return pass;
 	}
 
 	private static void printNoSuchFileOrDirectory (String fileName) {

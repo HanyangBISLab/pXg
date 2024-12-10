@@ -47,8 +47,12 @@ public class PBlock implements Comparable<PBlock> {
 	}
 
 	public String getSpecID () {
-		String specID = record[Parameters.fileColumnIndex] +"|"+record[Parameters.scanColumnIndex]+"|"+record[Parameters.chargeColumnIndex];
-		return specID;
+		
+		String specID = "";
+		for(int i=0; i<Parameters.identifierColumnIndicies.length; i++) {
+			specID += "|"+record[Parameters.identifierColumnIndicies[i]];
+		}
+		return specID.substring(1);
 	}
 
 	/**

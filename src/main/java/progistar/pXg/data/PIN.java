@@ -111,13 +111,13 @@ public class PIN {
 				pinOutput.setLength(0);
 
 				String[] fields = record.split("\t");
-
 				String specId = fields[0];
 				String genomicId = fields[1];
 				String label = fields[2];
 				String scanNr = specIDtoScanIdx.get(specId)+"";
 				String mainScore = fields[Parameters.scoreColumnIndex + indexShiftSize];
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
+				StringBuilder searchPeptide = new StringBuilder(fields[Parameters.peptideColumnIndex + indexShiftSize]);
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
 
@@ -142,15 +142,38 @@ public class PIN {
 				String deltaScore = fields[deltaScoreIdx];
 				String meanQScore = fields[meanQScoreIdx];
 				String peptide = fields[infPeptIdx];
-
+				
+				// TODO: More universal PTM annotation!
+				// It determines I/L characters based on genomic information
+				// If a peptide sequence from search engine contains PTM annotations, 
+				// only mass-shift is allowed.
+				int len = searchPeptide.length();
+				int pLen = peptide.length();
+				int pIdx = 0;
+				for(int i=0; i<len; i++) {
+					if(searchPeptide.charAt(i) == 'I' || searchPeptide.charAt(i) == 'L') {
+						while(pIdx < pLen) {
+							
+							if(peptide.charAt(pIdx) == 'I' || peptide.charAt(pIdx) == 'L') {
+								searchPeptide.setCharAt(i, peptide.charAt(pIdx));
+								pIdx++;
+								break;
+							}
+							
+							pIdx++;
+						}
+					}
+				}
+				
+				
 				pinOutput.append("\t").append(deltaScore);
 				pinOutput.append("\t").append(meanQScore);
-				pinOutput.append("\t").append(peptide);
+				pinOutput.append("\t").append(searchPeptide.toString());
 				// target or decoy
 				if(label.equalsIgnoreCase("1")) {
 					pinOutput.append("\t"+genomicId);
 				} else {
-					pinOutput.append("\trandom_"+genomicId);
+					pinOutput.append("\tXXX_"+genomicId);
 				}
 
 				pinRecords.add(pinOutput.toString());

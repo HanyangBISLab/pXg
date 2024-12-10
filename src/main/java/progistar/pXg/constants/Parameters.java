@@ -66,12 +66,8 @@ public class Parameters {
 	// for user-friendly purpose, peptideColumnIndex is taken one-based and converted to zero-based.
 	public static final String CMD_PEPTIDE_COLUMN_INDEX	=	"--pept_col".toLowerCase();
 	public static int peptideColumnIndex			=	-1; // user-specific peptide index
-
-	public static final String CMD_SCAN_COLUMN_INDEX	=	"--scan_col".toLowerCase();
-	public static int scanColumnIndex			=	-1; // user-specific scan index
-
-	public static final String CMD_FILE_COLUMN_INDEX	=	"--file_col".toLowerCase();
-	public static int fileColumnIndex						=	-1;
+	
+	public static int[] identifierColumnIndicies = null;
 
 	public static final String CMD_SCORE_COLUMN_INDEX	=	"--score_col".toLowerCase();
 	public static int scoreColumnIndex				=	-1;
