@@ -64,7 +64,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | DeltaScore | Difference between main scores of current rank and top-rank peptides | Float       |
 | Rank | Rank of candidate peptides | Integer       |
 | GenomicLociCount | The number of genomic locations | Integer       |
-| InferredPeptide | Translated nucleotide sequence | String       |
+| InferredPeptide | Translated nucleotide sequence with a PTM annotation | String       |
 | GenomicLoci | Genomic location of the peptide | String       |
 | Strand | Strand of matched sequence | + or -       |
 | ObservedLeftFlankNucleotide | Nucleotide sequence of the left flank of the peptide | String       |
@@ -102,33 +102,32 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 #### List of Parameters
 |Option    | Description    | Mandatory   |
 | :---:   | :---:       | :---:     |
-| gtf_file       | GTF file path. We recommand to use the same gtf corresponding to alignment |Yes   |
-| sam_file       | SAM/BAM file path. The file must be sorted by coordinate. Multiple SAM/BAM files should be separated by comma (,) |Yes   |
-| psm_file       | PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine |Yes   |
-| file_col       | File name index in the psm file |Yes   |
-| pept_col       | Peptide index in the psm file |Yes   |
-| charge_col     | Charge state index in the psm file |Yes   |
-| scan_col       | Scan number index in the psm file    |Yes   |
+| gtf       | GTF file path. We recommand to use the same gtf corresponding to alignment |Yes   |
+| bam       | SAM/BAM file path. The file must be sorted by coordinate. Multiple SAM/BAM files should be separated by comma (,) |Yes   |
+| psm       | PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine |Yes   |
+| identifier_index       | File name index in the psm file |Yes   |
+| peptide_index       | Peptide index in the psm file |Yes   |
+| charge_index     | Charge state index in the psm file |Yes   |
 | output         | Base output name of pXg |Yes   |
 | sep            | Specify the column separator. Possible values are csv or tsv. Default is csv |No   |
-| mode           | Specify the method of translation nucleotides. 3 for three-frame and 6 for six-frame. Default is 3 |No   |
-| add_feat_cols  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|No  |
-| ileq           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |No   |
+| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness. |No   |
+| add_index  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|No  |
+| il_equivalent           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |No   |
 | lengths        | Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13 |No   |
-| fasta_file     | Canonical sequence database to report conservative assignment of noncanonical PSMs |No   |
+| fasta     | Canonical sequence database to report conservative assignment of noncanonical PSMs |No   |
 | rank           | How many candidates will be considered per a scan. Default is 100 (in other words, use all ranked candidates) |No   |
-| out_sam        | Report matched reads as SAM format (true or false). Default is false |No   |
-| out_canonical  | Report caonical peptides in the out_sam file (true or false). Default is true |No   |
-| out_noncanonical| Report noncaonical peptides in the out_sam file (true or false). Default is true |No   |
+| output_sam        | Report matched reads as SAM format (true or false). Default is false |No   |
+| output_canonical  | Report caonical peptides in the out_sam file (true or false). Default is true |No   |
+| output_noncanonical| Report noncaonical peptides in the out_sam file (true or false). Default is true |No   |
 | penalty_mutation   | Penalty per a mutation. Default is 1 |No   |
-| penalty_AS         | Penalty for alternative splicing. Default is 10 |No   |
-| penalty_5UTR       | Penalty for 5`-UTR. Default is 20 |No   |
-| penalty_3UTR       | Penalty for 3`-UTR. Default is 20 |No   |
-| penalty_ncRNA      | Penalty for noncoding RNA. Default is 20 |No   |
-| penalty_FS         | Penalty for frame shift. Default is 20 |No   |
-| penalty_IR         | Penalty for intron region. Default is 30 |No   |
-| penalty_IGR        | Penalty for intergenic region. Default is 30 |No   |
-| penalty_asRNA      | Penalty for antisense RNA. Default is 30 |No   |
+| penalty_alternative_splicing         | Penalty for alternative splicing. Default is 10 |No   |
+| penalty_5utr       | Penalty for 5`-UTR. Default is 20 |No   |
+| penalty_3utr       | Penalty for 3`-UTR. Default is 20 |No   |
+| penalty_ncrna      | Penalty for noncoding RNA. Default is 20 |No   |
+| penalty_frameshift         | Penalty for frame shift. Default is 20 |No   |
+| penalty_intron_retention         | Penalty for intron region. Default is 30 |No   |
+| penalty_intergenic_region        | Penalty for intergenic region. Default is 30 |No   |
+| penalty_asrna      | Penalty for antisense RNA. Default is 30 |No   |
 | penalty_softclip      | Penalty for softclip reads. Default is 50 |No   |
 | penalty_unknown    | Penalty for unmapped reads. Default is 100 |No   |
 | gtf_partition_size*       | The size of treating genomic region at once. Default is 5000000 |No   |
@@ -140,15 +139,14 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 #### Basic command
 ```bash
 java -Xmx30G -jar pXg.jar \
---gtf_file [gene annotation file path] \
---sam_file [sorted SAM/BAM file path] \
---psm_file [de novo result file path] \
---fasta_file [protein sequence fasta file paht] \
---file_col [index of file name column] \
---charge_col [index of chage state column] \
---pept_col [index of peptide column] \
---score_col [index of search score column] \
---scan_col [index of scan number column] \
+--gtf [gene annotation file path] \
+--bam [sorted SAM/BAM file path] \
+--psm [de novo result file path] \
+--fasta [protein sequence fasta file paht] \
+--identifier_index [index of file name column] \
+--charge_index [index of chage state column] \
+--peptide_index [index of peptide column] \
+--score_index [index of search score column] \
 --output [base output file name]
 ```
 
@@ -164,10 +162,11 @@ Once you get the aligned BAM or SAM file, you MUST sort the file by chromosomal 
 
 We provide a code for preprocessing SAM file using <a href="http://www.htslib.org/" target="_blank">SAMtools</a> below:
 ```bash
-samtools sort -o in.sorted.sam in.sam -@ 8
+samtools sort -o in.sorted.bam in.bam -@ 8
+samtools index in.sorted.bam -@ 8
 ```
 
-The "in.sorted.sam" is used for pXg input.
+The "in.sorted.bam" is used for pXg input.
 
 ### Toy example
 In this tutorial, toy datasets including 1) de novo results, 2) in.sorted.sam, 3) gene annotation (GTF) and 4) protein sequence fasta file are provided in the <a href="https://github.com/progistar/pXg/tree/main/tutorial" target="_blank">tutorial</a> folder so that a user can try to run the pXg pipeline. 
@@ -176,24 +175,23 @@ In this tutorial, toy datasets including 1) de novo results, 2) in.sorted.sam, 3
 Using the toy datasets, you can run the pXg pipline using following command: <br>
 ```bash
 java -Xmx2G -jar pXg.v2.0.1.jar \
---gtf_file toy.gtf \
---sam_file toy.sorted.sam \
---psm_file toy.psm.csv \
---fasta_file toy.fasta \
+--gtf toy.gtf \
+--sam toy.sorted.sam \
+--psm toy.psm.csv \
+--fasta toy.fasta \
 --output toy \
---scan_col 5 \
---file_col 2 \
---pept_col 4 \
---score_col 8 \
---charge_col 11 \
---add_feat_cols 15 \
+--identifier_index 2,5 \
+--peptide_index 4 \
+--score_index 8 \
+--charge_index 11 \
+--add_index 15 \
 --sep csv \
---mode 3 \
+--mode none \
 --threads 2
 ```
 This may take about 2 mins.<br>
 
-Note that the memory option "-Xmx50G" depends on the size of SAM file. In our experience, "-Xmx30G" is enough to deal with ~20G file. 
+Note that the memory option "-Xmx50G" depends on the size of BAM file. In our experience, "-Xmx30G" is enough to deal with ~20G file. 
 
 ### Run Percolator using the pXg results
 Once you get the pXg result, you can add more features such as spectral similarity and delta retention time described in our manuscript. Without the additional features, still it is possible to run <a href="https://github.com/percolator/percolator" target="_blank">Percolator</a> and estimate FDR from the pXg results.<br>
