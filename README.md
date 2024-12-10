@@ -109,8 +109,8 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | peptide_index       | Peptide index in the psm file |Yes   |
 | charge_index     | Charge state index in the psm file |Yes   |
 | output         | Base output name of pXg |Yes   |
-| sep            | Specify the column separator. Possible values are csv or tsv. Default is csv |No   |
-| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness. |No   |
+| sep            | Specify the column separator. Possible values are csv or tsv. Default is tsv |No   |
+| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness |No   |
 | add_index  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|No  |
 | il_equivalent           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |No   |
 | lengths        | Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13 |No   |
