@@ -211,19 +211,6 @@ public class XBlock {
 		Hashtable<String, String> events = toEvents();
 		Hashtable<String, String> fastaIDs = toFastaIDs();
 		Hashtable<String, String> transcriptIDs = toTranscriptIDs();
-		/*
-		XBlock consensusXBlock = this.getConsensusSequenceXBlock();
-		String lfs = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx).length() == 0 ?
-				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankSequenceIdx);
-
-		String rfs = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankSequenceIdx).length() == 0 ?
-				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankSequenceIdx);
-
-		String lfsRef = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankRefSequenceIdx).length() == 0 ?
-				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.leftFlankRefSequenceIdx);
-
-		String rfsRef = Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankRefSequenceIdx).length() == 0 ?
-				"-" : Global.SEQUENCE_ARRAYLIST.get(consensusXBlock.rightFlankRefSequenceIdx);*/
 		
 		ConsensusSequence consensusSequence = new ConsensusSequence(this);
 

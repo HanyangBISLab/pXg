@@ -19,7 +19,7 @@ public class PIN {
 	 */
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
-	private static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
+	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
 	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", "InferredPeptide"};
 
 	private PIN() {}
@@ -117,7 +117,6 @@ public class PIN {
 				String scanNr = specIDtoScanIdx.get(specId)+"";
 				String mainScore = fields[Parameters.scoreColumnIndex + indexShiftSize];
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
-				StringBuilder searchPeptide = new StringBuilder(fields[Parameters.peptideColumnIndex + indexShiftSize]);
 				String peptide = fields[infPeptIdx];
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
@@ -170,32 +169,9 @@ public class PIN {
 				String meanQScore = fields[meanQScoreIdx];
 				
 				
-				// TODO: More universal PTM annotation!
-				// It determines I/L characters based on genomic information
-				// If a peptide sequence from search engine contains PTM annotations, 
-				// only mass-shift is allowed.
-				int len = searchPeptide.length();
-				
-				int pIdx = 0;
-				for(int i=0; i<len; i++) {
-					if(searchPeptide.charAt(i) == 'I' || searchPeptide.charAt(i) == 'L') {
-						while(pIdx < pLen) {
-							
-							if(peptide.charAt(pIdx) == 'I' || peptide.charAt(pIdx) == 'L') {
-								searchPeptide.setCharAt(i, peptide.charAt(pIdx));
-								pIdx++;
-								break;
-							}
-							
-							pIdx++;
-						}
-					}
-				}
-				
-				
 				pinOutput.append("\t").append(deltaScore);
 				pinOutput.append("\t").append(meanQScore);
-				pinOutput.append("\t").append(searchPeptide.toString());
+				pinOutput.append("\t").append(peptide);
 				// target or decoy
 				if(label.equalsIgnoreCase("1")) {
 					pinOutput.append("\t"+genomicId);

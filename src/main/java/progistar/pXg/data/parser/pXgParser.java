@@ -13,6 +13,7 @@ import java.util.Hashtable;
 
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
+import progistar.pXg.data.PIN;
 import progistar.pXg.data.pXgRecord;
 
 public class pXgParser {
@@ -196,8 +197,48 @@ public class pXgParser {
 
 			BW.append(header);
 			BW.newLine();
+			
+			int indexShiftSize = PIN.pXgADDED_HEADERS.length;
+			int infPeptideIdx = -1;
+			String[] fields = header.split("\t");
+			for(int i=0; i<fields.length; i++) {
+				if(fields[i].equalsIgnoreCase(Constants.INFERRED_PEPTIDE_COLUMN_NAME)) {
+					infPeptideIdx = i;
+				}
+			}
+			
 			for(String record : finalResults) {
-				BW.append(record);
+				fields = record.split("\t");
+				String peptide = fields[infPeptideIdx];
+				StringBuilder searchPeptide = new StringBuilder(fields[Parameters.peptideColumnIndex + indexShiftSize]);
+				// TODO: More universal PTM annotation!
+				// It determines I/L characters based on genomic information
+				// If a peptide sequence from search engine contains PTM annotations, 
+				// only mass-shift is allowed.
+				int len = searchPeptide.length();
+				int pLen = peptide.length();
+				int pIdx = 0;
+				for(int i=0; i<len; i++) {
+					if(searchPeptide.charAt(i) == 'I' || searchPeptide.charAt(i) == 'L') {
+						while(pIdx < pLen) {
+							
+							if(peptide.charAt(pIdx) == 'I' || peptide.charAt(pIdx) == 'L') {
+								searchPeptide.setCharAt(i, peptide.charAt(pIdx));
+								pIdx++;
+								break;
+							}
+							
+							pIdx++;
+						}
+					}
+				}
+				
+				fields[infPeptideIdx] = peptide;
+				BW.append(fields[0]);
+				for(String field : fields) {
+					BW.append("\t").append(field);
+				}
+				
 				BW.newLine();
 			}
 
