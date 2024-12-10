@@ -17,7 +17,7 @@ public class PIN {
 	 *
 	 * ScanNr is actually acting as scan index
 	 */
-	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tMainScore\tLog2Reads";
+	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads";
 	// note that the gemomicID is assigned to proteinIds
 	private static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
 	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", "InferredPeptide"};
