@@ -6,7 +6,7 @@ public class Constants {
 	//        plus, basically, this version number intends to upgrade behaviors of tool.
 	// minor: critical bug fix, change in results something like that.
 	// patch: tiny bug fix, typo, and change code styles something like that.
-	public static final String VERSION = "pXg v2.3.3";
+	public static final String VERSION = "pXg v2.4.0";
 	public static final String RELEASE = "(release 2024-12-10)";
 	public static final String INTRODUCE = "Seunghyuk Choi and Eunok Paek in the Department of Computer Science at Hanyang University in Seoul, South Korea. ";
 	public static final String PMID = "38403075";
@@ -151,6 +151,7 @@ public class Constants {
 	public static final String R_STRANDED			=	"r";
 	/**
 	 * Determine strand-specific using XS and FLAGs
+	 * TODO: determine based on genomic annotation from the GTF
 	 */
 	public static final String AUTO_STRANDED			=	"auto";
 }
