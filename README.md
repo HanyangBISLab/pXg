@@ -1,8 +1,9 @@
 # pXg: proteomics X genomics
 <p align="center">
 	<img src="https://github.com/HanyangBISLab/pXg/blob/main/img/logo.svg"/>
-	Thank you, <a href="https://www.bcm.edu/people-search/jong-min-choi-19517" target="_blank">Dr. Jongmin Choi</a>, for designing the logo!
 </p>
+Thank you, <a href="https://www.bcm.edu/people-search/jong-min-choi-19517" target="_blank">Dr. Jongmin Choi</a>, for designing the logo!
+
 ---
 - [About pXg](#about-pxg)
 - [Usage](#usage)
