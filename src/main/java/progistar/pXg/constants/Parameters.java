@@ -46,6 +46,9 @@ public class Parameters {
 	public static int[] additionalFeatureIndices				=	null;
 	public static int psmRank						=	100;
 	public static String peptideParserRegExr		=	"[A-Z]"; // read sequence matched to the RegExr.
+	public static String unimodParserRegExr			=	"\\[(.*?)\\]";
+	public static String massParserRegExr			=	"\\((.*?)\\)";
+	
 	// Note that
 	// comment is different from field.
 	// In pXg definition, field indicates column names and comment shows some meta-data.

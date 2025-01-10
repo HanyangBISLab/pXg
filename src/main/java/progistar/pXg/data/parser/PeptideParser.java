@@ -15,7 +15,6 @@ import progistar.pXg.data.PeptideAnnotation;
 
 public class PeptideParser {
 
-	private static Pattern	peptideRegExr;
 	private static String[]	commentMarkers;
 
 	private PeptideParser () {}
@@ -33,7 +32,7 @@ public class PeptideParser {
 		long startTime = System.currentTimeMillis();
 
 		// set regular expressions
-		peptideRegExr = Pattern.compile(Parameters.peptideParserRegExr);
+		Pattern peptideRegExr	= Pattern.compile(Parameters.peptideParserRegExr);
 		commentMarkers = Parameters.commentMarker.split("\\|");
 
 		StringBuilder pSeq = new StringBuilder();
@@ -72,8 +71,10 @@ public class PeptideParser {
 				}
 				// record
 				else {
-					String peptide = record[Parameters.peptideColumnIndex];
-
+					// remove unimod and mass relating patterns
+					String peptide = record[Parameters.peptideColumnIndex]
+									.replaceAll(Parameters.unimodParserRegExr, "").replaceAll(Parameters.massParserRegExr, "");
+					
 					// find peptide strip sequence
 					Matcher matcher = peptideRegExr.matcher(peptide);
 
