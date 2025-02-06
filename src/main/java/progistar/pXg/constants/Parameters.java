@@ -86,17 +86,15 @@ public class Parameters {
 	// Third-party path
 	public static String netMHCpanPath				=	"/Users/gistar/tools/netMHCpan4.1/netMHCpan-4.1/netMHCpan";
 
-
-
 	// hidden parameters for revision
 	public static String PHRED_CAL						=	Constants.CAL_PHRED_AVG;
 	
-	
 	// Primary count
-	public static boolean COUNT_PRIMARY_ONLY			=	false;
+	public static boolean COUNT_PRIMARY_ONLY			=	true;
 	public static String strandedness					=	Constants.AUTO_STRANDED;
 
-
+	// Normalization (RPHM)
+	public static boolean COUNT_NORMALIZATION			=	true;
 
 	///////////////////// Parameters for "Build Sequence Database" /////////////////////
 	public static String sequencedbInputPath			=	null;

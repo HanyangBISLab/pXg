@@ -42,7 +42,6 @@ public class GenomicSequence {
 	public ArrayList<Cigar> cigars;
 	public double meanQScore;
 	public int flags;
-	public boolean isPrimary = true;
 
 	// annotation
 	// if there is no model on the mapped region, then it means this read maps on intergenic region only.
@@ -110,11 +109,6 @@ public class GenomicSequence {
     		default :
     			break;
 	    	}
-		}
-		
-		// set primary
-		if(read.isSecondaryAlignment()) {
-			this.isPrimary = false;
 		}
 	}
 

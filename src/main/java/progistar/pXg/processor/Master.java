@@ -92,8 +92,13 @@ public class Master {
 
 	        	// get records
 	            for (SAMRecord samRecord : samReader) {
+	            	// Is it primary only?
+	            	if(Parameters.COUNT_PRIMARY_ONLY && samRecord.isSecondaryAlignment()) {
+	            		continue;
+	            	}
+	            	
 	                // Process each SAMRecord as needed
-	            	reads[readCount] =samRecord;
+	            	reads[readCount] = samRecord;
 
 	            	String chr = samRecord.getReferenceName();
 	            	int startPosition = samRecord.getAlignmentStart();

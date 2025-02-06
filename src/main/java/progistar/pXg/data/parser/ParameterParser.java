@@ -83,6 +83,19 @@ public class ParameterParser {
 				.desc("Main search score index (one-based).")
 				.build();
 		
+		// optional
+		Option optionCountStrategy = Option.builder("c")
+				.longOpt("count").argName("optional, primary|all")
+				.hasArg()
+				.required(false)
+				.desc("Specify which reads to consider for counting. The default is primary.")
+				.build();
+		Option optionNormalization = Option.builder("n")
+				.longOpt("normalize").argName("optional, rphm|raw")
+				.hasArg()
+				.required(false)
+				.desc("Specify the moethod of normalization to be used. The default is RPHM (read per a hundred million).")
+				.build();
 		Option optionAdditionalFeatures = Option.builder("ai")
 				.longOpt("add_index").argName("optional, integer")
 				.hasArg()
@@ -252,6 +265,8 @@ public class ParameterParser {
 		.addOption(optionChargeIdx)
 		.addOption(optionScoreIdx)
 		
+		.addOption(optionCountStrategy)
+		.addOption(optionNormalization)
 		.addOption(optionAdditionalFeatures)
 		.addOption(optionFasta)
 		.addOption(optionMode)
@@ -388,6 +403,32 @@ public class ParameterParser {
 					System.out.println(Parameters.exportSAMPaths[idx]);
 					System.out.println(Parameters.tmpOutputFilePaths[idx]);
 				}
+		    }
+		    
+		    // --count
+		    if(cmd.hasOption("c")) {
+		    	String count = cmd.getOptionValue("c");
+		    	if(count.equalsIgnoreCase("primary")) {
+		    		Parameters.COUNT_PRIMARY_ONLY = true;
+		    	} else if(count.equalsIgnoreCase("all")) {
+		    		Parameters.COUNT_PRIMARY_ONLY = false;
+		    	} else {
+		    		System.out.println(count +" is not supported value.");
+					isFail = true;
+		    	}
+		    }
+		    
+		 // --count
+		    if(cmd.hasOption("n")) {
+		    	String normalization = cmd.getOptionValue("n");
+		    	if(normalization.equalsIgnoreCase("rphm")) {
+		    		Parameters.COUNT_NORMALIZATION = true;
+		    	} else if(normalization.equalsIgnoreCase("raw")) {
+		    		Parameters.COUNT_NORMALIZATION = false;
+		    	} else {
+		    		System.out.println(normalization +" is not supported value.");
+					isFail = true;
+		    	}
 		    }
 		    
 		    // --add_index
@@ -601,21 +642,6 @@ public class ParameterParser {
 		return 0;
 	}
 	
-	private static class OptionCompartor implements Comparator<Option> {
-
-		@Override
-		public int compare(Option o1, Option o2) {
-			if(o1.isRequired()) {
-				return -1;
-			} else if(o2.isRequired()) {
-				return 1;
-			}
-			
-			return 0;
-		}
-		
-	}
-	
 	/**
 	 * GTF
 	 * SAM
@@ -668,6 +694,19 @@ public class ParameterParser {
 			}
 			addFeatCols = addFeatCols.substring(1);
 		}
+		
+		String countReads = "all";
+		if(Parameters.COUNT_PRIMARY_ONLY) {
+			countReads = "primary";
+		}
+		
+		String normalization = "raw";
+		if(Parameters.COUNT_NORMALIZATION) {
+			normalization = "RPHM";
+		}
+		
+		System.out.println("  COUNT_READS: "+countReads);
+		System.out.println("  NORMALIZATED_READS: "+normalization);
 		System.out.println("  ADDITIONAL_FEATURE_COLS: "+addFeatCols);
 		System.out.println("  RANK TO CONSIDER: "+Parameters.psmRank);
 		System.out.println("  PEPTIDE_LENGTHS: "+Parameters.minPeptLen+"-"+Parameters.maxPeptLen);
@@ -715,6 +754,11 @@ public class ParameterParser {
 		Logger.append("  PEPT_COL: "+Parameters.peptideColumnIndex);
 		Logger.newLine();
 		Logger.append("  SCORE_COL: "+Parameters.scoreColumnIndex);
+		Logger.newLine();
+		
+		Logger.append("  COUNT_READS: "+countReads);
+		Logger.newLine();
+		Logger.append("  NORMALIZATED_READS: "+normalization);
 		Logger.newLine();
 		Logger.append("  ADDITIONAL_FEATURE_COLS: "+addFeatCols);
 		Logger.newLine();

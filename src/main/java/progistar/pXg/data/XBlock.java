@@ -8,6 +8,7 @@ import progistar.pXg.constants.Parameters;
 import progistar.pXg.data.parser.ResultParser;
 import progistar.pXg.utils.ENSTMapper;
 import progistar.pXg.utils.Priority;
+import progistar.pXg.utils.ReadNormalizer;
 
 public class XBlock {
 	// Note that only unmapped reads store sequenceID.
@@ -240,7 +241,7 @@ public class XBlock {
 					+"\t"+this.toDist()
 					+"\t"+events.get("key")+"\t"+events.get("count")
 					+"\t"+fastaIDs.get("key")+"\t"+fastaIDs.get("count")
-					+"\t"+mockReadCount+"\t"+(qScore);
+					+"\t"+ReadNormalizer.normalize(mockReadCount)+"\t"+(qScore);
 		} else {
 
 			double qScore = this.targetQScore;
@@ -264,7 +265,7 @@ public class XBlock {
 					+"\t"+this.toDist()
 					+"\t"+events.get("key")+"\t"+events.get("count")
 					+"\t"+fastaIDs.get("key")+"\t"+fastaIDs.get("count")
-					+"\t"+targetReadCount+"\t"+(qScore);
+					+"\t"+ReadNormalizer.normalize(targetReadCount)+"\t"+(qScore);
 		}
 	}
 

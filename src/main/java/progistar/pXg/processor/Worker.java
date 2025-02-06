@@ -59,10 +59,6 @@ public class Worker extends Thread {
 				RunInfo.workerProcessedReads[this.workerID] ++; // increase a number of processed reads
 
 				GenomicSequence genomicSequence = new GenomicSequence(samRead);
-				// if consider only primary count?
-				if(Parameters.COUNT_PRIMARY_ONLY && !genomicSequence.isPrimary) {
-					continue;
-				}
 				ArrayList<Output> matches = PeptideAnnotation.find(genomicSequence);
 
 				/**

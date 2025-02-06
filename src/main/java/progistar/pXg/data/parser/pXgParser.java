@@ -142,14 +142,14 @@ public class pXgParser {
 		spectrumToKey.forEach((specId, keyToRecords)->{
 			keyToRecords.forEach((key, array)->{
 				StringBuilder counts = new StringBuilder();
-				int mergedReads = 0;
+				double mergedReads = 0;
 				pXgRecord maxRecord = null;
-				int maxReads = 0;
+				double maxReads = 0;
 
 				for (pXgRecord element : array) {
-					int reads = 0;
+					double reads = 0;
 					if(element != null) {
-						reads = Integer.parseInt(element.getValueByFieldName("Reads"));
+						reads = Double.parseDouble(element.getValueByFieldName("Reads"));
 						mergedReads += reads;
 						if(reads > maxReads) {
 							maxRecord = element;
