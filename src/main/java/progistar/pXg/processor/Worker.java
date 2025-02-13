@@ -64,7 +64,6 @@ public class Worker extends Thread {
 				/**
 				 * Only consider matched NGS-reads.
 				 * Because we are not interested in unmatched NGS-reads.
-				 *
 				 */
 
 				if(matches.size() > 0) {

@@ -177,7 +177,7 @@ public class PxGAnnotation {
 				// for target
 				isTarget[0] = true;
 				Hashtable<String, XBlock> xBlocksTmp = this.targetXBlockMapper.get(key);
-				if(xBlocksTmp == null && Parameters.isDecoyOut) {
+				if(xBlocksTmp == null) {
 					xBlocksTmp = this.decoyXBlockMapper.get(key);
 					isTarget[0] = false;
 				}

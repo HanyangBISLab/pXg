@@ -80,7 +80,6 @@ public class Parameters {
 
 	// System Parameters
 	public static int nThreads						=	4;
-	public static boolean isDecoyOut 				=	true;
 	public static boolean rmQuotes					=	true;
 
 	// Third-party path
@@ -105,5 +104,7 @@ public class Parameters {
 	public static boolean isIncludedFlankSequence		=	false;
 	public static boolean isStringent					=	false;
 	////////////////////////////////////////////////////////////////////////////////////
+	
+	public static boolean printTargetOnly				=	false;
 
 }

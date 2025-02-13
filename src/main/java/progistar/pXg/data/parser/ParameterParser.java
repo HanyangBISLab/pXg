@@ -120,6 +120,11 @@ public class ParameterParser {
 				.required(false)
 				.desc("Specify the column separator. Possible values are csv or tsv. Default is tsv.")
 				.build();
+		Option optionPrintTargetOnly = Option.builder("to")
+				.longOpt("print_target_only").argName("optional, tsv|csv")
+				.required(false)
+				.desc("Print target only.")
+				.build();
 		Option optionIL = Option.builder("il")
 				.longOpt("il_equivalent").argName("optional, true|false")
 				.hasArg()
@@ -271,6 +276,7 @@ public class ParameterParser {
 		.addOption(optionFasta)
 		.addOption(optionMode)
 		.addOption(optionSeparator)
+		.addOption(optionPrintTargetOnly)
 		.addOption(optionIL)
 		.addOption(optionLengths)
 		.addOption(optionMaxFlankSize)
@@ -443,6 +449,11 @@ public class ParameterParser {
 		    // --sep
 		    if(cmd.hasOption("s")) {
 		    	Parameters.sepType = cmd.getOptionValue("s");
+		    }
+		    
+		 // --sep
+		    if(cmd.hasOption("to")) {
+		    	Parameters.printTargetOnly = true;
 		    }
 		    
 		    // --mode
@@ -705,6 +716,11 @@ public class ParameterParser {
 			normalization = "RPHM";
 		}
 		
+		String printTargetOnly = "target and decoy";
+		if(Parameters.printTargetOnly) {
+			printTargetOnly = "target only";
+		}
+		
 		System.out.println("  COUNT_READS: "+countReads);
 		System.out.println("  NORMALIZATED_READS: "+normalization);
 		System.out.println("  ADDITIONAL_FEATURE_COLS: "+addFeatCols);
@@ -717,6 +733,7 @@ public class ParameterParser {
 		System.out.println("  OUT_SAM: "+Parameters.EXPORT_SAM);
 		System.out.println("  OUT_CANONICAL: "+Parameters.EXPORT_CANONICAL);
 		System.out.println("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
+		System.out.println("  PRINT_TYPE: "+printTargetOnly);
 		System.out.println(" penalty_mutation: "+Parameters.PENALTY_MUTATION);
 		System.out.println(" penalty_AS: "+Parameters.PENALTY_AS);
 		System.out.println(" penalty_5UTR: "+Parameters.PENALTY_5UTR);
@@ -779,6 +796,8 @@ public class ParameterParser {
 		Logger.append("  OUT_CANONICAL: "+Parameters.EXPORT_CANONICAL);
 		Logger.newLine();
 		Logger.append("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
+		Logger.newLine();
+		Logger.append("  PRINT_TYPE: "+printTargetOnly);
 		Logger.newLine();
 		Logger.append(" penalty_mutation: "+Parameters.PENALTY_MUTATION);
 		Logger.newLine();
