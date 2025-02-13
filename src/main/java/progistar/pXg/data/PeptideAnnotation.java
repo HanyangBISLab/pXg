@@ -371,4 +371,8 @@ public class PeptideAnnotation {
 
 		return peptides.size();
 	}
+	
+	public static int getFieldLength () {
+		return fields.length;
+	}
 }

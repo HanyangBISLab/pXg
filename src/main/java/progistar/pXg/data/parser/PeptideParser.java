@@ -36,6 +36,8 @@ public class PeptideParser {
 		commentMarkers = Parameters.commentMarker.split("\\|");
 
 		StringBuilder pSeq = new StringBuilder();
+		int dismatchedFieldLength = 0;
+		int fieldLength = 0;
 		try {
 			File file = new File(peptideFilePath);
 
@@ -68,9 +70,28 @@ public class PeptideParser {
 				// the first line after headers must be field line.
 				if(recordCount == -1) {
 					PeptideAnnotation.setFields(record);
+					fieldLength = PeptideAnnotation.getFieldLength();
 				}
 				// record
 				else {
+					// if the number of fields in the record is different from the number of fields in the header,
+					// adjust
+					if(record.length != fieldLength) {
+						dismatchedFieldLength++;
+						String[] adjustedRecord = new String[fieldLength];
+						for(int i=0; i<fieldLength; i++) {
+							if(record.length > i) {
+								adjustedRecord[i] = record[i];
+							} else {
+								adjustedRecord[i] = "";
+							}
+						}
+						
+						// replace an original record to an adjust record.
+						record = adjustedRecord;
+					}
+					
+					
 					// remove unimod and mass relating patterns
 					String peptide = record[Parameters.peptideColumnIndex]
 									.replaceAll(Parameters.unimodParserRegExr, "").replaceAll(Parameters.massParserRegExr, "");
