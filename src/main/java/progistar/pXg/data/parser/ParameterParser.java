@@ -404,10 +404,6 @@ public class ParameterParser {
 					
 					file = new File(Parameters.tmpOutputFilePaths[idx]);
 					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+file.getName();
-					
-					System.out.println(Parameters.unmappedFilePaths[idx]);
-					System.out.println(Parameters.exportSAMPaths[idx]);
-					System.out.println(Parameters.tmpOutputFilePaths[idx]);
 				}
 		    }
 		    
