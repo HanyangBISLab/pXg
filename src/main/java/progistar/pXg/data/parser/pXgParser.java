@@ -48,7 +48,7 @@ public class pXgParser {
 				continue;
 			}
 			
-			String header = record.getHeader();
+			String header = record.getHeader(0);
 
 			if(!removeDuplicates || checkDuplicates.get(header) == null) {
 				records.add(record);

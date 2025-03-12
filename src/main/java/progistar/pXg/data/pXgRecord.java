@@ -9,52 +9,19 @@ public class pXgRecord {
 	public pXgRecord (String[] fields) {
 		this.fields = fields;
 	}
-
-	public String getHeader () {
-		StringBuilder header = new StringBuilder(">pXg");
-
-		String id = getID();
-		String isCanonical = getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? "Canonical" : "Noncanonical";
-		String gn = getValueByFieldName("GeneNames");
-		String ev = getValueByFieldName("Events");
-		String pe = getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? "1" : "2";
-		String pep = getValueByFieldName("InferredPeptide");
-		String exp = getValueByFieldName("Reads");
-		String var = getValueByFieldName("Mutations");
-		String alt = getValueByFieldName("MutationStatus");
-		String gId = getValueByFieldName("GeneIDs");
-		String rna = getNucleotideSequence();
-
-		header.append("|").append(id)
-		.append("|").append(id+"_"+isCanonical)
-		.append(" ").append(gId)
-		.append(" ").append("GN="+gn)
-		.append(" ").append("EV="+ev)
-		.append(" ").append("PEP="+pep)
-		.append(" ").append("EXP="+exp)
-		.append(" ").append("VAR="+var)
-		.append(" ").append("ALT="+alt)
-		.append(" ").append("PE="+pe);
-		
-		if(Parameters.isIncludedFlankSequence) {
-			header.append(" ").append("RNA=").append(rna);
-		}
-
-		return header.toString();
-	}
 	
 	public String getHeader (int pe) {
 		StringBuilder header = new StringBuilder(">pXg");
 
 		String id = getID();
 		String isCanonical = getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? "Canonical" : "Noncanonical";
-		String gn = getValueByFieldName("GeneNames");
-		String ev = getValueByFieldName("Events");
+		String gn = getValueByFieldName("GeneNames").replace("|", ",");
+		String ev = getValueByFieldName("Events").replace("|", ",");
 		String pep = getValueByFieldName("InferredPeptide");
 		String exp = getValueByFieldName("Reads");
-		String var = getValueByFieldName("Mutations");
+		String var = getValueByFieldName("Mutations").replace("|", ",");
 		String alt = getValueByFieldName("MutationStatus");
-		String gId = getValueByFieldName("GeneIDs");
+		String gId = getValueByFieldName("GeneIDs").replace("|", ",");
 		String rna = getNucleotideSequence();
 
 		header.append("|").append(id)
@@ -69,7 +36,7 @@ public class pXgRecord {
 		.append(" ").append("PE="+pe);
 
 		if(Parameters.isIncludedFlankSequence) {
-			header.append(" ").append("RNA=").append(rna);
+			header.append(" ").append("RNA=").append(rna.replace("|", ","));
 		}
 		
 		return header.toString();
