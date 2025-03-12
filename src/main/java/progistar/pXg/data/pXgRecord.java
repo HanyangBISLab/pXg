@@ -39,6 +39,35 @@ public class pXgRecord {
 
 		return header.toString();
 	}
+	
+	public String getHeader (int pe) {
+		StringBuilder header = new StringBuilder(">pXg");
+
+		String id = getID();
+		String isCanonical = getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? "Canonical" : "Noncanonical";
+		String gn = getValueByFieldName("GeneNames");
+		String ev = getValueByFieldName("Events");
+		String pep = getValueByFieldName("InferredPeptide");
+		String exp = getValueByFieldName("Reads");
+		String var = getValueByFieldName("Mutations");
+		String alt = getValueByFieldName("MutationStatus");
+		String gId = getValueByFieldName("GeneIDs");
+
+		header.append("|").append(id)
+		.append("|").append(id+"_"+isCanonical)
+		.append(" ").append(gId)
+		.append(" ").append("GN="+gn)
+		.append(" ").append("EV="+ev)
+		.append(" ").append("PEP="+pep)
+		.append(" ").append("EXP="+exp)
+		.append(" ").append("VAR="+var)
+		.append(" ").append("ALT="+alt)
+		.append(" ").append("PE="+pe);
+
+		return header.toString();
+	}
+	
+
 
 	public String getID () {
 		String id = null;
@@ -46,9 +75,8 @@ public class pXgRecord {
 		String genomicLoci = getValueByFieldName("GenomicLoci").replace("|", ",");
 		String centerSeuqnece = getValueByFieldName("ObservedNucleotide");
 		String strand = getValueByFieldName("Strand");
-		String label = getValueByFieldName("Label");
 
-		id = genomicLoci+":"+strand+":"+centerSeuqnece+":"+label;
+		id = genomicLoci+"_"+strand+"_"+centerSeuqnece;
 
 		return id;
 	}

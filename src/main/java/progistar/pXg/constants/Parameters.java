@@ -96,9 +96,9 @@ public class Parameters {
 	public static boolean COUNT_NORMALIZATION			=	true;
 
 	///////////////////// Parameters for "Build Sequence Database" /////////////////////
-	public static String sequencedbInputPath			=	null;
+	public static String[] sequencedbpXgPath			=	new String[5];
+	public static String[] sequencedbFastaPath			=	new String[5];
 	public static String sequencedbOutputPath			=	null;
-	public static String referenceSequencePath			=	null;
 	public static boolean isIncludedCanonical			=	false;
 	public static boolean isIncludedNoncanonical		=	false;
 	public static boolean isIncludedFlankSequence		=	false;
