@@ -102,6 +102,10 @@ public class pXgRecord {
 		}
 	}
 
+	public boolean isTarget () {
+		return getValueByFieldName("Label").equalsIgnoreCase("1") ? true : false;
+	}
+	
 	public boolean isCanonical () {
 		return getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? true : false;
 	}
