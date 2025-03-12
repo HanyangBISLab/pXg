@@ -44,6 +44,7 @@ public class pXgParser {
 
 			// skip decoy records
 			if(!record.isTarget()) {
+				decoys++;
 				continue;
 			}
 			
