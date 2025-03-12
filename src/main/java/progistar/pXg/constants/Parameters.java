@@ -99,6 +99,7 @@ public class Parameters {
 	public static String[] sequencedbpXgPath			=	new String[5];
 	public static String[] sequencedbFastaPath			=	new String[5];
 	public static String sequencedbOutputPath			=	null;
+	public static boolean isIncludedDecoy				=	false;
 	public static boolean isIncludedCanonical			=	false;
 	public static boolean isIncludedNoncanonical		=	false;
 	public static boolean isIncludedFlankSequence		=	false;

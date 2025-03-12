@@ -220,6 +220,11 @@ public class BuildSequenceDB {
 				.required(false)
 				.desc("Exclude non-canonical peptides with FastaIDs")
 				.build();
+		Option optionDecoy = Option.builder("d")
+				.longOpt("decoy").argName("Decoy peptides")
+				.required(false)
+				.desc("Include decoy records (it can be used as entrapment sequence)")
+				.build();
 
 
 		options
@@ -237,7 +242,8 @@ public class BuildSequenceDB {
 		.addOption(optionCanonical)
 		.addOption(optionNoncanonical)
 		.addOption(optionFlank)
-		.addOption(optionStringent);
+		.addOption(optionStringent)
+		.addOption(optionDecoy);
 
 		CommandLineParser parser = new DefaultParser();
 	    HelpFormatter helper = new HelpFormatter();
@@ -265,6 +271,10 @@ public class BuildSequenceDB {
 		    if(cmd.hasOption("s")) {
 		    	Parameters.isStringent = true;
 		    	System.out.println("Excluding non-canonical peptides with FastaIDs.");
+		    }
+		    if(cmd.hasOption("d")) {
+		    	Parameters.isIncludedDecoy = true;
+		    	System.out.println("Include decoy sequences as entrapment sequences.");
 		    }
 		    
 		    // pXg inputs

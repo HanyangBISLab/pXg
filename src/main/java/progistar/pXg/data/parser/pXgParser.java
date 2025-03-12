@@ -42,10 +42,13 @@ public class pXgParser {
 			pXgRecord record = new pXgRecord(line.split("\t"));
 			
 
-			// skip decoy records
 			if(!record.isTarget()) {
 				decoys++;
-				continue;
+				
+				// skip decoy records
+				if(!Parameters.isIncludedDecoy) {
+					continue;
+				}
 			}
 			
 			String header = record.getHeader(0);
@@ -63,7 +66,11 @@ public class pXgParser {
 		}
 
 		BR.close();
-		System.out.println("Skip decoys: "+decoys);
+		if(Parameters.isIncludedDecoy) {
+			System.out.println("Include decoys: "+decoys);
+		} else {
+			System.out.println("Skip decoys: "+decoys);
+		}
 		System.out.println("A total of "+totalPRSM+" PRSMs were parsed");
 
 		if(Parameters.isStringent) {

@@ -23,10 +23,12 @@ public class pXgRecord {
 		String alt = getValueByFieldName("MutationStatus");
 		String gId = getValueByFieldName("GeneIDs").replace("|", ",");
 		String rna = getNucleotideSequence();
-
+		String td = isTarget() ? "Target" : "Decoy";
+		
 		header.append("|").append(id)
 		.append("|").append(id+"_"+isCanonical)
 		.append(" ").append(gId)
+		.append(" ").append("TD="+td)
 		.append(" ").append("GN="+gn)
 		.append(" ").append("EV="+ev)
 		.append(" ").append("PEP="+pep)
