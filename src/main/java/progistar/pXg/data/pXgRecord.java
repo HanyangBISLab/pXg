@@ -34,8 +34,11 @@ public class pXgRecord {
 		.append(" ").append("EXP="+exp)
 		.append(" ").append("VAR="+var)
 		.append(" ").append("ALT="+alt)
-		.append(" ").append("RNA="+rna)
 		.append(" ").append("PE="+pe);
+		
+		if(Parameters.isIncludedFlankSequence) {
+			header.append(" ").append("RNA=").append(rna);
+		}
 
 		return header.toString();
 	}
@@ -52,6 +55,7 @@ public class pXgRecord {
 		String var = getValueByFieldName("Mutations");
 		String alt = getValueByFieldName("MutationStatus");
 		String gId = getValueByFieldName("GeneIDs");
+		String rna = getNucleotideSequence();
 
 		header.append("|").append(id)
 		.append("|").append(id+"_"+isCanonical)
@@ -64,6 +68,10 @@ public class pXgRecord {
 		.append(" ").append("ALT="+alt)
 		.append(" ").append("PE="+pe);
 
+		if(Parameters.isIncludedFlankSequence) {
+			header.append(" ").append("RNA=").append(rna);
+		}
+		
 		return header.toString();
 	}
 	

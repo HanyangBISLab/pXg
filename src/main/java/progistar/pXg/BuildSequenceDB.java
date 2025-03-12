@@ -41,6 +41,7 @@ public class BuildSequenceDB {
 
 		// pXg records
 		for(int i=0; i<5; i++) {
+			int PE = i+1;
 			String filePath = Parameters.sequencedbpXgPath[i];
 			if(filePath != null) {
 				ArrayList<pXgRecord> records = pXgParser.parse(new File(filePath), true);
@@ -58,7 +59,7 @@ public class BuildSequenceDB {
 
 					if(isWrite) {
 						writeCnt++;
-						BW.append(record.getHeader());
+						BW.append(record.getHeader(PE));
 						BW.newLine();
 						BW.append(record.getTranslatedSequence());
 						BW.newLine();
