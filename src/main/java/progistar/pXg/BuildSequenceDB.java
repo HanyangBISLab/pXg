@@ -48,11 +48,6 @@ public class BuildSequenceDB {
 				int writeCnt = 0;
 				for (pXgRecord record : records) {
 					
-					// write target only
-					if(!record.isTarget()) {
-						continue;
-					}
-					
 					boolean isWrite = false;
 					if(Parameters.isIncludedCanonical && record.isCanonical()) {
 						isWrite = true;

@@ -36,9 +36,17 @@ public class pXgParser {
 		int totalPRSM = 0;
 		int canonical = 0;
 		int noncanonical = 0;
+		int decoys = 0;
 		while((line = BR.readLine()) != null) {
 			totalPRSM++;
 			pXgRecord record = new pXgRecord(line.split("\t"));
+			
+
+			// skip decoy records
+			if(!record.isTarget()) {
+				continue;
+			}
+			
 			String header = record.getHeader();
 
 			if(!removeDuplicates || checkDuplicates.get(header) == null) {
@@ -54,7 +62,7 @@ public class pXgParser {
 		}
 
 		BR.close();
-
+		System.out.println("Skip decoys: "+decoys);
 		System.out.println("A total of "+totalPRSM+" PRSMs were parsed");
 
 		if(Parameters.isStringent) {
@@ -71,10 +79,11 @@ public class pXgParser {
 			System.out.println(excluded +" non-canonical peptides were excluded");
 			records = selectedRecords;
 		}
-		
+
 		if(removeDuplicates) {
 			System.out.println("A total of "+records.size()+" unique entries were saved (canonical: "+canonical+", non-canonical:"+noncanonical+")");
 		} else {
+			
 			System.out.println("A total of "+records.size()+" entries were saved (canonical: "+canonical+", non-canonical:"+noncanonical+")");
 		}
 
