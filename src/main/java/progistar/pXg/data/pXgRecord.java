@@ -71,12 +71,19 @@ public class pXgRecord {
 			nucleotide = nucleotide.split("\\|")[1];
 		}
 
-
+		String peptide = null;
 		if(strand.equalsIgnoreCase("+")) {
-			return GenomicSequence.translation(nucleotide, 0);
+			peptide = GenomicSequence.translation(nucleotide, 0);
 		} else {
-			return GenomicSequence.reverseComplementTranslation(nucleotide, 0);
+			peptide = GenomicSequence.reverseComplementTranslation(nucleotide, 0);
 		}
+		
+		// reverse decoy
+		if(!isTarget()) {
+			peptide = new StringBuilder(peptide).reverse().toString();
+		}
+		
+		return peptide;
 	}
 
 	public boolean isTarget () {
