@@ -128,7 +128,7 @@ public class Constants {
 	
 	// strandedness
 	// Strand-specific
-	public static final String NON_STRANDED			=	"non";
+	public static final String NON_STRANDED			=	"none";
 	/**
 	 * FR_STRANDED: fr-second strand, direct stranded
 	 * the first read: forward
