@@ -214,8 +214,11 @@ public class Output {
 
 		int size = this.startGenomicPositions.size();
 		
-		if(tBlock.getFrameMark(this.startGenomicPositions.get(0), this.endGenomicPositions.get(size-1)) == 0) {
+		int frameMark = tBlock.getFrameMark(this.startGenomicPositions.get(0), this.endGenomicPositions.get(size-1));
+		if(frameMark == 0) {
 			return Constants.IN_FRAME;
+		} else if(frameMark == Constants.FRAME_X) {
+			return Constants.NO_FRAME;
 		} else {
 			return Constants.OUT_OF_FRAME;
 		}
