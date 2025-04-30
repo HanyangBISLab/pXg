@@ -185,34 +185,58 @@ public class TBlock implements Comparable<TBlock> {
 
 	/**
 	 * currently, if not CDS, return FRAME_X. <br>
-	 * If CDS, it returns the frameMark such as: <br>
-	 * FRAME_0, FRAME_1, FRAME2. <br>
+	 * If CDS, it returns 0.
 	 *
 	 * @param pos
 	 * @return
 	 */
-	public byte getFrameMark (int pos) {
+	public byte getFrameMark (int start, int end) {
 		byte mark = Constants.FRAME_X;
-
+		int pos = start;
 		int cds = 0;
-		for(ABlock aBlock : this.aBlocks) {
-			// inclusive
-			if(aBlock.start <= pos && aBlock.end >= pos) {
-				if(aBlock.feature == Constants.CDS) {
-					cds += (pos - aBlock.start);
-					mark = (byte) ( cds % 3);
+		int size = this.aBlocks.size();
+		
+		if(this.strand) {
+			pos = start;
+			for(ABlock exon : this.aBlocks) {
+				// inclusive
+				if(exon.start <= pos && exon.end >= pos) {
+					if(exon.feature == Constants.CDS) {
+						cds += (pos - exon.start);
+						mark = (byte) ( cds % 3);
+					}
+					break;
 				}
-
-				// return NO_FRAME
-				break;
-			}
-			// exclusive
-			else {
-				if(aBlock.feature == Constants.CDS) {
-					cds += (aBlock.end - aBlock.start + 1);
+				// exclusive
+				else {
+					if(exon.feature == Constants.CDS) {
+						cds += (exon.end - exon.start + 1);
+					}
 				}
 			}
 		}
+		
+		else {
+			pos = end;
+			for(int i = size-1; i>=0; i--) {
+				ABlock exon = this.aBlocks.get(i);
+				// inclusive
+				if(exon.start <= pos && exon.end >= pos) {
+					if(exon.feature == Constants.CDS) {
+						cds += (exon.end - pos);
+						mark = (byte) ( cds % 3);
+					}
+					break;
+				}
+				// exclusive
+				else {
+					if(exon.feature == Constants.CDS) {
+						cds += (exon.end - exon.start + 1);
+					}
+				}
+			}
+		}
+		
 
 		return mark;
 	}

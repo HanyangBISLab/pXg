@@ -213,52 +213,14 @@ public class Output {
 		}
 
 		int size = this.startGenomicPositions.size();
-
-		int genomicSize = 0;
-		for(int i=0; i<size; i++) {
-			int startPos = this.startGenomicPositions.get(i);
-			int endPos = this.endGenomicPositions.get(i);
-			genomicSize += endPos - startPos + 1;
-		}
-		byte[] frames = new byte[genomicSize];
-
-		int fIndex = 0;
-		for(int i=0; i<size; i++) {
-			int startPos = this.startGenomicPositions.get(i);
-			int endPos = this.endGenomicPositions.get(i);
-
-			for(int gPos=startPos; gPos<=endPos; gPos++) {
-				byte frame = tBlock.getFrameMark(gPos);
-				frames[fIndex++] = frame;
-
-				// If FRAME_X, it means no meaningful information about frame.
-				if(frame == Constants.FRAME_X) {
-					return Constants.NO_FRAME;
-				}
-			}
-		}
-
-		byte targetFrame = Constants.FRAME_0;
-		for (byte frame : frames) {
-			if(frame != targetFrame) {
-				return Constants.OUT_OF_FRAME;
-			} else {
-				targetFrame++;
-				if(targetFrame > Constants.FRAME_2) {
-					targetFrame = Constants.FRAME_0;
-				}
-			}
-		}
-
-		// starting from FRAME_0 and ending with FRAME2+1 => FRAME_0.
-		// INDELs can ruin this FRAME rule.
-		if(targetFrame != Constants.FRAME_0) {
+		
+		if(tBlock.getFrameMark(this.startGenomicPositions.get(0), this.endGenomicPositions.get(size-1)) == 0) {
+			return Constants.IN_FRAME;
+		} else {
 			return Constants.OUT_OF_FRAME;
 		}
-
-		return Constants.IN_FRAME;
-
 	}
+
 
 	/**
 	 * return where the mapping is alternative splicing or canonical form <br>
