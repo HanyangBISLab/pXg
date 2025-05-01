@@ -243,8 +243,8 @@ public class pXgParser {
 				ArrayList<Integer> ptmStarts = new ArrayList<Integer>();
 				ArrayList<Integer> ptmEnds = new ArrayList<Integer>();
 				while(matcher.find()) {
-					ptmStarts.add(matcher.regionStart()); // inclusive
-					ptmEnds.add(matcher.regionEnd()); // exclusive
+					ptmStarts.add(matcher.start()); // inclusive
+					ptmEnds.add(matcher.end()); // exclusive
 				}
 				
 				
@@ -259,7 +259,7 @@ public class pXgParser {
 						int s = ptmStarts.get(j);
 						int e = ptmEnds.get(j);
 						
-						if(i <= s && i < e) {
+						if(s <= i && i < e) {
 							isPTMSite = true;
 							break;
 						}
@@ -296,4 +296,5 @@ public class pXgParser {
 		}
 
 	}
+	
 }
