@@ -27,6 +27,9 @@ public class PeptideParser {
 	 * @param peptideFilePath
 	 */
 	public static void parseResult (String peptideFilePath) {
+		// there are PTM patterns : May 1, 2025
+		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
+		
 		PeptideAnnotation.pBlocks = new ArrayList<>();
 		System.out.print("Parsing peptide file: "+peptideFilePath);
 		long startTime = System.currentTimeMillis();
@@ -36,7 +39,6 @@ public class PeptideParser {
 		commentMarkers = Parameters.commentMarker.split("\\|");
 
 		StringBuilder pSeq = new StringBuilder();
-		int dismatchedFieldLength = 0;
 		int fieldLength = 0;
 		try {
 			File file = new File(peptideFilePath);
@@ -77,7 +79,6 @@ public class PeptideParser {
 					// if the number of fields in the record is different from the number of fields in the header,
 					// adjust
 					if(record.length != fieldLength) {
-						dismatchedFieldLength++;
 						String[] adjustedRecord = new String[fieldLength];
 						for(int i=0; i<fieldLength; i++) {
 							if(record.length > i) {
@@ -91,13 +92,20 @@ public class PeptideParser {
 						record = adjustedRecord;
 					}
 					
+					String peptide = record[Parameters.peptideColumnIndex];
+					
+					
+					// check PTM pattern
+					Matcher matcher = ptmPattern.matcher(peptide);
+					while(matcher.find()) {
+						Parameters.detectedPTMTable.put(matcher.group(), true);
+					}
 					
 					// remove unimod and mass relating patterns
-					String peptide = record[Parameters.peptideColumnIndex]
-									.replaceAll(Parameters.unimodParserRegExr, "").replaceAll(Parameters.massParserRegExr, "");
+					peptide = peptide.replaceAll(Parameters.ptmParserRegExr, "");
 					
 					// find peptide strip sequence
-					Matcher matcher = peptideRegExr.matcher(peptide);
+					matcher = peptideRegExr.matcher(peptide);
 
 					while(matcher.find()) {
 						pSeq.append(matcher.group());
@@ -115,7 +123,15 @@ public class PeptideParser {
 			}
 
 			BR.close();
-
+			
+			// print what kinds of PTM patterns in it.
+			System.out.println("Found PTM patterns: "+Parameters.detectedPTMTable.size());
+			if(Parameters.detectedPTMTable.size()==0) {
+				Parameters.detectedPTMTable.forEach((ptm, nil)->{
+					System.out.println(ptm);
+				});
+			}
+			
 		}catch (IOException ioe) {
 
 		}

@@ -1,5 +1,7 @@
 package progistar.pXg.constants;
 
+import java.util.Hashtable;
+
 public class Parameters {
 	// Number of SMA/BAM files
 	public static int NUM_OF_SAM_FILES									=	1;
@@ -46,8 +48,8 @@ public class Parameters {
 	public static int[] additionalFeatureIndices				=	null;
 	public static int psmRank						=	100;
 	public static String peptideParserRegExr		=	"[A-Z]"; // read sequence matched to the RegExr.
-	public static String unimodParserRegExr			=	"\\[(.*?)\\]";
-	public static String massParserRegExr			=	"\\((.*?)\\)";
+	public static String ptmParserRegExr			=	"(\\[\\w+:\\d+\\]|\\([+-]?\\d+\\.\\d+\\)|[+-]?\\d+\\.\\d+)";
+	public static Hashtable<String, Boolean> detectedPTMTable	=	new Hashtable<String, Boolean>();
 	
 	// Note that
 	// comment is different from field.

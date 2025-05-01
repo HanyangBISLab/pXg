@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
@@ -109,6 +111,8 @@ public class pXgParser {
 	 * @param outputFilePath
 	 */
 	public static void writeMergedResult (ArrayList<pXgRecord>[] tmpRecords, String outputFilePath) {
+		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
+		
 		String[] samFileNames = new String[tmpRecords.length];
 		Hashtable<String, Hashtable<String, pXgRecord[]>> spectrumToKey = new Hashtable<>();
 
@@ -224,6 +228,7 @@ public class pXgParser {
 				}
 			}
 			
+			
 			for(String record : finalResults) {
 				fields = record.split("\t");
 				String peptide = fields[infPeptideIdx];
@@ -232,10 +237,36 @@ public class pXgParser {
 				// It determines I/L characters based on genomic information
 				// If a peptide sequence from search engine contains PTM annotations, 
 				// only mass-shift is allowed.
+
+				// check PTM pattern
+				Matcher matcher = ptmPattern.matcher(searchPeptide);
+				ArrayList<Integer> ptmStarts = new ArrayList<Integer>();
+				ArrayList<Integer> ptmEnds = new ArrayList<Integer>();
+				while(matcher.find()) {
+					ptmStarts.add(matcher.regionStart()); // inclusive
+					ptmEnds.add(matcher.regionStart()); // exclusive
+				}
+				
+				
 				int len = searchPeptide.length();
 				int pLen = peptide.length();
 				int pIdx = 0;
 				for(int i=0; i<len; i++) {
+					boolean isPTMSite = false;
+					
+					// check PTM site
+					for(int j=0; j<ptmStarts.size(); j++) {
+						int s = ptmStarts.get(j);
+						int e = ptmEnds.get(j);
+						
+						if(i <= s && i < e) {
+							isPTMSite = true;
+							break;
+						}
+					}
+					
+					if(isPTMSite) continue;
+					
 					if(searchPeptide.charAt(i) == 'I' || searchPeptide.charAt(i) == 'L') {
 						while(pIdx < pLen) {
 							
