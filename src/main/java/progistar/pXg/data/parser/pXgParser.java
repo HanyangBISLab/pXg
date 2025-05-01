@@ -244,7 +244,7 @@ public class pXgParser {
 				ArrayList<Integer> ptmEnds = new ArrayList<Integer>();
 				while(matcher.find()) {
 					ptmStarts.add(matcher.regionStart()); // inclusive
-					ptmEnds.add(matcher.regionStart()); // exclusive
+					ptmEnds.add(matcher.regionEnd()); // exclusive
 				}
 				
 				
