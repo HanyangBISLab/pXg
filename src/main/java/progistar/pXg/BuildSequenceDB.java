@@ -273,8 +273,11 @@ public class BuildSequenceDB {
 		    	System.out.println("Excluding non-canonical peptides with FastaIDs.");
 		    }
 		    if(cmd.hasOption("d")) {
-		    	Parameters.isIncludedDecoy = true;
+		    	Parameters.printTargetOnly = false;
 		    	System.out.println("Include decoy sequences as entrapment sequences.");
+		    } else {
+		    	// this is default for making DB
+		    	Parameters.printTargetOnly = true;
 		    }
 		    
 		    // pXg inputs

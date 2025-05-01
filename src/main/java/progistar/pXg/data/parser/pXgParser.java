@@ -46,7 +46,7 @@ public class pXgParser {
 				decoys++;
 				
 				// skip decoy records
-				if(!Parameters.isIncludedDecoy) {
+				if(Parameters.printTargetOnly) {
 					continue;
 				}
 			}
@@ -66,10 +66,10 @@ public class pXgParser {
 		}
 
 		BR.close();
-		if(Parameters.isIncludedDecoy) {
-			System.out.println("Include decoys: "+decoys);
-		} else {
+		if(Parameters.printTargetOnly) {
 			System.out.println("Skip decoys: "+decoys);
+		} else {
+			System.out.println("Include decoys: "+decoys);
 		}
 		System.out.println("A total of "+totalPRSM+" PRSMs were parsed");
 
