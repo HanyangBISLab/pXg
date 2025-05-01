@@ -126,7 +126,7 @@ public class PeptideParser {
 			
 			// print what kinds of PTM patterns in it.
 			System.out.println("Found PTM patterns: "+Parameters.detectedPTMTable.size());
-			if(Parameters.detectedPTMTable.size()==0) {
+			if(Parameters.detectedPTMTable.size()>0) {
 				Parameters.detectedPTMTable.forEach((ptm, nil)->{
 					System.out.println(ptm);
 				});
