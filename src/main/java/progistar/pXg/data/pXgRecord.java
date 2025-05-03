@@ -14,27 +14,30 @@ public class pXgRecord {
 		StringBuilder header = new StringBuilder(">pXg");
 
 		String id = getID();
-		String isCanonical = getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? "Canonical" : "Noncanonical";
 		String gn = getValueByFieldName("GeneNames").replace("|", ",");
 		String ev = getValueByFieldName("Events").replace("|", ",");
-		String pep = getValueByFieldName("InferredPeptide");
+		String gCount = getValueByFieldName("GenomicLociCount");
 		String exp = getValueByFieldName("Reads");
 		String var = getValueByFieldName("Mutations").replace("|", ",");
 		String alt = getValueByFieldName("MutationStatus");
 		String gId = getValueByFieldName("GeneIDs").replace("|", ",");
 		String rna = getNucleotideSequence();
+		String genomicLoci = getValueByFieldName("GenomicLoci").replace("|", " ");
+		String strand = getValueByFieldName("Strand");
 		String td = isTarget() ? "Target" : "Decoy";
 		
 		header.append("|").append(id)
-		.append("|").append(id+"_"+isCanonical)
-		.append(" ").append(gId)
+		.append("|").append(gId)
 		.append(" ").append("TD="+td)
 		.append(" ").append("GN="+gn)
+		.append(" ").append("NUM="+gCount)
+		.append(" ").append("FR=0")
 		.append(" ").append("EV="+ev)
-		.append(" ").append("PEP="+pep)
 		.append(" ").append("EXP="+exp)
 		.append(" ").append("VAR="+var)
 		.append(" ").append("ALT="+alt)
+		.append(" ").append("SR="+strand)
+		.append(" ").append("gene_site="+genomicLoci)
 		.append(" ").append("PE="+pe);
 
 		if(Parameters.isIncludedFlankSequence) {

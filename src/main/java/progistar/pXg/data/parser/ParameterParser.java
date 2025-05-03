@@ -121,7 +121,7 @@ public class ParameterParser {
 				.desc("Specify the column separator. Possible values are csv or tsv. Default is tsv.")
 				.build();
 		Option optionPrintTargetOnly = Option.builder("to")
-				.longOpt("print_target_only").argName("optional, tsv|csv")
+				.longOpt("print_target_only").argName("optional")
 				.required(false)
 				.desc("Print target only.")
 				.build();
