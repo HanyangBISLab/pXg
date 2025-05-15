@@ -32,6 +32,8 @@ public class AAVariantTable {
 		// add end mark
 		aaRNAArray[endPos+1] = Constants.ID_NULL;
 		aaPeptideArray[endPos+1] = Constants.ID_NULL;
+		
+		endPos++;
 	}
 	
 	public static int getSize () {

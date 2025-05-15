@@ -18,9 +18,9 @@ public class Parameters {
 	// Output file path
 	public static String outputFilePath					=	null;
 	public static String pinFilePath					=	null;
-	public static String[] unmappedFilePaths				=	null;
-	public static String[] exportSAMPaths					=	null;
-	public static String[] tmpOutputFilePaths				=	null;
+	public static String[] unmappedFilePaths			=	null;
+	public static String[] exportSAMPaths				=	null;
+	public static String[] tmpOutputFilePaths			=	null;
 
 
 	// Peptide length

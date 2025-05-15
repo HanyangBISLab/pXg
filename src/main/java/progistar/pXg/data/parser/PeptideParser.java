@@ -31,7 +31,7 @@ public class PeptideParser {
 		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
 		
 		PeptideAnnotation.pBlocks = new ArrayList<>();
-		System.out.print("Parsing peptide file: "+peptideFilePath);
+		System.out.println("Parsing peptide file: "+peptideFilePath);
 		long startTime = System.currentTimeMillis();
 
 		// set regular expressions

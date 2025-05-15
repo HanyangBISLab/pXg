@@ -361,6 +361,7 @@ public class ParameterParser {
 				}
 		    }
 		    
+		    // --aa_variant
 		    if(cmd.hasOption("a")) {
 		    	Parameters.aaVariantTableFilePath = cmd.getOptionValue("a");
 		    	if(!isExist(Parameters.aaVariantTableFilePath)) {
@@ -733,6 +734,11 @@ public class ParameterParser {
 			printTargetOnly = "target only";
 		}
 		
+		String aaVariant = "NA";
+		if(Parameters.aaVariantTableFilePath != null) {
+			aaVariant = Parameters.aaVariantTableFilePath;
+		}
+		
 		System.out.println("  COUNT_READS: "+countReads);
 		System.out.println("  NORMALIZATED_READS: "+normalization);
 		System.out.println("  ADDITIONAL_FEATURE_COLS: "+addFeatCols);
@@ -746,6 +752,7 @@ public class ParameterParser {
 		System.out.println("  OUT_CANONICAL: "+Parameters.EXPORT_CANONICAL);
 		System.out.println("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
 		System.out.println("  PRINT_TYPE: "+printTargetOnly);
+		System.out.println(" AA_VARIANT: "+aaVariant);
 		System.out.println(" penalty_mutation: "+Parameters.PENALTY_MUTATION);
 		System.out.println(" penalty_AS: "+Parameters.PENALTY_AS);
 		System.out.println(" penalty_5UTR: "+Parameters.PENALTY_5UTR);
@@ -810,6 +817,8 @@ public class ParameterParser {
 		Logger.append("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
 		Logger.newLine();
 		Logger.append("  PRINT_TYPE: "+printTargetOnly);
+		Logger.newLine();
+		Logger.append(" AA_VARIANT: "+aaVariant);
 		Logger.newLine();
 		Logger.append(" penalty_mutation: "+Parameters.PENALTY_MUTATION);
 		Logger.newLine();

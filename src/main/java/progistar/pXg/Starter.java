@@ -40,7 +40,8 @@ public class Starter
     		Parameters.CURRENT_FILE_INDEX = si;
     		Master.ready(Parameters.genomicAnnotationFilePath, 
     				Parameters.sequenceFilePaths[Parameters.CURRENT_FILE_INDEX], 
-    				Parameters.peptideFilePath, Parameters.aaVariantTableFilePath);
+    				Parameters.peptideFilePath, 
+    				Parameters.aaVariantTableFilePath);
         	Master.run();
 
         	long endTime = System.currentTimeMillis();
