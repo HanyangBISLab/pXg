@@ -120,6 +120,12 @@ public class Constants {
 	public static final String NUCLEOTIDE_COLUMN_NAME		=	"ObservedNucleotide";
 	public static final String STRAND_COLUMN_NAME			=	"Strand";
 	public static final String EVENT_COLUMN_NAME			=	"Events";
+	
+	
+	/** AA Penalty Table **/
+	public static final String AA_RNA_COLUMN_NAME			=	"aaRNA";
+	public static final String AA_PEPTIDE_COLUMN_NAME		=	"aaPeptide";
+	public static final String AA_PENALTY_COLUMN_NAME		=	"aaPenalty";
 
 	// hidden parameters for revision
 	public static final String CAL_PHRED_MIN				=	"min";

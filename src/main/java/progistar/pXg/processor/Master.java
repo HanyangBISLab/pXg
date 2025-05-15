@@ -15,6 +15,7 @@ import htsjdk.samtools.SamReaderFactory;
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.constants.RunInfo;
+import progistar.pXg.data.AAVariantTable;
 import progistar.pXg.data.GenomicAnnotation;
 import progistar.pXg.data.PeptideAnnotation;
 import progistar.pXg.data.PxGAnnotation;
@@ -45,10 +46,15 @@ public class Master {
 	 * @param genomicAnnotationFilePath
 	 * @param sequenceFilePath
 	 */
-	public static void ready (String genomicAnnotationFilePath, String sequenceFilePath, String peptideFilePath) {
+	public static void ready (String genomicAnnotationFilePath, 
+			String sequenceFilePath, 
+			String peptideFilePath,
+			String aaVariantTableFilePath) {
 		// GTF parser and Peptide parser
 		genomicAnnotation = GTFParser.parseGTF(genomicAnnotationFilePath);
 		PeptideParser.parseResult(peptideFilePath); // static..!
+		AAVariantTable.parseTable(aaVariantTableFilePath);
+		
 		tmpOutputFilePaths = new Hashtable<>();
 
 		SAM_FILE = new File(sequenceFilePath);

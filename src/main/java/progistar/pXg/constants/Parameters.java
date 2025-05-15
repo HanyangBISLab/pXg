@@ -13,6 +13,7 @@ public class Parameters {
 	public static String[] sequenceFilePaths		=	null;
 	public static String peptideFilePath			=	null;
 	public static String proteinFastaPath			=	null;
+	public static String aaVariantTableFilePath		=	null;
 	public static String sepType					=	"tsv".toLowerCase();
 	// Output file path
 	public static String outputFilePath					=	null;

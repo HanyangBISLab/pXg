@@ -155,6 +155,10 @@ public class PeptideParser {
 		RunInfo.lengthFilterPeptideNum2 = PeptideAnnotation.getPeptideSize();
 		RunInfo.lengthFilterScanNum2 = PeptideAnnotation.getScanSize();
 
+		
+		// add AAVs
+		PeptideAnnotation.setAAVs();
+		
 		// calculate total candidate peptides per rank
 		for(PBlock pBlock : PeptideAnnotation.pBlocks) {
 			RunInfo.totalRankPSMs[pBlock.rank]++;

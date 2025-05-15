@@ -19,17 +19,45 @@ public class PBlock implements Comparable<PBlock> {
 	public double fdrRate;
 	// after mapping
 	// key: peptide with I!=L
-	public int rank = -1;
+	public int rank = -1; // It also represents a candidate identifier.
 
 	// pBlock stores both target and decoy xBlocks above the RNA threshold.
 	public Hashtable<String, XBlock> targetXBlocks = new Hashtable<>();
 	public Hashtable<String, XBlock> decoyXBlocks = new Hashtable<>();
+	
+	// for AAV penalties
+	// allow single user-defined aa variant per peptide.
+	public AAVariant aaVariant = null;
 
 	public PBlock (String[] record, String pSeq) {
 		this.record = record;
 		this.pSeq = pSeq;
 		this.fastaIDs = new String[0]; // zero size, initially.
 		this.score = Double.parseDouble(record[Parameters.scoreColumnIndex]);
+	}
+	
+	/**
+	 * Deep copy: <br>
+	 * record, score, deltaScore, rank
+	 * 
+	 * 
+	 * @param newSequence
+	 * @return
+	 */
+	public PBlock deepCopy (String newSequence) {
+		String[] nRecord = new String[this.record.length];
+		for(int i=0; i<nRecord.length; i++) {
+			nRecord[i] = this.record[i];
+		}
+		
+		PBlock newBlock = new PBlock(nRecord, newSequence);
+		
+		newBlock.score = this.score;
+		newBlock.deltaScore = this.deltaScore;
+		newBlock.rank = this.rank;
+		
+		
+		return newBlock;
 	}
 
 	/**
@@ -38,14 +66,16 @@ public class PBlock implements Comparable<PBlock> {
 	 *
 	 * @return
 	 */
-	public String getPeptideSequence () {
-		if(Parameters.leucineIsIsoleucine) {
+	public String getPeptideSequence (boolean isReplaceIL) {
+		if(isReplaceIL) {
 			return this.pSeq.replace("I", "L");
 		} else {
 			return this.pSeq;
 		}
 	}
-
+	
+	
+	
 	public String getSpecID () {
 		
 		String specID = "";

@@ -88,7 +88,7 @@ public class PxGAnnotation {
 
 		// assign fasta IDs to pBlock
 		for(PBlock pBlock : PeptideAnnotation.pBlocks) {
-			ArrayList<String> ids = matchedList.get(pBlock.getPeptideSequence());
+			ArrayList<String> ids = matchedList.get(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine));
 			if(ids != null) {
 				pBlock.fastaIDs = new String[ids.size()];
 				for(int i=0; i<pBlock.fastaIDs.length; i++) {
@@ -172,7 +172,7 @@ public class PxGAnnotation {
 			boolean[] isTarget = new boolean[1];
 			for(PBlock pBlock : pBlocks) {
 				// peptide sequence without I/L consideration
-				String key = pBlock.getPeptideSequence();
+				String key = pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
 
 				// for target
 				isTarget[0] = true;
@@ -259,7 +259,7 @@ public class PxGAnnotation {
 
 		}
 	}
-
+	
 	/**
 	 * Marking target PSM <br>
 	 *
@@ -273,8 +273,8 @@ public class PxGAnnotation {
 		int size = pBlocks.size();
 		for(int i=0; i<size; i++) {
 			PBlock pBlock = pBlocks.get(i);
-			// peptide sequence without I/L consideration
-			String key = pBlock.getPeptideSequence();
+			// peptide sequence with I/L consideration
+			String key = pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
 
 			// check error!
 			boolean[] expAndMocks = new boolean[2];

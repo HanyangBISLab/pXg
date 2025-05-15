@@ -38,7 +38,9 @@ public class Starter
 
     	for(int si=0; si<samFileSize; si++) {
     		Parameters.CURRENT_FILE_INDEX = si;
-    		Master.ready(Parameters.genomicAnnotationFilePath, Parameters.sequenceFilePaths[Parameters.CURRENT_FILE_INDEX], Parameters.peptideFilePath);
+    		Master.ready(Parameters.genomicAnnotationFilePath, 
+    				Parameters.sequenceFilePaths[Parameters.CURRENT_FILE_INDEX], 
+    				Parameters.peptideFilePath, Parameters.aaVariantTableFilePath);
         	Master.run();
 
         	long endTime = System.currentTimeMillis();

@@ -52,6 +52,45 @@ public class PeptideAnnotation {
 		System.out.println("Done!");
 	}
 
+	
+	
+	/**
+	 * For setting Amino Acid Variants.<br>
+	 * It must be called following "peptideLengthFilter"
+	 * 
+	 */
+	public static void setAAVs () {
+		int initSize = pBlocks.size();
+		
+		for(int i=0; i<initSize; i++) {
+			PBlock initBlock = pBlocks.get(i);
+			String initPeptide = initBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
+			// check if the block has aa variant
+			/**
+			 * Allow only single AAVar per peptide.
+			 * 
+			 */
+			ArrayList<AAVariant> aaVariants = AAVariantTable.getAAVariants(initPeptide);
+			
+			for(AAVariant aaVar : aaVariants) {
+				String aaRNA = AAVariantTable.aaRNAArray[aaVar.aaVariantIndex];
+				String aaPeptide = AAVariantTable.aaPeptideArray[aaVar.aaVariantIndex];
+				
+				
+				String leftPeptide = initPeptide.substring(0, aaVar.pos);
+				String rightPeptide = initPeptide.substring(aaVar.pos).replaceFirst(aaPeptide, aaRNA);
+				
+				PBlock aaVarBlock = initBlock.deepCopy(leftPeptide+rightPeptide);
+				aaVarBlock.aaVariant = aaVar;
+				
+				// add aaVarBlock
+				pBlocks.add(aaVarBlock);
+			}
+		}
+		
+		System.out.println("Generated AA variant peptides: "+ (pBlocks.size()-initSize));
+	}
+	
 
 
 	public static ArrayList<Output> find (GenomicSequence gSeq) {
@@ -166,9 +205,9 @@ public class PeptideAnnotation {
 		// put peptide sequences into checks
 		pBlocks.forEach(pBlock ->
 			{
-				if(peptideIndexer.get(pBlock.getPeptideSequence()) == null) {
-					indexedPeptide.put(peptideIndexer.size()+1, pBlock.getPeptideSequence());
-					peptideIndexer.put(pBlock.getPeptideSequence(), peptideIndexer.size()+1);
+				if(peptideIndexer.get(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine)) == null) {
+					indexedPeptide.put(peptideIndexer.size()+1, pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine));
+					peptideIndexer.put(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine), peptideIndexer.size()+1);
 
 				}
 			}
@@ -235,7 +274,7 @@ public class PeptideAnnotation {
 
 		int size = tmpPBlocks.size();
 		for(int i=0; i<size; i++) {
-			int peptLength = tmpPBlocks.get(i).getPeptideSequence().length();
+			int peptLength = tmpPBlocks.get(i).getPeptideSequence(Parameters.leucineIsIsoleucine).length();
 
 			// filter-out non-interesting
 			if(peptLength >= Parameters.minPeptLen && peptLength <= Parameters.maxPeptLen) {
@@ -286,7 +325,7 @@ public class PeptideAnnotation {
 	public static int getPeptideSizeWithXBlocks (Hashtable<String, Hashtable<String, XBlock>> xBlockMapper) {
 		Hashtable<String, String> peptides = new Hashtable<>();
 		for (PBlock pBlock : pBlocks) {
-			peptides.put(pBlock.getPeptideSequence(), "");
+			peptides.put(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine), "");
 		}
 
 		// if there is at least one xBlock with exp reads?
@@ -333,7 +372,7 @@ public class PeptideAnnotation {
 		pBlocksByScan.forEach((scanID, pBlocks) -> {
 			boolean is = false;
 			for(PBlock pBlock : pBlocks) {
-				String peptideIL = pBlock.getPeptideSequence();
+				String peptideIL = pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
 				Hashtable<String, XBlock> xBlocks = xBlockMapper.get(peptideIL);
 
 				if(xBlocks != null && xBlocks.size() != 0) {
@@ -366,7 +405,7 @@ public class PeptideAnnotation {
 		Hashtable<String, String> peptides = new Hashtable<>();
 
 		for (PBlock pBlock : pBlocks) {
-			peptides.put(pBlock.getPeptideSequence(), "");
+			peptides.put(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine), "");
 		}
 
 		return peptides.size();
