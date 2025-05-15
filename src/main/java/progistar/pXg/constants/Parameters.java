@@ -43,10 +43,10 @@ public class Parameters {
 	// Peptide file
 	// for user-friendly purpose, peptideColumnIndex is taken one-based and converted to zero-based.
 	public static int peptideColumnIndex			=	-1; // user-specific peptide index
-	public static int[] identifierColumnIndicies = null;
+	public static int[] identifierColumnIndicies	=	null;
 	public static int scoreColumnIndex				=	-1;
 	public static int chargeColumnIndex				=	-1;
-	public static int[] additionalFeatureIndices				=	null;
+	public static int[] additionalFeatureIndices	=	null;
 	public static int psmRank						=	100;
 	public static String peptideParserRegExr		=	"[A-Z]"; // read sequence matched to the RegExr.
 	public static String ptmParserRegExr			=	"(\\[\\w+:\\d+\\]|\\([+-]?\\d+\\.\\d+\\)|[+-]?\\d+\\.\\d+)";

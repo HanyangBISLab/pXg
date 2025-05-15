@@ -120,6 +120,12 @@ public class ParameterParser {
 				.required(false)
 				.desc("Specify the column separator. Possible values are csv or tsv. Default is tsv.")
 				.build();
+		Option optionAAVariant = Option.builder("a")
+				.longOpt("aa_variant").argName("optional, string")
+				.hasArg()
+				.required(false)
+				.desc("File path of amino acid variant table.")
+				.build();
 		Option optionPrintTargetOnly = Option.builder("to")
 				.longOpt("print_target_only").argName("optional")
 				.required(false)
@@ -281,6 +287,7 @@ public class ParameterParser {
 		.addOption(optionLengths)
 		.addOption(optionMaxFlankSize)
 		.addOption(optionRank)
+		.addOption(optionAAVariant)
 		.addOption(optionOutputSAM)
 		.addOption(optionOutputNoncanonical)
 		.addOption(optionOutputCanonical)
@@ -354,6 +361,14 @@ public class ParameterParser {
 				}
 		    }
 		    
+		    if(cmd.hasOption("a")) {
+		    	Parameters.aaVariantTableFilePath = cmd.getOptionValue("a");
+		    	if(!isExist(Parameters.aaVariantTableFilePath)) {
+					printNoSuchFileOrDirectory(Parameters.aaVariantTableFilePath);
+					return -1;
+				}
+		    }
+		    
 		    // --peptide_index
 		    if(cmd.hasOption("pi")) {
 		    	Parameters.peptideColumnIndex = Integer.parseInt(cmd.getOptionValue("pi"));
@@ -378,6 +393,7 @@ public class ParameterParser {
 		    if(cmd.hasOption("si")) {
 		    	Parameters.scoreColumnIndex = Integer.parseInt(cmd.getOptionValue("si"));
 		    }
+		    
 		    
 		    // --output
 		    if(cmd.hasOption("o")) {
