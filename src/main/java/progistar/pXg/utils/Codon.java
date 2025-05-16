@@ -9,7 +9,7 @@ public class Codon {
 	private static String AminoToNuclArray[][];
 	private static char NuclToAminoArray[][][];
 	private static boolean setOkay = false;
-	private static char aminoAcids[] = {'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y'};
+	private static char aminoAcids[] = {'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', Constants.STOP_AA, 'Y'};
 
 	private static String nucleotides[][] = {
 			/*A*/ {"GCT", "GCC", "GCA", "GCG"},
@@ -35,7 +35,7 @@ public class Codon {
 					{},
 			/*V*/ {"GTT", "GTA", "GTC", "GTG"},
 			/*W*/ {"TGG"},
-					{},
+			/*X*/ {"TGA", "TAA", "TAG"}, // constants.stop_aa
 			/*Y*/ {"TAT", "TAC"},
 					{}
 	};
@@ -47,7 +47,7 @@ public class Codon {
 
 		for(int ntPos = 0; ntPos<nucleoIndexes; ntPos++){
 			for(int ntPos_ = 0; ntPos_<nucleoIndexes; ntPos_++){
-				Arrays.fill(NuclToAminoArray[ntPos][ntPos_], 'X');
+				Arrays.fill(NuclToAminoArray[ntPos][ntPos_], Constants.UNKNOWN_AA);
 			}
 		}
 
@@ -73,7 +73,7 @@ public class Codon {
 			mapping();
 		}
 		if(nucleotides.length() != 3) {
-			return 'X';
+			return Constants.UNKNOWN_AA;
 		}
 		return NuclToAminoArray[nucleotides.charAt(0) & 7][nucleotides.charAt(1) & 7][nucleotides.charAt(2) & 7];
 	}

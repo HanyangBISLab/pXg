@@ -38,6 +38,10 @@ public class Constants {
 	public static final char MARK_MAPPED		=	'M';
 	public static final char MARK_SOFTCLIP		=	'?';
 	public static final char MARK_UNMAPPED		=	'*';
+	
+	// Stop AA and (1 or 2)-nt AA
+	public static final char STOP_AA			=	'X';
+	public static final char UNKNOWN_AA			=	'.';		
 
 	// Alternative Splicing Character
 	public static final char MARK_AS			=	'A'; // for alternative splicing form

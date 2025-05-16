@@ -13,7 +13,6 @@ public class AAVariantTable {
 	private static int endPos = 0;
 	public static String[] aaRNAArray = new String[100];
 	public static String[] aaPeptideArray = new String[100];
-	public static double[] penaltyArray = new double[100];
 	
 	public static void init () {
 		// init
@@ -22,12 +21,11 @@ public class AAVariantTable {
 		
 	}
 	
-	public static void addAAVariant (String aaRNA, String aaPeptide, double aaPenalty) {
+	public static void addAAVariant (String aaRNA, String aaPeptide) {
 		assert endPos < aaRNAArray.length;
 		
 		aaRNAArray[endPos] = aaRNA;
 		aaPeptideArray[endPos] = aaPeptide;
-		penaltyArray[endPos] = aaPenalty;
 		
 		// add end mark
 		aaRNAArray[endPos+1] = Constants.ID_NULL;
@@ -72,7 +70,6 @@ public class AAVariantTable {
 			BufferedReader BR = new BufferedReader(new FileReader(tableFilePath));
 			int aaRNAIdx = -1;
 			int aaPeptideIdx = -1;
-			int aaPenaltyIdx = -1;
 			
 			String header = BR.readLine();
 			String[] fields = header.split("\t");
@@ -82,15 +79,13 @@ public class AAVariantTable {
 					aaRNAIdx = i;
 				} else if(fields[i].equalsIgnoreCase(Constants.AA_PEPTIDE_COLUMN_NAME)) {
 					aaPeptideIdx = i;
-				} else if(fields[i].equalsIgnoreCase(Constants.AA_PENALTY_COLUMN_NAME)) {
-					aaPenaltyIdx = i;
 				}
 			}
 			
-			if(aaRNAIdx == -1 ||aaPeptideIdx == -1 || aaPenaltyIdx == -1) {
+			if(aaRNAIdx == -1 ||aaPeptideIdx == -1) {
 				System.out.println(tableFilePath +" has wrong column names!");
 				System.out.println(header);
-				System.out.println("Header must have aaRNA, aaPeptide and aaPenalty columns!");
+				System.out.println("Header must have aaRNA and aaPeptide columns!");
 				System.exit(1);
 			}
 			
@@ -100,10 +95,9 @@ public class AAVariantTable {
 				fields = line.split("\t");
 				String aaRNA = fields[aaRNAIdx];
 				String aaPeptide = fields[aaPeptideIdx];
-				double aaPenalty = Double.parseDouble(fields[aaPenaltyIdx]);
 				
 				// add aaVariant
-				AAVariantTable.addAAVariant(aaRNA, aaPeptide, aaPenalty);
+				AAVariantTable.addAAVariant(aaRNA, aaPeptide);
 				
 			}
 			
