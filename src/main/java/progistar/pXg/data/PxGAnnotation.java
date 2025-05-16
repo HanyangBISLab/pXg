@@ -127,7 +127,9 @@ public class PxGAnnotation {
 			BW.append("DeltaScore").append("\t");
 			BW.append("Rank").append("\t");
 			BW.append("GenomicLociCount").append("\t");
-			BW.append("InferredPeptide").append("\t");
+			BW.append(Constants.AA_VARIANT_COLUMN_NAME).append("\t");
+			BW.append(Constants.INFERRED_PEPTIDE_COLUMN_NAME).append("\t");
+			
 			BW.append("GenomicLoci").append("\t");
 			BW.append("Strand").append("\t");
 
@@ -170,9 +172,22 @@ public class PxGAnnotation {
 			// The combination of genomic loci + strand + nucleotide sequence is mapping to unique gneomic ID.
 			Hashtable<String, Integer> genomicIDMapper = new Hashtable<>();
 			boolean[] isTarget = new boolean[1];
+			StringBuilder aaVariants = new StringBuilder();
 			for(PBlock pBlock : pBlocks) {
 				// peptide sequence without I/L consideration
 				String key = pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
+				
+				// generate aaVariant annotation
+				aaVariants.setLength(0);
+				if(pBlock.aaVariant == null) {
+					aaVariants.append(Constants.ID_NULL);
+				} else {
+					AAVariant aaVar = pBlock.aaVariant;
+					String aaRNA = AAVariantTable.aaRNAArray[aaVar.aaVariantIndex];
+					String aaPeptide = AAVariantTable.aaPeptideArray[aaVar.aaVariantIndex];
+					// position: zero to one base
+					aaVariants.append(aaVar.pos+1).append(":").append(aaRNA).append(">").append(aaPeptide);
+				}
 
 				// for target
 				isTarget[0] = true;
@@ -210,6 +225,7 @@ public class PxGAnnotation {
 							.append(pBlock.deltaScore+"\t")
 							.append(pBlock.rank+"\t")
 							.append(gLociCount+"\t")
+							.append(aaVariants.toString()+"\t")
 							.append(xBlock.toString(pBlock.psmStatus))
 							.append("\t"+pBlock.isCannonical);
 							BW.newLine();
@@ -309,6 +325,12 @@ public class PxGAnnotation {
 						expAndMocks[1] = true;
 					}
 				});
+			}
+			
+			// if the pBlock has aa variant?
+			// it should be non-canonical
+			if(pBlock.aaVariant != null) {
+				pBlock.isCannonical = false;
 			}
 
 			// remove unassigned pBlock

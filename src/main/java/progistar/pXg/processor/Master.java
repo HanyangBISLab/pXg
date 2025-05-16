@@ -52,8 +52,8 @@ public class Master {
 			String aaVariantTableFilePath) {
 		// GTF parser and Peptide parser
 		genomicAnnotation = GTFParser.parseGTF(genomicAnnotationFilePath);
-		PeptideParser.parseResult(peptideFilePath); // static..!
 		AAVariantTable.parseTable(aaVariantTableFilePath);
+		PeptideParser.parseResult(peptideFilePath); // static..!
 		
 		tmpOutputFilePaths = new Hashtable<>();
 

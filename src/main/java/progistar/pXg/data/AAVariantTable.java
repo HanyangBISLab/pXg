@@ -99,7 +99,7 @@ public class AAVariantTable {
 			while((line = BR.readLine()) != null) {
 				fields = line.split("\t");
 				String aaRNA = fields[aaRNAIdx];
-				String aaPeptide = fields[aaPenaltyIdx];
+				String aaPeptide = fields[aaPeptideIdx];
 				double aaPenalty = Double.parseDouble(fields[aaPenaltyIdx]);
 				
 				// add aaVariant

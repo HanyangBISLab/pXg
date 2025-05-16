@@ -1,5 +1,6 @@
 package progistar.pXg.data;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,10 +89,8 @@ public class PeptideAnnotation {
 			}
 		}
 		
-		System.out.println("Generated AA variant peptides: "+ (pBlocks.size()-initSize));
+		System.out.println("Generated AA variant records: "+ (pBlocks.size()-initSize));
 	}
-	
-
 
 	public static ArrayList<Output> find (GenomicSequence gSeq) {
 		ArrayList<Output> outputs = new ArrayList<>();
