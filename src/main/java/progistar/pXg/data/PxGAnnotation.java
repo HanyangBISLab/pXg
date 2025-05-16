@@ -162,7 +162,7 @@ public class PxGAnnotation {
 			BW.append("FastaIDCount").append("\t");
 			BW.append("Reads").append("\t");
 			BW.append("MeanQScore").append("\t");
-			BW.append("IsCanonical");
+			BW.append(Constants.CLASS_COLUMN_NAME);
 			BW.newLine();
 
 			File outFile = new File(Parameters.unmappedFilePaths[Parameters.CURRENT_FILE_INDEX]);
@@ -227,7 +227,7 @@ public class PxGAnnotation {
 							.append(gLociCount+"\t")
 							.append(aaVariants.toString()+"\t")
 							.append(xBlock.toString(pBlock.psmStatus))
-							.append("\t"+pBlock.isCannonical);
+							.append("\t"+pBlock.isReference);
 							BW.newLine();
 
 							// Jul 23, 2024
@@ -251,8 +251,8 @@ public class PxGAnnotation {
  							} else if(isTarget[0]){
  								// SAM ID Mapper
  								if(Parameters.EXPORT_SAM) {
- 									if(		(Parameters.EXPORT_CANONICAL && pBlock.isCannonical) ||
- 											(Parameters.EXPORT_NONCANONICAL && !pBlock.isCannonical)) {
+ 									if(		(Parameters.EXPORT_CANONICAL && pBlock.isReference) ||
+ 											(Parameters.EXPORT_NONCANONICAL && !pBlock.isReference)) {
  										SAMExportor.putSequenceID(xBlock);
  									}
  								}
@@ -302,7 +302,7 @@ public class PxGAnnotation {
 				xBlocks.forEach((key_, xBlock) -> {
 					if(xBlock.targetReadCount >= 1) {
 						pBlock.psmStatus = Constants.PSM_STATUS_TARGET;
-						pBlock.isCannonical |= xBlock.isCannonical();
+						pBlock.isReference |= xBlock.isCannonical();
 						pBlock.targetXBlocks.put(xBlock.getKey(), xBlock);
 						expAndMocks[0] = true;
 					}
@@ -319,7 +319,7 @@ public class PxGAnnotation {
 							pBlock.psmStatus = Constants.PSM_STATUS_BOTH;
 						} else {
 							pBlock.psmStatus = Constants.PSM_STATUS_DECOY;
-							pBlock.isCannonical |= xBlock.isCannonical();
+							pBlock.isReference |= xBlock.isCannonical();
 						}
 						pBlock.decoyXBlocks.put(xBlock.getKey(), xBlock);
 						expAndMocks[1] = true;
@@ -330,7 +330,7 @@ public class PxGAnnotation {
 			// if the pBlock has aa variant?
 			// it should be non-canonical
 			if(pBlock.aaVariant != null) {
-				pBlock.isCannonical = false;
+				pBlock.isReference = false;
 			}
 
 			// remove unassigned pBlock

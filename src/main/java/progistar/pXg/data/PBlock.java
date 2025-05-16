@@ -15,7 +15,7 @@ public class PBlock implements Comparable<PBlock> {
 	public double score;
 	public double deltaScore;
 	public byte psmStatus = Constants.PSM_STATUS_UNDEF;
-	public boolean isCannonical = false;
+	public boolean isReference = false;
 	public double fdrRate;
 	// after mapping
 	// key: peptide with I!=L
