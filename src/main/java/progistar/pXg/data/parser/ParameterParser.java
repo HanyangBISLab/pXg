@@ -410,17 +410,20 @@ public class ParameterParser {
 				if(basePath == null) {
 					basePath = "";
 				}
-				// relocation of sam/bam-related outputs
+				
+				
+				File outputFileWOExtension = new File(cmd.getOptionValue("o"));
+				// rename and relocation of sam/bam-related outputs
 				for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
 					
 					File file = new File(Parameters.unmappedFilePaths[idx]);
-					Parameters.unmappedFilePaths[idx] = basePath +"/"+file.getName();
+					Parameters.unmappedFilePaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
 					
 					file = new File(Parameters.exportSAMPaths[idx]);
-					Parameters.exportSAMPaths[idx] = basePath +"/"+file.getName();
+					Parameters.exportSAMPaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
 					
 					file = new File(Parameters.tmpOutputFilePaths[idx]);
-					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+file.getName();
+					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
 				}
 		    }
 		    
@@ -607,7 +610,7 @@ public class ParameterParser {
 		    	Parameters.readSize = Integer.parseInt(cmd.getOptionValue("bps"));
 		    }
 		    
-		    // --bam_partition_size
+		    // --fasta
 		    if(cmd.hasOption("f")) {
 		    	Parameters.proteinFastaPath = cmd.getOptionValue("f");
 				if(!isExist(Parameters.proteinFastaPath)) {
