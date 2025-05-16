@@ -6,7 +6,7 @@ public class Constants {
 	//        plus, basically, this version number intends to upgrade behaviors of tool.
 	// minor: critical bug fix, change in results something like that.
 	// patch: tiny bug fix, typo, and change code styles something like that.
-	public static final String VERSION = "pXg v2.4.1a";
+	public static final String VERSION = "pXg v2.4.2";
 	public static final String RELEASE = "(release 2025-05-01)";
 	public static final String INTRODUCE = "Seunghyuk Choi and Eunok Paek in the Department of Computer Science at Hanyang University in Seoul, South Korea. ";
 	public static final String PMID = "38403075";
@@ -117,10 +117,11 @@ public class Constants {
 
 	/** pXg TSV Parser Constants **/
 	public static final String INFERRED_PEPTIDE_COLUMN_NAME	=	"InferredPeptide";
-	public static final String AA_VARIANT_COLUMN_NAME		=	"AAVariants";
+	public static final String AA_VARIANT_COLUMN_NAME		=	"AminoAcidVariants";
 	public static final String NUCLEOTIDE_COLUMN_NAME		=	"ObservedNucleotide";
 	public static final String STRAND_COLUMN_NAME			=	"Strand";
 	public static final String EVENT_COLUMN_NAME			=	"Events";
+	public static final String CLASS_COLUMN_NAME			=	"IsReference";
 	
 	
 	/** AA Penalty Table **/
