@@ -78,8 +78,8 @@ public class Parameters {
 	public static boolean EXPORT_TSV				=	true;
 	public static boolean EXPORT_UNMAPPED_SEQ		=	true;
 	public static boolean EXPORT_SAM				=	false;
-	public static boolean EXPORT_NONCANONICAL		=	true;
-	public static boolean EXPORT_CANONICAL			=	true;
+	public static boolean EXPORT_NON_REFERENCE		=	true;
+	public static boolean EXPORT_REFERENCE			=	true;
 
 	// System Parameters
 	public static int nThreads						=	4;

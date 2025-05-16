@@ -153,7 +153,7 @@ public class ParameterParser {
 				.longOpt("fasta").argName("optional, fasta|fa")
 				.hasArg()
 				.required(false)
-				.desc("Canonical sequence database to avoid ambiguous assignment of noncanonical peptides.")
+				.desc("Reference sequence database to avoid ambiguous assignment of non-reference peptides.")
 				.build();
 		Option optionRank = Option.builder("r")
 				.longOpt("rank").argName("optional, integer")
@@ -167,17 +167,17 @@ public class ParameterParser {
 				.required(false)
 				.desc("Report matched reads as SAM format (true or false). Default is false.")
 				.build();
-		Option optionOutputNoncanonical = Option.builder("on")
-				.longOpt("output_noncanonical").argName("optional, true|false")
+		Option optionOutputNonreference = Option.builder("on")
+				.longOpt("output_non_reference").argName("optional, true|false")
 				.hasArg()
 				.required(false)
-				.desc("Report noncaonical peptides for SAM and/or GTF formats (true or false). Default is true.")
+				.desc("Report non-reference peptides for SAM and/or GTF formats (true or false). Default is true.")
 				.build();
-		Option optionOutputCanonical = Option.builder("oc")
-				.longOpt("output_canonical").argName("optional, true|false")
+		Option optionOutputReference = Option.builder("or")
+				.longOpt("output_reference").argName("optional, true|false")
 				.hasArg()
 				.required(false)
-				.desc("Report caonical peptides for SAM and/or GTF formats (true or false). Default is true.")
+				.desc("Report reference peptides for SAM and/or GTF formats (true or false). Default is true.")
 				.build();
 		Option optionPenaltyMutation = Option.builder("pm")
 				.longOpt("penalty_mutation").argName("optional, integer")
@@ -289,8 +289,8 @@ public class ParameterParser {
 		.addOption(optionRank)
 		.addOption(optionAAVariant)
 		.addOption(optionOutputSAM)
-		.addOption(optionOutputNoncanonical)
-		.addOption(optionOutputCanonical)
+		.addOption(optionOutputNonreference)
+		.addOption(optionOutputReference)
 		.addOption(optionPenaltyMutation)
 		.addOption(optionPenaltyAlternativeSplicing)
 		.addOption(optionPenalty5UTR)
@@ -517,17 +517,17 @@ public class ParameterParser {
 				}
 		    }
 		    
-		    // --output_noncanonical
+		    // --output_non_reference
 		    if(cmd.hasOption("on")) {
 		    	if(cmd.getOptionValue("on").equalsIgnoreCase("false")) {
-					Parameters.EXPORT_NONCANONICAL = false;
+					Parameters.EXPORT_NON_REFERENCE = false;
 				}
 		    }
 		    
-		    // --output_canonical
-		    if(cmd.hasOption("oc")) {
+		    // --output_reference
+		    if(cmd.hasOption("or")) {
 		    	if(cmd.getOptionValue("oc").equalsIgnoreCase("false")) {
-					Parameters.EXPORT_CANONICAL= false;
+					Parameters.EXPORT_REFERENCE= false;
 				}
 		    }
 		    
@@ -749,8 +749,8 @@ public class ParameterParser {
 		System.out.println("  OUT_PIN.: "+Parameters.pinFilePath);
 		System.out.println("  OUT_UNKNOWN: "+Parameters.EXPORT_UNMAPPED_SEQ);
 		System.out.println("  OUT_SAM: "+Parameters.EXPORT_SAM);
-		System.out.println("  OUT_CANONICAL: "+Parameters.EXPORT_CANONICAL);
-		System.out.println("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
+		System.out.println("  OUT_REFERENCE: "+Parameters.EXPORT_REFERENCE);
+		System.out.println("  OUT_NON_REFERENCE: "+Parameters.EXPORT_NON_REFERENCE);
 		System.out.println("  PRINT_TYPE: "+printTargetOnly);
 		System.out.println(" AA_VARIANT: "+aaVariant);
 		System.out.println(" penalty_mutation: "+Parameters.PENALTY_MUTATION);
@@ -812,9 +812,9 @@ public class ParameterParser {
 		Logger.newLine();
 		Logger.append("  OUT_SAM: "+Parameters.EXPORT_SAM);
 		Logger.newLine();
-		Logger.append("  OUT_CANONICAL: "+Parameters.EXPORT_CANONICAL);
+		Logger.append("  OUT_REFERENCE: "+Parameters.EXPORT_REFERENCE);
 		Logger.newLine();
-		Logger.append("  OUT_NONCANONICAL: "+Parameters.EXPORT_NONCANONICAL);
+		Logger.append("  OUT_NON_REFERENCE: "+Parameters.EXPORT_NON_REFERENCE);
 		Logger.newLine();
 		Logger.append("  PRINT_TYPE: "+printTargetOnly);
 		Logger.newLine();

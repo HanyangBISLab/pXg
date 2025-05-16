@@ -251,8 +251,8 @@ public class PxGAnnotation {
  							} else if(isTarget[0]){
  								// SAM ID Mapper
  								if(Parameters.EXPORT_SAM) {
- 									if(		(Parameters.EXPORT_CANONICAL && pBlock.isReference) ||
- 											(Parameters.EXPORT_NONCANONICAL && !pBlock.isReference)) {
+ 									if(		(Parameters.EXPORT_REFERENCE && pBlock.isReference) ||
+ 											(Parameters.EXPORT_NON_REFERENCE && !pBlock.isReference)) {
  										SAMExportor.putSequenceID(xBlock);
  									}
  								}
