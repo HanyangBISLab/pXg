@@ -102,8 +102,8 @@ public class Parameters {
 	public static String[] sequencedbpXgPath			=	new String[5];
 	public static String[] sequencedbFastaPath			=	new String[5];
 	public static String sequencedbOutputPath			=	null;
-	public static boolean isIncludedCanonical			=	false;
-	public static boolean isIncludedNoncanonical		=	false;
+	public static boolean isIncludedReference			=	false;
+	public static boolean isIncludedNonReference		=	false;
 	public static boolean isIncludedFlankSequence		=	false;
 	public static boolean isStringent					=	false;
 	////////////////////////////////////////////////////////////////////////////////////

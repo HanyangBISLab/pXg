@@ -1,5 +1,6 @@
 package progistar.pXg.data;
 
+import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.data.parser.pXgParser;
 
@@ -93,8 +94,8 @@ public class pXgRecord {
 		return getValueByFieldName("Label").equalsIgnoreCase("1") ? true : false;
 	}
 	
-	public boolean isCanonical () {
-		return getValueByFieldName("isCanonical").equalsIgnoreCase("true") ? true : false;
+	public boolean isReference () {
+		return getValueByFieldName(Constants.CLASS_COLUMN_NAME).equalsIgnoreCase("true") ? true : false;
 	}
 
 	/**

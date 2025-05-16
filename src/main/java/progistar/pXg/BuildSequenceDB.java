@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,10 +49,10 @@ public class BuildSequenceDB {
 				for (pXgRecord record : records) {
 					
 					boolean isWrite = false;
-					if(Parameters.isIncludedCanonical && record.isCanonical()) {
+					if(Parameters.isIncludedReference && record.isReference()) {
 						isWrite = true;
 					}
-					else if(Parameters.isIncludedNoncanonical && !record.isCanonical()) {
+					else if(Parameters.isIncludedNonReference && !record.isReference()) {
 						isWrite = true;
 					}
 
@@ -200,15 +199,15 @@ public class BuildSequenceDB {
 				.build();
 
 		// Optional
-		Option optionCanonical = Option.builder("c")
-				.longOpt("canonical").argName("Canonical peptides")
+		Option optionReference = Option.builder("r")
+				.longOpt("reference").argName("Reference peptides")
 				.required(false)
-				.desc("Include canonical peptides")
+				.desc("Include reference peptides")
 				.build();
-		Option optionNoncanonical = Option.builder("n")
-				.longOpt("noncanonical").argName("Non-canonical peptides")
+		Option optionNonReference = Option.builder("n")
+				.longOpt("non_reference").argName("Non-reference peptides")
 				.required(false)
-				.desc("Include non-canonical peptides")
+				.desc("Include non-reference peptides")
 				.build();
 		Option optionFlank = Option.builder("f")
 				.longOpt("flank").argName("Flank sequences")
@@ -239,8 +238,8 @@ public class BuildSequenceDB {
 		.addOption(optionF4)
 		.addOption(optionF5)
 		.addOption(optionOutput)
-		.addOption(optionCanonical)
-		.addOption(optionNoncanonical)
+		.addOption(optionReference)
+		.addOption(optionNonReference)
 		.addOption(optionFlank)
 		.addOption(optionStringent)
 		.addOption(optionDecoy);
@@ -252,17 +251,17 @@ public class BuildSequenceDB {
 		try {
 		    cmd = parser.parse(options, args);
 
-		    if(!cmd.hasOption("c") && !cmd.hasOption("n")) {
+		    if(!cmd.hasOption("r") && !cmd.hasOption("n")) {
 		    	isFail = true;
-		    	System.out.println("-c or -n must be included.");
+		    	System.out.println("-r or -n must be included.");
 		    }
-		    if(cmd.hasOption("c")) {
-		    	Parameters.isIncludedCanonical = true;
-		    	System.out.println("Canonical peptides are included in the sequence database.");
+		    if(cmd.hasOption("r")) {
+		    	Parameters.isIncludedReference = true;
+		    	System.out.println("Reference peptides are included in the sequence database.");
 		    }
 		    if(cmd.hasOption("n")) {
-		    	Parameters.isIncludedNoncanonical = true;
-		    	System.out.println("Non-canonical peptides are included in the sequence database.");
+		    	Parameters.isIncludedNonReference = true;
+		    	System.out.println("Non-reference peptides are included in the sequence database.");
 		    }
 		    if(cmd.hasOption("f")) {
 		    	Parameters.isIncludedFlankSequence = true;

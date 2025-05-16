@@ -36,8 +36,8 @@ public class pXgParser {
 
 		Hashtable<String, String> checkDuplicates = new Hashtable<>();
 		int totalPRSM = 0;
-		int canonical = 0;
-		int noncanonical = 0;
+		int reference = 0;
+		int nonReference = 0;
 		int decoys = 0;
 		while((line = BR.readLine()) != null) {
 			totalPRSM++;
@@ -59,10 +59,10 @@ public class pXgParser {
 				records.add(record);
 				checkDuplicates.put(header, "");
 
-				if(record.isCanonical()) {
-					canonical ++;
+				if(record.isReference()) {
+					reference ++;
 				} else {
-					noncanonical ++;
+					nonReference ++;
 				}
 			}
 		}
@@ -76,25 +76,25 @@ public class pXgParser {
 		System.out.println("A total of "+totalPRSM+" PRSMs were parsed");
 
 		if(Parameters.isStringent) {
-			System.out.println("Exclude non-canonical peptides with FastaIDs...");
+			System.out.println("Exclude non-reference peptides with FastaIDs...");
 			ArrayList<pXgRecord> selectedRecords = new ArrayList<>();
 			for(pXgRecord record : records) {
-				if(record.isCanonical() || !record.hasFastaID()) {
+				if(record.isReference() || !record.hasFastaID()) {
 					selectedRecords.add(record);
 				}
 			}
 
 			int excluded = records.size() - selectedRecords.size();
-			noncanonical -= excluded;
+			nonReference -= excluded;
 			System.out.println(excluded +" non-canonical peptides were excluded");
 			records = selectedRecords;
 		}
 
 		if(removeDuplicates) {
-			System.out.println("A total of "+records.size()+" unique entries were saved (canonical: "+canonical+", non-canonical:"+noncanonical+")");
+			System.out.println("A total of "+records.size()+" unique entries were saved (reference: "+reference+", non-reference:"+nonReference+")");
 		} else {
 			
-			System.out.println("A total of "+records.size()+" entries were saved (canonical: "+canonical+", non-canonical:"+noncanonical+")");
+			System.out.println("A total of "+records.size()+" entries were saved (reference: "+reference+", non-reference:"+nonReference+")");
 		}
 
 		long endTime = System.currentTimeMillis();
