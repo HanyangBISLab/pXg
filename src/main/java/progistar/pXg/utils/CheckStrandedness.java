@@ -75,7 +75,15 @@ public class CheckStrandedness {
 			Parameters.strandedness = Constants.RF_STRANDED;
 		} else if(R1F > R1R*10 && R2F*10 < R2R) {
 			Parameters.strandedness = Constants.FR_STRANDED;
-		} else {
+		} 
+		// for single end
+		else if( (R1F + R2F) > 10 * (R1R + R2R) ) {
+			Parameters.strandedness = Constants.F_STRANDED;
+		} else if( 10 * (R1F + R2F) < (R1R + R2R) ) {
+			Parameters.strandedness = Constants.R_STRANDED;
+		}
+		// not found
+		else {
 			Parameters.strandedness = Constants.NON_STRANDED;
 		}
 		System.out.println("Estimate strandedness");
@@ -87,7 +95,7 @@ public class CheckStrandedness {
 			System.out.println("It looks single-end RNA-seq experiement. Please specify strandedness.");
 			System.exit(1);
 		} else {
-			System.out.println("Strandedness: "+Parameters.strandedness+"-stranded");
+			System.out.println("Strandedness: "+Parameters.strandedness);
 		}
 		
 		long endTime = System.currentTimeMillis();
