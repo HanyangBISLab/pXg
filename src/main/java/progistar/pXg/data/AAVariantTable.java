@@ -96,8 +96,13 @@ public class AAVariantTable {
 				String aaRNA = fields[aaRNAIdx];
 				String aaPeptide = fields[aaPeptideIdx];
 				
-				// add aaVariant
-				AAVariantTable.addAAVariant(aaRNA, aaPeptide);
+				if(aaRNA.equalsIgnoreCase(aaPeptide)) {
+					System.out.println("Skip synounymous amino acid variation: "+aaRNA+">"+aaPeptide);
+				} else {
+					// add aaVariant
+					AAVariantTable.addAAVariant(aaRNA, aaPeptide);
+				}
+				
 				
 			}
 			
