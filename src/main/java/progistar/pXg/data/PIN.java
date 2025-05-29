@@ -21,7 +21,7 @@ public class PIN {
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
-	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME};
+	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
 
 	private PIN() {}
 
@@ -60,6 +60,7 @@ public class PIN {
 			int meanQScoreIdx = pXgDefaultFeatIdices[2];
 			int infPeptIdx = pXgDefaultFeatIdices[3];
 			int classIdx = pXgDefaultFeatIdices[4];
+			int aaVariantIdx = pXgDefaultFeatIdices[5];
 
 			// to adjust index caused by appending "UniqueID" and "Label" to the original input,
 			// the original index must be shifted by 2.
@@ -102,7 +103,7 @@ public class PIN {
 			}
 
 			// last header
-			PIN_HEADER += "\tDeltaScore\tMeanQScore\tIsReference\tPeptide\tProteins";
+			PIN_HEADER += "\tDeltaScore\tMeanQScore\tIsAAVariant\tIsReference\tPeptide\tProteins";
 
 			pinRecords.add(PIN_HEADER);
 			/******************8 Gen PIN 8*******************/
@@ -121,6 +122,7 @@ public class PIN {
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
 				String peptide = fields[infPeptIdx];
 				String classPenalty = fields[classIdx].equalsIgnoreCase("true") ? "0" : "1";
+				String aaVariantPenalty = fields[aaVariantIdx].equalsIgnoreCase(Constants.ID_NULL) ? "0" : "1";
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
 				int pLen = peptide.length();
@@ -175,6 +177,7 @@ public class PIN {
 				pinOutput.append("\t").append(deltaScore);
 				pinOutput.append("\t").append(meanQScore);
 				pinOutput.append("\t").append(classPenalty);
+				pinOutput.append("\t").append(aaVariantPenalty);
 				pinOutput.append("\t").append(peptide);
 				// target or decoy
 				if(label.equalsIgnoreCase("1")) {
