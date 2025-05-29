@@ -84,9 +84,10 @@ public class PIN {
 					specIDtoScanIdx.put(specID, specIDtoScanIdx.size()+1);
 				}
 			}
-
+			
 			BR.close();
-
+			
+			
 			/******************8 HEADER maker 8*******************/
 			// add charge header
 			for(int charge=minCharge; charge<=maxCharge; charge++) {
@@ -101,9 +102,20 @@ public class PIN {
 				}
 				PIN_HEADER += additionalFeatureHeader.toString();
 			}
-
+			PIN_HEADER += "\tDeltaScore\tMeanQScore";
+			// AA variants
+			ArrayList<String> aaVariants = new ArrayList<String>();
+			int aaVarSize = AAVariantTable.getSize();
+			
+			for(int i=0; i<aaVarSize; i++) {
+				String aaVar = AAVariantTable.getAnnotation(i);
+				aaVariants.add(aaVar);
+				
+				PIN_HEADER += "\t" + aaVar;
+			}
+			
 			// last header
-			PIN_HEADER += "\tDeltaScore\tMeanQScore\tIsAAVariant\tIsReference\tPeptide\tProteins";
+			PIN_HEADER += "\tIsReference\tPeptide\tProteins";
 
 			pinRecords.add(PIN_HEADER);
 			/******************8 Gen PIN 8*******************/
@@ -122,7 +134,7 @@ public class PIN {
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
 				String peptide = fields[infPeptIdx];
 				String classPenalty = fields[classIdx].equalsIgnoreCase("true") ? "0" : "1";
-				String aaVariantPenalty = fields[aaVariantIdx].equalsIgnoreCase(Constants.ID_NULL) ? "0" : "1";
+				String aaVariantPenalty = fields[aaVariantIdx];
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
 				int pLen = peptide.length();
@@ -176,8 +188,17 @@ public class PIN {
 				
 				pinOutput.append("\t").append(deltaScore);
 				pinOutput.append("\t").append(meanQScore);
+				
+				// add AAvar
+				for(String aaVar : aaVariants) {
+					if(aaVariantPenalty.split("\\:")[1].equalsIgnoreCase(aaVar)) {
+						pinOutput.append("\t1");
+					} else {
+						pinOutput.append("\t0");
+					}
+				}
+				
 				pinOutput.append("\t").append(classPenalty);
-				pinOutput.append("\t").append(aaVariantPenalty);
 				pinOutput.append("\t").append(peptide);
 				// target or decoy
 				if(label.equalsIgnoreCase("1")) {

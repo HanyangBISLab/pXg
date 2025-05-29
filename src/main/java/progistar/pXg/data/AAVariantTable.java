@@ -21,6 +21,14 @@ public class AAVariantTable {
 		
 	}
 	
+	public static String getAnnotation (int idx) {
+		if(idx < endPos) {
+			return aaRNAArray[idx] + ">" +aaPeptideArray[idx];
+		} else {
+			return null;
+		}
+	}
+	
 	public static void addAAVariant (String aaRNA, String aaPeptide) {
 		assert endPos < aaRNAArray.length;
 		

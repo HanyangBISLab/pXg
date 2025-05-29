@@ -183,10 +183,8 @@ public class PxGAnnotation {
 					aaVariants.append(Constants.ID_NULL);
 				} else {
 					AAVariant aaVar = pBlock.aaVariant;
-					String aaRNA = AAVariantTable.aaRNAArray[aaVar.aaVariantIndex];
-					String aaPeptide = AAVariantTable.aaPeptideArray[aaVar.aaVariantIndex];
 					// position: zero to one base
-					aaVariants.append(aaVar.pos+1).append(":").append(aaRNA).append(">").append(aaPeptide);
+					aaVariants.append(aaVar.getAnnotation());
 				}
 
 				// for target
