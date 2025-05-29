@@ -27,13 +27,13 @@ public class PeptideParser {
 	 * @param peptideFilePath
 	 */
 	public static void parseResult (String peptideFilePath) {
-		// there are PTM patterns : May 1, 2025
-		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
 		
 		PeptideAnnotation.pBlocks = new ArrayList<>();
 		System.out.println("Parsing peptide file: "+peptideFilePath);
 		long startTime = System.currentTimeMillis();
 
+		// there are PTM patterns : May 1, 2025
+		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
 		// set regular expressions
 		Pattern peptideRegExr	= Pattern.compile(Parameters.peptideParserRegExr);
 		commentMarkers = Parameters.commentMarker.split("\\|");

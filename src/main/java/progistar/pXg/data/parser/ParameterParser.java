@@ -417,13 +417,13 @@ public class ParameterParser {
 				for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
 					
 					File file = new File(Parameters.unmappedFilePaths[idx]);
-					Parameters.unmappedFilePaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
+					Parameters.unmappedFilePaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
 					
 					file = new File(Parameters.exportSAMPaths[idx]);
-					Parameters.exportSAMPaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
+					Parameters.exportSAMPaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
 					
 					file = new File(Parameters.tmpOutputFilePaths[idx]);
-					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+outputFileWOExtension+"."+file.getName();
+					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
 				}
 		    }
 		    
