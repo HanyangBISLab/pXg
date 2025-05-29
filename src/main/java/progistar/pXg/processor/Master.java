@@ -178,6 +178,8 @@ public class Master {
 			pXgA.markFasta();
 			// marking target PSMs
 			pXgA.assignXBlocks();
+			// SAAV filter
+			pXgA.aminoAcidVariantFilter();
 
 			pXgA.write(Parameters.tmpOutputFilePaths[Parameters.CURRENT_FILE_INDEX]);
 		}catch (Exception e) {

@@ -111,7 +111,7 @@ public class PeptideParser {
 						pSeq.append(matcher.group());
 					}
 
-					PBlock pBlock = new PBlock(record, pSeq.toString());
+					PBlock pBlock = new PBlock(record, pSeq.toString(), recordCount);
 
 					PeptideAnnotation.pBlocks.add(pBlock);
 					pSeq.setLength(0);
@@ -131,7 +131,6 @@ public class PeptideParser {
 					System.out.println(ptm);
 				});
 			}
-			
 		}catch (IOException ioe) {
 
 		}

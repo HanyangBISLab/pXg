@@ -9,7 +9,12 @@ public class PBlock implements Comparable<PBlock> {
 
 	// preprocessed
 	private String[] record;
-	private String pSeq;
+	/**
+	 * This sequence is affected by AAVariant.
+	 * On the other hand, inferred peptide sequence is affected by XBlock (RNA-seq).
+	 * 
+	 */
+	private String pSeq; 
 
 	public String[] fastaIDs;
 	public double score;
@@ -20,6 +25,7 @@ public class PBlock implements Comparable<PBlock> {
 	// after mapping
 	// key: peptide with I!=L
 	public int rank = -1; // It also represents a candidate identifier.
+	public int recordId = -1;
 
 	// pBlock stores both target and decoy xBlocks above the RNA threshold.
 	public Hashtable<String, XBlock> targetXBlocks = new Hashtable<>();
@@ -29,11 +35,12 @@ public class PBlock implements Comparable<PBlock> {
 	// allow single user-defined aa variant per peptide.
 	public AAVariant aaVariant = null;
 
-	public PBlock (String[] record, String pSeq) {
+	public PBlock (String[] record, String pSeq, int recordId) {
 		this.record = record;
 		this.pSeq = pSeq;
 		this.fastaIDs = new String[0]; // zero size, initially.
 		this.score = Double.parseDouble(record[Parameters.scoreColumnIndex]);
+		this.recordId = recordId;
 	}
 	
 	/**
@@ -50,7 +57,7 @@ public class PBlock implements Comparable<PBlock> {
 			nRecord[i] = this.record[i];
 		}
 		
-		PBlock newBlock = new PBlock(nRecord, newSequence);
+		PBlock newBlock = new PBlock(nRecord, newSequence, this.recordId);
 		
 		newBlock.score = this.score;
 		newBlock.deltaScore = this.deltaScore;
@@ -83,6 +90,10 @@ public class PBlock implements Comparable<PBlock> {
 			specID += "|"+record[Parameters.identifierColumnIndicies[i]];
 		}
 		return specID.substring(1);
+	}
+	
+	public boolean isAAVariant () {
+		return this.aaVariant == null ? false : true;
 	}
 
 	/**

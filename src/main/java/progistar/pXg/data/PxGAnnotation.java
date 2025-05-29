@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -13,8 +15,6 @@ import progistar.pXg.constants.Parameters;
 import progistar.pXg.data.parser.SAMExportor;
 
 public class PxGAnnotation {
-
-
 
 	// the first key: peptide sequence without I/L consideration
 	// the first value: xBlocks corresponding to the key
@@ -344,6 +344,7 @@ public class PxGAnnotation {
 		System.out.println("\tElapsed time: "+((endTime-startTime)/1000) + " sec");
 
 	}
+	
 	/**
 	 * This method expects that: <br>
 	 * 1) following estimatePvalueTreshold.<br>
@@ -417,5 +418,97 @@ public class PxGAnnotation {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * A peptide with/without AAVariants is aggregated by a record id.<br>
+	 * If there is a peptide without AAVariants, all the peptides with AAVariants are ignored. 
+	 * 
+	 * 
+	 */
+	public void aminoAcidVariantFilter () {
+		Collections.sort(PeptideAnnotation.pBlocks, new Comparator<PBlock>() {
+			@Override
+			public int compare(PBlock o1, PBlock o2) {
+				if(o1.recordId < o2.recordId) {
+					return -1;
+				} else if(o1.recordId > o2.recordId) {
+					return 1;
+				}
+				return 0;
+			}
+        });
+		
+		ArrayList<PBlock> nPBlocks = new ArrayList<PBlock>();
+		
+		int size = PeptideAnnotation.pBlocks.size();
+		int startIdx = -1;
+		int prevId = -1;
+		for(int i=0; i<size; i++) {
+			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
+			
+			// init
+			if(prevId == -1) {
+				startIdx = 0;
+				prevId = pBlock.recordId;
+			} else {
+				
+				if(prevId != pBlock.recordId) {
+					
+					// check AAVariants
+					boolean hasNonAAVarPeptide = false;
+					for(int j=startIdx; j<i; j++) {
+						if(!PeptideAnnotation.pBlocks.get(j).isAAVariant()) {
+							hasNonAAVarPeptide = true;
+						}
+					}
+					
+					// if it has a non-aavariant peptide
+					if(hasNonAAVarPeptide) {
+						for(int j=startIdx; j<i; j++) {
+							PBlock thisPBlock = PeptideAnnotation.pBlocks.get(j);
+							if(thisPBlock.isAAVariant()) {
+								thisPBlock.recordId = -1; // mark as delete
+							}
+						}
+					}
+					
+					prevId = pBlock.recordId;
+					startIdx = i;
+				}
+				
+			}
+		}
+		
+		// last pang
+		// check AAVariants
+		boolean hasNonAAVarPeptide = false;
+		for(int j=startIdx; j<size; j++) {
+			if(!PeptideAnnotation.pBlocks.get(j).isAAVariant()) {
+				hasNonAAVarPeptide = true;
+			}
+		}
+		
+		// if it has a non-aavariant peptide
+		if(hasNonAAVarPeptide) {
+			for(int j=startIdx; j<size; j++) {
+				PBlock thisPBlock = PeptideAnnotation.pBlocks.get(j);
+				if(thisPBlock.isAAVariant()) {
+					thisPBlock.recordId = -1; // mark as delete
+				}
+			}
+		}
+		
+		
+		// remove AAVariants
+		for(int i=0; i<size; i++) {
+			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
+			if(pBlock.recordId != -1) {
+				nPBlocks.add(pBlock);
+			}
+		}
+		
+		PeptideAnnotation.pBlocks.clear();
+		PeptideAnnotation.pBlocks = nPBlocks;
 	}
 }
