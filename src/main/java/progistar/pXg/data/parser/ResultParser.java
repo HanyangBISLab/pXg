@@ -140,7 +140,7 @@ public class ResultParser {
 							xBlock.sequenceID = uniqueID;
 							if(xBlock.tAnnotations.contains(Constants.MARK_UNMAPPED+"")) {
 								// those xBlocks are needed to merge into contig.
-								xBlock.genomicLocus = "-";
+								xBlock.genomicLocus = Constants.ID_NULL;
 								// TODO: assembly?
 								// Assembler.addXBlock(pSeq, xBlock);
 							}

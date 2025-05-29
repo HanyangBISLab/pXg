@@ -287,6 +287,7 @@ public class PxGAnnotation {
 		PeptideAnnotation.pBlocks = new ArrayList<>();
 		// update pBlocks!
 		int size = pBlocks.size();
+		
 		for(int i=0; i<size; i++) {
 			PBlock pBlock = pBlocks.get(i);
 			// peptide sequence with I/L consideration
@@ -297,10 +298,8 @@ public class PxGAnnotation {
 
 			Hashtable<String, XBlock> xBlocks = this.targetXBlockMapper.get(key);
 			if(xBlocks != null) {
-				// only select significantly mapped PSMs
-				// this is because we are interested in P( decoy (score > X) | significantly mapped PSMs)
 				xBlocks.forEach((key_, xBlock) -> {
-					if(xBlock.targetReadCount >= 1) {
+					if(xBlock.targetReadCount > 0) {
 						pBlock.psmStatus = Constants.PSM_STATUS_TARGET;
 						pBlock.isReference |= xBlock.isCannonical();
 						pBlock.targetXBlocks.put(xBlock.getKey(), xBlock);
@@ -311,10 +310,8 @@ public class PxGAnnotation {
 
 			xBlocks = this.decoyXBlockMapper.get(key);
 			if(xBlocks != null) {
-				// only select significantly mapped PSMs
-				// this is because we are interested in P( decoy (score > X) | significantly mapped PSMs)
 				xBlocks.forEach((key_, xBlock) -> {
-					if(xBlock.mockReadCount >= 1) {
+					if(xBlock.mockReadCount > 0) {
 						if(expAndMocks[0]) {
 							pBlock.psmStatus = Constants.PSM_STATUS_BOTH;
 						} else {
@@ -337,10 +334,10 @@ public class PxGAnnotation {
 			if(expAndMocks[0] || expAndMocks[1]) {
 				PeptideAnnotation.pBlocks.add(pBlock);
 			}
-
 		}
 		pBlocks.clear();
 		long endTime = System.currentTimeMillis();
+		
 		System.out.println("\tElapsed time: "+((endTime-startTime)/1000) + " sec");
 
 	}
@@ -424,9 +421,84 @@ public class PxGAnnotation {
 	 * A peptide with/without AAVariants is aggregated by a record id.<br>
 	 * If there is a peptide without AAVariants, all the peptides with AAVariants are ignored. 
 	 * 
+	 * Priority<br>
+	 * Target > Decoy > Non-AAVariant > AAVariant
+	 * 
+	 * SAAV filter + TD filter
 	 * 
 	 */
-	public void aminoAcidVariantFilter () {
+	public void prioritizePeptidesInEachCandidate () {
+		ArrayList<PBlock> newPBlocks = new ArrayList<PBlock>();
+		
+		int size = PeptideAnnotation.pBlocks.size();
+		Hashtable<Integer, ArrayList<PBlock>> aggregates = new Hashtable<Integer, ArrayList<PBlock>>();
+		for(int i=0; i<size; i++) {
+			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
+			ArrayList<PBlock> pBlocks = aggregates.get(pBlock.recordId);
+			if(pBlocks == null) {
+				pBlocks = new ArrayList<PBlock>();
+			}
+			
+			pBlocks.add(pBlock);
+			aggregates.put(pBlock.recordId, pBlocks);
+		}
+		
+		aggregates.forEach((id, pBlocks)->{
+			byte maxScore = 0;
+			// check AAVariants
+			for(PBlock pBlock : pBlocks) {
+				byte score = 0;
+				// target = 20. Decoy = 10.
+				if(pBlock.psmStatus == Constants.PSM_STATUS_DECOY) {
+					score = 10;
+				} else {
+					score = 20;
+				}
+				
+				// Non-AAvariant = + 2. AAVariant = + 1.
+				if(pBlock.isAAVariant()) {
+					score += 1;
+				} else {
+					score += 2;
+				}
+				
+				maxScore = score > maxScore ? score : maxScore;
+			}
+			
+			for(PBlock pBlock : pBlocks) {
+				byte score = 0;
+				// target = 20. Decoy = 10.
+				if(pBlock.psmStatus == Constants.PSM_STATUS_DECOY) {
+					score = 10;
+				} else {
+					score = 20;
+				}
+				
+				// Non-AAvariant = + 2. AAVariant = + 1.
+				if(pBlock.isAAVariant()) {
+					score += 1;
+				} else {
+					score += 2;
+				}
+				
+				if(score < maxScore) {
+					pBlock.recordId = -1; // mark as delete
+				}
+			}
+		});
+		
+		
+		// remove lower priority peptides in each candidate.
+		for(int i=0; i<size; i++) {
+			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
+			if(pBlock.recordId != -1) {
+				newPBlocks.add(pBlock);
+			}
+		}
+		
+		PeptideAnnotation.pBlocks.clear();
+		PeptideAnnotation.pBlocks = newPBlocks;
+		
 		Collections.sort(PeptideAnnotation.pBlocks, new Comparator<PBlock>() {
 			@Override
 			public int compare(PBlock o1, PBlock o2) {
@@ -439,76 +511,5 @@ public class PxGAnnotation {
 			}
         });
 		
-		ArrayList<PBlock> nPBlocks = new ArrayList<PBlock>();
-		
-		int size = PeptideAnnotation.pBlocks.size();
-		int startIdx = -1;
-		int prevId = -1;
-		for(int i=0; i<size; i++) {
-			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
-			
-			// init
-			if(prevId == -1) {
-				startIdx = 0;
-				prevId = pBlock.recordId;
-			} else {
-				
-				if(prevId != pBlock.recordId) {
-					
-					// check AAVariants
-					boolean hasNonAAVarPeptide = false;
-					for(int j=startIdx; j<i; j++) {
-						if(!PeptideAnnotation.pBlocks.get(j).isAAVariant()) {
-							hasNonAAVarPeptide = true;
-						}
-					}
-					
-					// if it has a non-aavariant peptide
-					if(hasNonAAVarPeptide) {
-						for(int j=startIdx; j<i; j++) {
-							PBlock thisPBlock = PeptideAnnotation.pBlocks.get(j);
-							if(thisPBlock.isAAVariant()) {
-								thisPBlock.recordId = -1; // mark as delete
-							}
-						}
-					}
-					
-					prevId = pBlock.recordId;
-					startIdx = i;
-				}
-				
-			}
-		}
-		
-		// last pang
-		// check AAVariants
-		boolean hasNonAAVarPeptide = false;
-		for(int j=startIdx; j<size; j++) {
-			if(!PeptideAnnotation.pBlocks.get(j).isAAVariant()) {
-				hasNonAAVarPeptide = true;
-			}
-		}
-		
-		// if it has a non-aavariant peptide
-		if(hasNonAAVarPeptide) {
-			for(int j=startIdx; j<size; j++) {
-				PBlock thisPBlock = PeptideAnnotation.pBlocks.get(j);
-				if(thisPBlock.isAAVariant()) {
-					thisPBlock.recordId = -1; // mark as delete
-				}
-			}
-		}
-		
-		
-		// remove AAVariants
-		for(int i=0; i<size; i++) {
-			PBlock pBlock = PeptideAnnotation.pBlocks.get(i);
-			if(pBlock.recordId != -1) {
-				nPBlocks.add(pBlock);
-			}
-		}
-		
-		PeptideAnnotation.pBlocks.clear();
-		PeptideAnnotation.pBlocks = nPBlocks;
 	}
 }

@@ -176,10 +176,17 @@ public class Master {
 			// mark fasta result
 			// to distinguish ambiguous interpretation
 			pXgA.markFasta();
+			
+			/**
+			 * Filtering priority:
+			 * Target > Decoy > Non-AAVariant peptide > AAVariant peptide.
+			 * It means that 
+			 */
+			
 			// marking target PSMs
 			pXgA.assignXBlocks();
-			// SAAV filter
-			pXgA.aminoAcidVariantFilter();
+			// SAAV filter + TD filter
+			pXgA.prioritizePeptidesInEachCandidate();
 
 			pXgA.write(Parameters.tmpOutputFilePaths[Parameters.CURRENT_FILE_INDEX]);
 		}catch (Exception e) {
