@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.constants.RunInfo;
+import progistar.pXg.data.AAVariantTable;
 import progistar.pXg.data.PIN;
 import progistar.pXg.data.pXgRecord;
 import progistar.pXg.data.parser.ParameterParser;
@@ -35,13 +36,14 @@ public class Starter
     	}
 
     	int samFileSize = Parameters.sequenceFilePaths.length;
+    	
+    	AAVariantTable.parseTable(Parameters.aaVariantTableFilePath);
 
     	for(int si=0; si<samFileSize; si++) {
     		Parameters.CURRENT_FILE_INDEX = si;
     		Master.ready(Parameters.genomicAnnotationFilePath, 
     				Parameters.sequenceFilePaths[Parameters.CURRENT_FILE_INDEX], 
-    				Parameters.peptideFilePath, 
-    				Parameters.aaVariantTableFilePath);
+    				Parameters.peptideFilePath);
         	Master.run();
 
         	long endTime = System.currentTimeMillis();

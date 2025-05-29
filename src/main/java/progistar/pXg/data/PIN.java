@@ -191,7 +191,9 @@ public class PIN {
 				
 				// add AAvar
 				for(String aaVar : aaVariants) {
-					if(aaVariantPenalty.split("\\:")[1].equalsIgnoreCase(aaVar)) {
+					if(aaVariantPenalty.equalsIgnoreCase(Constants.ID_NULL)) {
+						pinOutput.append("\t0");
+					} else if(aaVariantPenalty.split("\\:")[1].equalsIgnoreCase(aaVar)) {
 						pinOutput.append("\t1");
 					} else {
 						pinOutput.append("\t0");

@@ -36,10 +36,10 @@ public class AAVariantTable {
 		aaPeptideArray[endPos] = aaPeptide;
 		
 		// add end mark
-		aaRNAArray[endPos+1] = Constants.ID_NULL;
-		aaPeptideArray[endPos+1] = Constants.ID_NULL;
-		
 		endPos++;
+		aaRNAArray[endPos] = Constants.ID_NULL;
+		aaPeptideArray[endPos] = Constants.ID_NULL;
+		
 	}
 	
 	public static int getSize () {
