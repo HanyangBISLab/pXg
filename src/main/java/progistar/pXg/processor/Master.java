@@ -22,6 +22,7 @@ import progistar.pXg.data.PxGAnnotation;
 import progistar.pXg.data.parser.GTFParser;
 import progistar.pXg.data.parser.PeptideParser;
 import progistar.pXg.data.parser.ResultParser;
+import progistar.pXg.utils.BAMIndex;
 import progistar.pXg.utils.CheckStrandedness;
 import progistar.pXg.utils.Codon;
 import progistar.pXg.utils.IndexConvertor;
@@ -57,6 +58,11 @@ public class Master {
 
 		SAM_FILE = new File(sequenceFilePath);
 
+		try {
+			BAMIndex.index(SAM_FILE);
+		} catch(IOException ioe) {
+		}
+		
 		// for SAM - GTF associated task assignment
 		// TASK-related variables
 		chrIndices = new int[Parameters.readSize];
