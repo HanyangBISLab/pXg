@@ -21,7 +21,7 @@ public class Parameters {
 	public static String[] unmappedFilePaths			=	null;
 	public static String[] exportSAMPaths				=	null;
 	public static String[] tmpOutputFilePaths			=	null;
-
+	public static boolean isOutputUnamppedReads			=	false; // default is false!. If true, it uses lots of memory up to BAM file.
 
 	// Peptide length
 	public static int minPeptLen					=	8;

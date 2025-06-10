@@ -54,7 +54,9 @@ public class ResultParser {
 
 					} else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_QSCORE)) {
 						meanQScore = Double.parseDouble(field[1]);
-					} else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_SEQUENCE)) {
+					} 
+					// there is no OUTPUT_G_SEQUENCE field if Parameters.isOutputUnamppedReads turns off.
+					else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_SEQUENCE)) {
 						fullReads = field[1];
 					} else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_PEPTIDE)) {
 
