@@ -15,7 +15,6 @@ import htsjdk.samtools.SamReaderFactory;
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.constants.RunInfo;
-import progistar.pXg.data.AAVariantTable;
 import progistar.pXg.data.GenomicAnnotation;
 import progistar.pXg.data.PeptideAnnotation;
 import progistar.pXg.data.PxGAnnotation;

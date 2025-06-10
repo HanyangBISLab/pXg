@@ -26,7 +26,7 @@ public class Parameters {
 	// Peptide length
 	public static int minPeptLen					=	8;
 	public static int maxPeptLen					=	15;
-	public static int maxFlankNSize					=	1000;
+	public static int maxFlankNSize					=	10;
 	public static boolean leucineIsIsoleucine		=	true;
 
 	// Those options cannot be accessed by users.
