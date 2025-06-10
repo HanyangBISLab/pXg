@@ -147,7 +147,7 @@ public class ParameterParser {
 				.longOpt("flank_size").argName("optional, integer")
 				.hasArg()
 				.required(false)
-				.desc("Specify to print maximum flank nuleotides from the matched sequence. Default is 1,000.")
+				.desc("Specify to print maximum flank nuleotides from the matched sequence. Default is 10.")
 				.build();
 		Option optionFasta = Option.builder("f")
 				.longOpt("fasta").argName("optional, fasta|fa")
@@ -160,6 +160,12 @@ public class ParameterParser {
 				.hasArg()
 				.required(false)
 				.desc("How many candidates will be considered per scan. Default is 100 (in other words, use all candidates).")
+				.build();
+		Option optionUnmappedReads = Option.builder("ou")
+				.longOpt("output_unmapped_reads").argName("optional, true|false")
+				.hasArg()
+				.required(false)
+				.desc("Report matched unmapped reads as an additional output file (true or false). Default is false.")
 				.build();
 		Option optionOutputSAM = Option.builder("os")
 				.longOpt("output_sam").argName("optional, true|false")
@@ -288,6 +294,7 @@ public class ParameterParser {
 		.addOption(optionMaxFlankSize)
 		.addOption(optionRank)
 		.addOption(optionAAVariant)
+		.addOption(optionUnmappedReads)
 		.addOption(optionOutputSAM)
 		.addOption(optionOutputNonreference)
 		.addOption(optionOutputReference)
@@ -395,7 +402,6 @@ public class ParameterParser {
 		    	Parameters.scoreColumnIndex = Integer.parseInt(cmd.getOptionValue("si"));
 		    }
 		    
-		    
 		    // --output
 		    if(cmd.hasOption("o")) {
 		    	Parameters.outputFilePath = cmd.getOptionValue("o") +".pXg";
@@ -467,7 +473,7 @@ public class ParameterParser {
 		    	Parameters.sepType = cmd.getOptionValue("s");
 		    }
 		    
-		 // --sep
+		    // --target_only
 		    if(cmd.hasOption("to")) {
 		    	Parameters.printTargetOnly = true;
 		    }
@@ -511,6 +517,13 @@ public class ParameterParser {
 		    // --rank
 		    if(cmd.hasOption("r")) {
 		    	Parameters.psmRank = Integer.parseInt(cmd.getOptionValue("r"));
+		    }
+		    
+		    // --output_unmapped_reads
+		    if(cmd.hasOption("ou")) {
+		    	if(cmd.getOptionValue("ou").equalsIgnoreCase("true")) {
+		    		Parameters.isOutputUnamppedReads = true;
+		    	}
 		    }
 		    
 		    // --output_sam
