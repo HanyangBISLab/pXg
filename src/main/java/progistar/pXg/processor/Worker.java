@@ -127,7 +127,7 @@ public class Worker extends Thread {
 
 			// for unmapped/softclip we need more sequence information
 			char mappingStatus = gSeq.getMappingStatus();
-			if(Parameters.isOutputUnamppedReads && (mappingStatus == Constants.MARK_UNMAPPED || mappingStatus == Constants.MARK_SOFTCLIP)) {
+			if(Parameters.EXPORT_UNMAPPED_SEQ && (mappingStatus == Constants.MARK_UNMAPPED || mappingStatus == Constants.MARK_SOFTCLIP)) {
 				BW.append(Constants.OUTPUT_G_SEQUENCE).append("\t").append(gSeq.getNucleotideString());
 				BW.newLine();
 			}

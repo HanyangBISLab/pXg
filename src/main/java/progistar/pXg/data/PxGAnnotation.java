@@ -233,7 +233,7 @@ public class PxGAnnotation {
 							// decoy information is neglected.
 							
 							// if this is unmapped, then store.
-							if(xBlock.isMappedAmbiguous() && isTarget[0] && Parameters.isOutputUnamppedReads) {
+							if(xBlock.isMappedAmbiguous() && isTarget[0] && Parameters.EXPORT_UNMAPPED_SEQ) {
 								ArrayList<XBlock> unmappedXBlocks = new ArrayList<>();
 								unmappedXBlocks.add(xBlock);
 								unmappedXBlocks.addAll(xBlock.siblingXBlocks);
@@ -267,7 +267,7 @@ public class PxGAnnotation {
 			BWUnmapped.close();
 			
 			// if we do not want to generate additional file for unmapped reads
-			if(!Parameters.isOutputUnamppedReads) {
+			if(!Parameters.EXPORT_UNMAPPED_SEQ) {
 				outFile.delete();
 			}
 			

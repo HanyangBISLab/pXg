@@ -522,7 +522,7 @@ public class ParameterParser {
 		    // --output_unmapped_reads
 		    if(cmd.hasOption("ou")) {
 		    	if(cmd.getOptionValue("ou").equalsIgnoreCase("true")) {
-		    		Parameters.isOutputUnamppedReads = true;
+		    		Parameters.EXPORT_UNMAPPED_SEQ = true;
 		    	}
 		    }
 		    

@@ -21,7 +21,6 @@ public class Parameters {
 	public static String[] unmappedFilePaths			=	null;
 	public static String[] exportSAMPaths				=	null;
 	public static String[] tmpOutputFilePaths			=	null;
-	public static boolean isOutputUnamppedReads			=	false; // default is false!. If true, it uses lots of memory up to BAM file.
 
 	// Peptide length
 	public static int minPeptLen					=	8;
@@ -77,7 +76,7 @@ public class Parameters {
 
 	// Export option
 	public static boolean EXPORT_TSV				=	true;
-	public static boolean EXPORT_UNMAPPED_SEQ		=	true;
+	public static boolean EXPORT_UNMAPPED_SEQ		=	false; // default is false!. If true, it uses lots of memory up to BAM file.
 	public static boolean EXPORT_SAM				=	false;
 	public static boolean EXPORT_NON_REFERENCE		=	true;
 	public static boolean EXPORT_REFERENCE			=	true;

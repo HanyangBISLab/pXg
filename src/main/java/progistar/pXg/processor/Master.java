@@ -57,10 +57,11 @@ public class Master {
 
 		SAM_FILE = new File(sequenceFilePath);
 
+		/** Do not need a BAI file...!
 		try {
 			BAMIndex.index(SAM_FILE);
 		} catch(IOException ioe) {
-		}
+		}**/
 		
 		// for SAM - GTF associated task assignment
 		// TASK-related variables

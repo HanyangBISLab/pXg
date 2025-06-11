@@ -101,16 +101,10 @@ public class ConsensusSequence {
 			maxRightSize = Math.max(rightFlankSequence.length(), maxRightSize);
 		}
 
-		if(maxLeftSize > Parameters.maxFlankNSize) {
-			maxLeftSize = Parameters.maxFlankNSize;
-		}
-		if(maxRightSize > Parameters.maxFlankNSize) {
-			maxRightSize = Parameters.maxFlankNSize;
-		}
-
 		int[][] leftConsensusScore = new int[maxLeftSize][10];
 		int[][] rightConsensusScore = new int[maxRightSize][10];
-
+		
+		
 
 		// calculate score matrix
 		for(XBlock xBlock_ : list) {
