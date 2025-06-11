@@ -174,7 +174,11 @@ public class pXgParser {
 						reads = Double.parseDouble(element.getValueByFieldName("Reads"));
 						
 						if(reads > 0) {
-							mergedReads *= reads;
+							if(mergedReads == 0) {
+								mergedReads = reads;
+							} else {
+								mergedReads *= reads;
+							}
 						}
 						
 						if(reads > maxReads) {

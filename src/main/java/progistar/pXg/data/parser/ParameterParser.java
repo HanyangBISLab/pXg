@@ -1,7 +1,6 @@
 package progistar.pXg.data.parser;
 
 import java.io.File;
-import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
