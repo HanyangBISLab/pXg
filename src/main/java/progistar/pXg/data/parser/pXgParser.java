@@ -200,7 +200,13 @@ public class pXgParser {
 				
 				tmp.setLength(0);
 				tmp.append(maxRecord.toString()).append(counts.toString());
-				finalResults.add(tmp.toString());
+				
+				
+				// if the mergedReads is exceeding threshold
+				if(mergedReads > Parameters.MIN_THRESHOLD_READS) {
+					finalResults.add(tmp.toString());
+				}
+				
 			});
 		});
 

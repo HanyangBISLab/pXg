@@ -97,7 +97,7 @@ public class Parameters {
 
 	// Normalization (RPHM)
 	public static boolean COUNT_NORMALIZATION			=	true;
-	public static double MIN_RPHM						=	1;
+	public static double MIN_THRESHOLD_READS			=	1;
 
 	///////////////////// Parameters for "Build Sequence Database" /////////////////////
 	public static String[] sequencedbpXgPath			=	new String[5];
