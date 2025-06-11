@@ -236,7 +236,7 @@ public class PeptideAnnotation {
 			for(int i=0; i<size; i++) {
 				PBlock pBlock = scanPBlocks.get(i);
 				pBlock.rank = ++rank;
-				pBlock.deltaScore = topScore - pBlock.score;
+				pBlock.deltaScore = (topScore - pBlock.score)/topScore; // normalized delta score
 			}
 		});
 	}
