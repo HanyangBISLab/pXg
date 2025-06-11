@@ -111,6 +111,7 @@ public class pXgParser {
 	 * @param outputFilePath
 	 */
 	public static void writeMergedResult (ArrayList<pXgRecord>[] tmpRecords, String outputFilePath) {
+		final int sampleSize = tmpRecords.length;
 		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
 		
 		String[] samFileNames = new String[tmpRecords.length];
@@ -171,7 +172,11 @@ public class pXgParser {
 					double reads = 0;
 					if(element != null) {
 						reads = Double.parseDouble(element.getValueByFieldName("Reads"));
-						mergedReads += reads;
+						
+						if(reads > 0) {
+							mergedReads *= reads;
+						}
+						
 						if(reads > maxReads) {
 							maxRecord = element;
 							maxReads = reads;
@@ -185,6 +190,9 @@ public class pXgParser {
 					genomicID = genomicIDMapper.size()+1;
 					genomicIDMapper.put(key, genomicID);
 				}
+				
+				// geometric mean
+				mergedReads = Math.pow(mergedReads, 1/sampleSize);
 				
 				// change representative reads to merged reads.
 				maxRecord.setValueByFieldName("Reads", mergedReads+"");
