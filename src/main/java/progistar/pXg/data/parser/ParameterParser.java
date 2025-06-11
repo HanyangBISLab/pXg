@@ -90,6 +90,12 @@ public class ParameterParser {
 				.required(false)
 				.desc("Specify which reads to consider for counting. The default is primary.")
 				.build();
+		Option optionReadThreshold = Option.builder("k")
+				.longOpt("read_threshold").argName("optional, float")
+				.hasArg()
+				.required(false)
+				.desc("Specify the read threshold for reporting mapped peptides. Default is 1.0 (RPHM or read count).")
+				.build();
 		Option optionNormalization = Option.builder("n")
 				.longOpt("normalize").argName("optional, rphm|raw")
 				.hasArg()
@@ -283,6 +289,7 @@ public class ParameterParser {
 		.addOption(optionScoreIdx)
 		
 		.addOption(optionCountStrategy)
+		.addOption(optionReadThreshold)
 		.addOption(optionNormalization)
 		.addOption(optionAdditionalFeatures)
 		.addOption(optionFasta)
@@ -446,7 +453,13 @@ public class ParameterParser {
 		    	}
 		    }
 		    
-		 // --count
+		    // --count
+		    if(cmd.hasOption("k")) {
+		    	double threshold = Double.parseDouble(cmd.getOptionValue("k"));
+		    	Parameters.READ_THRESHOLD = threshold;
+		    }
+		    
+		    // --normalize
 		    if(cmd.hasOption("n")) {
 		    	String normalization = cmd.getOptionValue("n");
 		    	if(normalization.equalsIgnoreCase("rphm")) {
@@ -756,6 +769,7 @@ public class ParameterParser {
 		}
 		
 		System.out.println("  COUNT_READS: "+countReads);
+		System.out.println("  READ_THRESHOLD: "+Parameters.READ_THRESHOLD);
 		System.out.println("  NORMALIZATED_READS: "+normalization);
 		System.out.println("  ADDITIONAL_FEATURE_COLS: "+addFeatCols);
 		System.out.println("  RANK TO CONSIDER: "+Parameters.psmRank);
@@ -809,6 +823,8 @@ public class ParameterParser {
 		Logger.newLine();
 		
 		Logger.append("  COUNT_READS: "+countReads);
+		Logger.newLine();
+		Logger.append("  READ_THRESHOLD: "+Parameters.READ_THRESHOLD);
 		Logger.newLine();
 		Logger.append("  NORMALIZATED_READS: "+normalization);
 		Logger.newLine();

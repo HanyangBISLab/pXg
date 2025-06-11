@@ -203,7 +203,7 @@ public class pXgParser {
 				
 				
 				// if the mergedReads is exceeding threshold
-				if(mergedReads > Parameters.MIN_THRESHOLD_READS) {
+				if(mergedReads > Parameters.READ_THRESHOLD) {
 					finalResults.add(tmp.toString());
 				}
 				
