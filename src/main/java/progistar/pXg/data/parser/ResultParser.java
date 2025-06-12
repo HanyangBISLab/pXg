@@ -20,7 +20,6 @@ public class ResultParser {
 	public static PxGAnnotation parseResult (ArrayList<File> files) {
 		PxGAnnotation annotation = new PxGAnnotation();
 
-
 		try {
 			for(File file : files) {
 				System.out.println("parsing "+file.getName()+" ...");

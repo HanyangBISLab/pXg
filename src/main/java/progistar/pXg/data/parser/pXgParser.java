@@ -196,7 +196,7 @@ public class pXgParser {
 				}
 				
 				// geometric mean
-				mergedReads = Math.pow(mergedReads, 1/sampleSize);
+				mergedReads = Math.pow(mergedReads, 1.0/sampleSize);
 				
 				// change representative reads to merged reads.
 				maxRecord.setValueByFieldName("Reads", mergedReads+"");
