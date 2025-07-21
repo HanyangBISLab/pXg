@@ -173,6 +173,7 @@ public class pXgParser {
 					if(element != null) {
 						reads = Double.parseDouble(element.getValueByFieldName("Reads"));
 						
+						//TODO: Caution: reads == 0 is better than reads < 1. Should be corrected.
 						if(reads > 0) {
 							if(mergedReads == 0) {
 								mergedReads = reads;

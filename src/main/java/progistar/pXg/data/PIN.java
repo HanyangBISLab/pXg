@@ -21,7 +21,9 @@ public class PIN {
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
-	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads","MeanQScore", Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
+	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads",
+			//"MeanQScore", disable MQScore 
+			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
 
 	private PIN() {}
 
@@ -57,10 +59,10 @@ public class PIN {
 
 			int deltaScoreIdx = pXgDefaultFeatIdices[0];
 			int readIdx = pXgDefaultFeatIdices[1];
-			int meanQScoreIdx = pXgDefaultFeatIdices[2];
-			int infPeptIdx = pXgDefaultFeatIdices[3];
-			int classIdx = pXgDefaultFeatIdices[4];
-			int aaVariantIdx = pXgDefaultFeatIdices[5];
+			//int meanQScoreIdx = pXgDefaultFeatIdices[2];
+			int infPeptIdx = pXgDefaultFeatIdices[2];
+			int classIdx = pXgDefaultFeatIdices[3];
+			int aaVariantIdx = pXgDefaultFeatIdices[4];
 
 			// to adjust index caused by appending "UniqueID" and "Label" to the original input,
 			// the original index must be shifted by 2.
@@ -102,7 +104,8 @@ public class PIN {
 				}
 				PIN_HEADER += additionalFeatureHeader.toString();
 			}
-			PIN_HEADER += "\tDeltaScore\tMeanQScore";
+			// PIN_HEADER += "\tDeltaScore\tMeanQScore";
+			PIN_HEADER += "\tDeltaScore";
 			// AA variants
 			ArrayList<String> aaVariants = new ArrayList<String>();
 			int aaVarSize = AAVariantTable.getSize();
@@ -183,11 +186,11 @@ public class PIN {
 
 				// pXg default features
 				String deltaScore = fields[deltaScoreIdx];
-				String meanQScore = fields[meanQScoreIdx];
+				// String meanQScore = fields[meanQScoreIdx];
 				
 				
 				pinOutput.append("\t").append(deltaScore);
-				pinOutput.append("\t").append(meanQScore);
+				// pinOutput.append("\t").append(meanQScore); disable MQScore
 				
 				// add AAvar
 				for(String aaVar : aaVariants) {
