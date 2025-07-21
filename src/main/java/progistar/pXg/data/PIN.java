@@ -21,7 +21,7 @@ public class PIN {
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
-	private static String[] pXg_DEFAULT_FEATURES = {"DeltaScore","Reads",
+	private static String[] pXg_DEFAULT_FEATURES = {"nDeltaScore","Reads",
 			//"MeanQScore", disable MQScore 
 			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
 
@@ -57,7 +57,7 @@ public class PIN {
 				}
 			}
 
-			int deltaScoreIdx = pXgDefaultFeatIdices[0];
+			int nDeltaScoreIdx = pXgDefaultFeatIdices[0];
 			int readIdx = pXgDefaultFeatIdices[1];
 			//int meanQScoreIdx = pXgDefaultFeatIdices[2];
 			int infPeptIdx = pXgDefaultFeatIdices[2];
@@ -104,8 +104,8 @@ public class PIN {
 				}
 				PIN_HEADER += additionalFeatureHeader.toString();
 			}
-			// PIN_HEADER += "\tDeltaScore\tMeanQScore";
-			PIN_HEADER += "\tDeltaScore";
+			// PIN_HEADER += "\tnDeltaScore\tMeanQScore";
+			PIN_HEADER += "\tnDeltaScore";
 			// AA variants
 			ArrayList<String> aaVariants = new ArrayList<String>();
 			int aaVarSize = AAVariantTable.getSize();
@@ -185,11 +185,11 @@ public class PIN {
 				}
 
 				// pXg default features
-				String deltaScore = fields[deltaScoreIdx];
+				String nDeltaScore = fields[nDeltaScoreIdx];
 				// String meanQScore = fields[meanQScoreIdx];
 				
 				
-				pinOutput.append("\t").append(deltaScore);
+				pinOutput.append("\t").append(nDeltaScore);
 				// pinOutput.append("\t").append(meanQScore); disable MQScore
 				
 				// add AAvar
