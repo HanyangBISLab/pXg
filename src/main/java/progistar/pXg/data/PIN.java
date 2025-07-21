@@ -136,7 +136,7 @@ public class PIN {
 				String mainScore = fields[Parameters.scoreColumnIndex + indexShiftSize];
 				String log2Reads = "" + Math.log(Double.parseDouble(fields[readIdx])+1)/Math.log(2);
 				String peptide = fields[infPeptIdx];
-				String classPenalty = fields[classIdx].equalsIgnoreCase("true") ? "0" : "1";
+				String classPenalty = fields[classIdx].equalsIgnoreCase("true") ? "1" : "0";
 				String aaVariantPenalty = fields[aaVariantIdx];
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
