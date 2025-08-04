@@ -113,7 +113,12 @@ public class PeptideParser {
 
 					PBlock pBlock = new PBlock(record, pSeq.toString(), recordCount);
 
-					PeptideAnnotation.pBlocks.add(pBlock);
+					
+					// only psms passing the minimum threshold are further considered.
+					if(pBlock.score > Parameters.minScoreThreshold) {
+						PeptideAnnotation.pBlocks.add(pBlock);
+					}
+					
 					pSeq.setLength(0);
 
 				}

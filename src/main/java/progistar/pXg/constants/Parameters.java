@@ -60,6 +60,9 @@ public class Parameters {
 	public static String commentMarker				=	"#|@|%"; // if line starts with the pattern, the line will be skipped during parsing the file.
 
 	public static int maxProteinOut					=	10;
+	
+	// Minimum score threshold
+	public static double minScoreThreshold			=	0;
 
 	// Penalty
 	public static double PENALTY_MUTATION			=	1;

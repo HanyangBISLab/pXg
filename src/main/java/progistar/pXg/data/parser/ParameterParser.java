@@ -83,6 +83,12 @@ public class ParameterParser {
 				.build();
 		
 		// optional
+		Option optionMinScore = Option.builder("ms")
+				.longOpt("min_score").argName("optional, float")
+				.hasArg()
+				.required(false)
+				.desc("Specify the minimum score threshold for peptide-spectrum matches (PSMs) to be included. The default value is 0.")
+				.build();
 		Option optionCountStrategy = Option.builder("c")
 				.longOpt("count").argName("optional, primary|all")
 				.hasArg()
@@ -287,6 +293,7 @@ public class ParameterParser {
 		.addOption(optionChargeIdx)
 		.addOption(optionScoreIdx)
 		
+		.addOption(optionMinScore)
 		.addOption(optionCountStrategy)
 		.addOption(optionReadThreshold)
 		.addOption(optionNormalization)
@@ -437,6 +444,12 @@ public class ParameterParser {
 					file = new File(Parameters.tmpOutputFilePaths[idx]);
 					Parameters.tmpOutputFilePaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
 				}
+		    }
+		    
+		    // --min_score
+		    if(cmd.hasOption("ms")) {
+		    	double threshold = Double.parseDouble(cmd.getOptionValue("ms"));
+		    	Parameters.minScoreThreshold = threshold;
 		    }
 		    
 		    // --count
@@ -767,6 +780,7 @@ public class ParameterParser {
 			aaVariant = Parameters.aaVariantTableFilePath;
 		}
 		
+		System.out.println("  MINIMUM_SCORE_THRESHOLD: "+Parameters.minScoreThreshold);
 		System.out.println("  COUNT_READS: "+countReads);
 		System.out.println("  READ_THRESHOLD: "+Parameters.READ_THRESHOLD);
 		System.out.println("  NORMALIZATED_READS: "+normalization);
@@ -821,6 +835,8 @@ public class ParameterParser {
 		Logger.append("  SCORE_COL: "+Parameters.scoreColumnIndex);
 		Logger.newLine();
 		
+		Logger.append("  MINIMUM_SCORE_THRESHOLD: "+Parameters.minScoreThreshold);
+		Logger.newLine();
 		Logger.append("  COUNT_READS: "+countReads);
 		Logger.newLine();
 		Logger.append("  READ_THRESHOLD: "+Parameters.READ_THRESHOLD);
