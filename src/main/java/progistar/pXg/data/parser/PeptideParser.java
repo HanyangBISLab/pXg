@@ -47,13 +47,21 @@ public class PeptideParser {
 			String line = null;
 
 			int recordCount = -1;
+			int skippedCommentLines = 0;
+			int skippedMinScoreLines = 0;
 			while((line = BR.readLine()) != null) {
 				// skip header marker
 				// comment marker is not considered record.
+				boolean isSkipped = false;
 				for(String headerMarker : commentMarkers) {
 					if(line.startsWith(headerMarker)) {
-						continue;
+						isSkipped = true;
+						break;
 					}
+				}
+				if(isSkipped) {
+					skippedCommentLines++;
+					continue;
 				}
 
 				String[] record = null;
@@ -117,6 +125,8 @@ public class PeptideParser {
 					// only psms passing the minimum threshold are further considered.
 					if(pBlock.score > Parameters.minScoreThreshold) {
 						PeptideAnnotation.pBlocks.add(pBlock);
+					} else {
+						skippedMinScoreLines++;
 					}
 					
 					pSeq.setLength(0);
@@ -128,6 +138,11 @@ public class PeptideParser {
 			}
 
 			BR.close();
+			
+			// skipped
+			System.out.println("Comment lines: "+skippedCommentLines);
+			System.out.println("Skipped PSMs by the score threshold: "+skippedMinScoreLines);
+			System.out.println("Processed PSMs: "+recordCount);
 			
 			// print what kinds of PTM patterns in it.
 			System.out.println("Found PTM patterns: "+Parameters.detectedPTMTable.size());
