@@ -124,7 +124,7 @@ public class PxGAnnotation {
 			BW.append("GenomicID").append("\t");
 			BW.append("Label").append("\t");
 			BW.append(PeptideAnnotation.toFields()).append("\t");
-			BW.append("DeltaScore").append("\t");
+			BW.append(Constants.DELTA_SCORE_COLUMN_NAME).append("\t");
 			BW.append("Rank").append("\t");
 			BW.append("GenomicLociCount").append("\t");
 			BW.append(Constants.AA_VARIANT_COLUMN_NAME).append("\t");

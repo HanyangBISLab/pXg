@@ -122,6 +122,7 @@ public class Constants {
 	/** pXg TSV Parser Constants **/
 	public static final String INFERRED_PEPTIDE_COLUMN_NAME	=	"InferredPeptide";
 	public static final String AA_VARIANT_COLUMN_NAME		=	"AminoAcidVariant";
+	public static final String DELTA_SCORE_COLUMN_NAME		=	"nDeltaScore";
 	public static final String NUCLEOTIDE_COLUMN_NAME		=	"ObservedNucleotide";
 	public static final String STRAND_COLUMN_NAME			=	"Strand";
 	public static final String EVENT_COLUMN_NAME			=	"Events";

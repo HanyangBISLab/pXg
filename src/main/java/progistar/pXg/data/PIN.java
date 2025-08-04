@@ -21,7 +21,7 @@ public class PIN {
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
-	private static String[] pXg_DEFAULT_FEATURES = {"nDeltaScore","Reads",
+	private static String[] pXg_DEFAULT_FEATURES = {Constants.DELTA_SCORE_COLUMN_NAME,"Reads",
 			//"MeanQScore", disable MQScore 
 			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
 
