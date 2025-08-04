@@ -83,6 +83,12 @@ public class ParameterParser {
 				.build();
 		
 		// optional
+		Option optionComment = Option.builder("cm")
+				.longOpt("comment").argName("optional, string")
+				.hasArg()
+				.required(false)
+				.desc("Specify the starting characters of comment lines to be ignored during processing. Lines beginning with these characters will be skipped. The default value is #|@|%|MTD.")
+				.build();
 		Option optionMinScore = Option.builder("ms")
 				.longOpt("min_score").argName("optional, float")
 				.hasArg()
@@ -293,6 +299,7 @@ public class ParameterParser {
 		.addOption(optionChargeIdx)
 		.addOption(optionScoreIdx)
 		
+		.addOption(optionComment)
 		.addOption(optionMinScore)
 		.addOption(optionCountStrategy)
 		.addOption(optionReadThreshold)
@@ -446,6 +453,10 @@ public class ParameterParser {
 				}
 		    }
 		    
+		    // --comment
+		    if(cmd.hasOption("cm")) {
+		    	Parameters.commentMarker = cmd.getOptionValue("cm");
+		    }
 		    // --min_score
 		    if(cmd.hasOption("ms")) {
 		    	double threshold = Double.parseDouble(cmd.getOptionValue("ms"));
@@ -780,6 +791,7 @@ public class ParameterParser {
 			aaVariant = Parameters.aaVariantTableFilePath;
 		}
 		
+		System.out.println("  COMMENT_STRINGS: "+Parameters.commentMarker);
 		System.out.println("  MINIMUM_SCORE_THRESHOLD: "+Parameters.minScoreThreshold);
 		System.out.println("  COUNT_READS: "+countReads);
 		System.out.println("  READ_THRESHOLD: "+Parameters.READ_THRESHOLD);
@@ -835,6 +847,8 @@ public class ParameterParser {
 		Logger.append("  SCORE_COL: "+Parameters.scoreColumnIndex);
 		Logger.newLine();
 		
+		Logger.append("  COMMENT_STRINGS: "+Parameters.commentMarker);
+		Logger.newLine();
 		Logger.append("  MINIMUM_SCORE_THRESHOLD: "+Parameters.minScoreThreshold);
 		Logger.newLine();
 		Logger.append("  COUNT_READS: "+countReads);

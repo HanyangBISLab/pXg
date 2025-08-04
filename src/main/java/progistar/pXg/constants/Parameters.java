@@ -57,7 +57,7 @@ public class Parameters {
 	// In pXg definition, field indicates column names and comment shows some meta-data.
 	// Comment line must be present on the top of records.
 	// Field must follow "comment" when the comment presents in the file.
-	public static String commentMarker				=	"#|@|%"; // if line starts with the pattern, the line will be skipped during parsing the file.
+	public static String commentMarker				=	"#|@|%|MTD"; // if line starts with the pattern, the line will be skipped during parsing the file.
 
 	public static int maxProteinOut					=	10;
 	
