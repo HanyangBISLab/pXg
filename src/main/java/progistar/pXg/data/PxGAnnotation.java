@@ -130,6 +130,7 @@ public class PxGAnnotation {
 			BW.append(Constants.AA_VARIANT_COLUMN_NAME).append("\t");
 			BW.append(Constants.PEPTIDE_LENGTH_COLUMN_NAME).append("\t");
 			BW.append(Constants.INFERRED_PEPTIDE_COLUMN_NAME).append("\t");
+			BW.append(Constants.INFERRED_SEQUENCE_COLUMN_NAME).append("\t");
 			
 			BW.append("GenomicLoci").append("\t");
 			BW.append("Strand").append("\t");
@@ -225,7 +226,6 @@ public class PxGAnnotation {
 							.append(pBlock.rank+"\t")
 							.append(gLociCount+"\t")
 							.append(aaVariants.toString()+"\t")
-							.append(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine).length()+"\t")
 							.append(xBlock.toString(pBlock.psmStatus))
 							.append("\t"+pBlock.isReference);
 							BW.newLine();
