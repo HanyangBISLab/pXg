@@ -225,8 +225,9 @@ public class XBlock {
 				qScore /= mockReadCount;
 			}
 
-			return new StringBuilder(peptideSequence).reverse().toString() +"\t"+genomicLocus+"\t"
-					+strand
+			return new StringBuilder(peptideSequence).reverse().toString()
+					+"\t"+genomicLocus
+					+"\t"+strand
 					+"\t"+consensusSequence.leftFlankConsensus
 					+"\t"+genomicSequence
 					+"\t"+consensusSequence.rightFlankConsensus
@@ -249,8 +250,9 @@ public class XBlock {
 				qScore /= targetReadCount;
 			}
 
-			return peptideSequence +"\t"+genomicLocus+"\t"
-					+strand
+			return peptideSequence
+					+"\t"+genomicLocus
+					+"\t"+strand
 					+"\t"+consensusSequence.leftFlankConsensus
 					+"\t"+genomicSequence
 					+"\t"+consensusSequence.rightFlankConsensus

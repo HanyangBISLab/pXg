@@ -23,7 +23,7 @@ public class PIN {
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
 	private static String[] pXg_DEFAULT_FEATURES = {Constants.DELTA_SCORE_COLUMN_NAME,"Reads",
 			//"MeanQScore", disable MQScore 
-			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME};
+			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME, Constants.PEPTIDE_LENGTH_COLUMN_NAME};
 
 	private PIN() {}
 
@@ -63,6 +63,7 @@ public class PIN {
 			int infPeptIdx = pXgDefaultFeatIdices[2];
 			int classIdx = pXgDefaultFeatIdices[3];
 			int aaVariantIdx = pXgDefaultFeatIdices[4];
+			int peptideLengthIdx = pXgDefaultFeatIdices[5];
 
 			// to adjust index caused by appending "UniqueID" and "Label" to the original input,
 			// the original index must be shifted by 2.
@@ -140,7 +141,7 @@ public class PIN {
 				String aaVariantPenalty = fields[aaVariantIdx];
 
 				int charge = (int) Double.parseDouble(fields[Parameters.chargeColumnIndex + indexShiftSize]);
-				int pLen = peptide.length();
+				int pLen = Integer.parseInt(fields[peptideLengthIdx]);
 				pinOutput.append(specId+"\t"+label+"\t"+scanNr+"\t"+mainScore+"\t"+log2Reads);
 				
 				// append length
