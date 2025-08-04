@@ -46,22 +46,25 @@ public class PeptideParser {
 			BufferedReader BR = new BufferedReader(new FileReader(file));
 			String line = null;
 
-			int recordCount = -1;
+			int recordCount = 0;
 			int skippedCommentLines = 0;
 			int skippedMinScoreLines = 0;
 			while((line = BR.readLine()) != null) {
 				// skip header marker
 				// comment marker is not considered record.
-				boolean isSkipped = false;
-				for(String headerMarker : commentMarkers) {
-					if(line.startsWith(headerMarker)) {
-						isSkipped = true;
-						break;
+				// to prevent skip records.
+				if(recordCount == 0) {
+					boolean isSkipped = false;
+					for(String headerMarker : commentMarkers) {
+						if(line.startsWith(headerMarker)) {
+							isSkipped = true;
+							break;
+						}
 					}
-				}
-				if(isSkipped) {
-					skippedCommentLines++;
-					continue;
+					if(isSkipped) {
+						skippedCommentLines++;
+						continue;
+					}
 				}
 
 				String[] record = null;
@@ -78,7 +81,7 @@ public class PeptideParser {
 				}
 
 				// the first line after headers must be field line.
-				if(recordCount == -1) {
+				if(recordCount == 0) {
 					PeptideAnnotation.setFields(record);
 					fieldLength = PeptideAnnotation.getFieldLength();
 				}
