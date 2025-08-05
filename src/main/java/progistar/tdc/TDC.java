@@ -16,6 +16,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import progistar.pXg.constants.Constants;
 import progistar.pXg.data.pXgRecord;
 import progistar.pXg.data.parser.pXgParser;
 
@@ -29,6 +30,9 @@ public class TDC {
 	public static File outputFile		= null;
 	
 	public static void main(String[] args) throws IOException {
+		System.out.println(Constants.VERSION+" "+Constants.RELEASE);
+		System.out.println(Constants.INTRODUCE);
+		System.out.println();
 		
 		parseOptions(args);
 		
