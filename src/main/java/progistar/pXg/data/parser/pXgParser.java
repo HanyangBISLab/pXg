@@ -20,7 +20,7 @@ import progistar.pXg.data.pXgRecord;
 
 public class pXgParser {
 
-	public static String[] header = null;
+	public static ArrayList<String> header = new ArrayList<String>();;
 
 	private pXgParser() {}
 
@@ -31,7 +31,11 @@ public class pXgParser {
 		ArrayList<pXgRecord> records = new ArrayList<>();
 
 		BufferedReader BR = new BufferedReader(new FileReader(file));
-		pXgParser.header = BR.readLine().split("\t");
+		String[] fields = BR.readLine().split("\t");
+		for(int i=0; i<fields.length; i++) {
+			pXgParser.header.add(fields[i]);
+		}
+		
 		String line = null;
 
 		Hashtable<String, String> checkDuplicates = new Hashtable<>();
@@ -143,11 +147,11 @@ public class pXgParser {
 		ArrayList<String> finalResults = new ArrayList<>();
 		StringBuilder tmp = new StringBuilder();
 
-		for(int i=0; i<pXgParser.header.length; i++) {
+		for(int i=0; i<pXgParser.header.size(); i++) {
 			if(i != 0) {
 				tmp.append("\t");
 			}
-			tmp.append(pXgParser.header[i]);
+			tmp.append(pXgParser.header.get(i));
 		}
 
 		if(samFileNames.length > 0) {

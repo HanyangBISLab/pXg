@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import progistar.pXg.constants.Constants;
-import progistar.pXg.constants.Parameters;
 import progistar.pXg.data.GenomicSequence;
 import progistar.pXg.data.Global;
 import progistar.pXg.data.PxGAnnotation;

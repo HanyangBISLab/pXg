@@ -1,14 +1,19 @@
 package progistar.pXg.data;
 
+import java.util.ArrayList;
+
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;
 import progistar.pXg.data.parser.pXgParser;
 
 public class pXgRecord {
-	private String[] fields = null;
+	private ArrayList<String> fields = null;
 
 	public pXgRecord (String[] fields) {
-		this.fields = fields;
+		this.fields = new ArrayList<String>();
+		for(int i=0; i<fields.length; i++) {
+			this.fields.add(fields[i]);
+		}
 	}
 	
 	public String getHeader (int pe) {
@@ -120,38 +125,58 @@ public class pXgRecord {
 
 
 	public String getValueByFieldName (String fieldName) {
-		String[] header = pXgParser.header;
+		ArrayList<String> header = pXgParser.header;
 		String value = null;
-		for(int i=0; i<header.length; i++) {
-			if(header[i].equalsIgnoreCase(fieldName)) {
+		for(int i=0; i<header.size(); i++) {
+			if(header.get(i).equalsIgnoreCase(fieldName)) {
 				if(value != null) {
 					System.out.println(fieldName+" is duplciated");
 				} else {
-					value = fields[i];
+					value = fields.get(i);
 				}
 			}
 		}
 		return value;
 	}
 
+	/**
+	 * If there is no matched field name, it will be automatically appended at the end of column.
+	 * 
+	 * @param fieldName
+	 * @param value
+	 */
 	public void setValueByFieldName (String fieldName, String value) {
-		String[] header = pXgParser.header;
-		for(int i=0; i<header.length; i++) {
-			if(header[i].equalsIgnoreCase(fieldName)) {
-				fields[i] = value;
+		ArrayList<String> header = pXgParser.header;
+		boolean isFound = false;
+		for(int i=0; i<header.size(); i++) {
+			// adjust field's size
+			if(fields.size() <= i) {
+				fields.add("");
+			}
+			
+			if(header.get(i).equalsIgnoreCase(fieldName)) {
+				fields.set(i, value);
+				isFound = true;
 			}
 		}
+		
+		// not found the field name.
+		if(!isFound) {
+			System.out.println("Field name \""+fieldName+"\""+ " was not found. It will be appended at the end of column.");
+			pXgParser.header.add(fieldName);
+			this.fields.add(value);
+ 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 
-		for(int i=0; i<fields.length; i++) {
+		for(int i=0; i<fields.size(); i++) {
 			if(i != 0) {
 				str.append("\t");
 			}
-			str.append(fields[i]);
+			str.append(fields.get(i));
 		}
 
 		return str.toString();
