@@ -2,8 +2,6 @@ package progistar.pXg.data;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import progistar.pXg.constants.Constants;
 import progistar.pXg.constants.Parameters;

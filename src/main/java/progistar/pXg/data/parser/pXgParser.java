@@ -247,10 +247,14 @@ public class pXgParser {
 			
 			int indexShiftSize = PIN.pXgADDED_HEADERS.length;
 			int infPeptideIdx = -1;
+			int infSequenceIdx = -1;
 			String[] fields = header.split("\t");
 			for(int i=0; i<fields.length; i++) {
 				if(fields[i].equalsIgnoreCase(Constants.INFERRED_PEPTIDE_COLUMN_NAME)) {
 					infPeptideIdx = i;
+				}
+				if(fields[i].equalsIgnoreCase(Constants.INFERRED_SEQUENCE_COLUMN_NAME)) {
+					infSequenceIdx = i;
 				}
 			}
 			
@@ -307,7 +311,11 @@ public class pXgParser {
 					}
 				}
 				
+				// inferredPeptide will have PTM annotations
 				fields[infPeptideIdx] = searchPeptide.toString();
+				// get inferredSequence from the inferredPeptide.
+				fields[infSequenceIdx] = fields[infPeptideIdx].replaceAll(Parameters.ptmParserRegExr, "");
+				
 				BW.append(fields[0]);
 				for(int i=1; i<fields.length; i++) {
 					BW.append("\t").append(fields[i]);
