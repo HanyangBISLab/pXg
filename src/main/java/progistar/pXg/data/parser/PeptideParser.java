@@ -34,11 +34,8 @@ public class PeptideParser {
 
 		// there are PTM patterns : May 1, 2025
 		Pattern ptmPattern = Pattern.compile(Parameters.ptmParserRegExr);
-		// set regular expressions
-		Pattern peptideRegExr	= Pattern.compile(Parameters.peptideParserRegExr);
 		commentMarkers = Parameters.commentMarker.split("\\|");
 
-		StringBuilder pSeq = new StringBuilder();
 		int fieldLength = 0;
 		try {
 			File file = new File(peptideFilePath);
@@ -114,26 +111,15 @@ public class PeptideParser {
 					
 					// remove unimod and mass relating patterns
 					peptide = peptide.replaceAll(Parameters.ptmParserRegExr, "");
-					
-					// find peptide strip sequence
-					matcher = peptideRegExr.matcher(peptide);
 
-					while(matcher.find()) {
-						pSeq.append(matcher.group());
-					}
+					PBlock pBlock = new PBlock(record, peptide, recordCount);
 
-					PBlock pBlock = new PBlock(record, pSeq.toString(), recordCount);
-
-					
 					// only psms passing the minimum threshold are further considered.
 					if(pBlock.score > Parameters.minScoreThreshold) {
 						PeptideAnnotation.pBlocks.add(pBlock);
 					} else {
 						skippedMinScoreLines++;
 					}
-					
-					pSeq.setLength(0);
-
 				}
 
 				recordCount ++;

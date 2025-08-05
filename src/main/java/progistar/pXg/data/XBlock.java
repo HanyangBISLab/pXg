@@ -209,7 +209,6 @@ public class XBlock {
 	 */
 	public String toString (byte psmStatus) {
 		
-		Pattern peptideRegExr	= Pattern.compile(Parameters.peptideParserRegExr);
 		Hashtable<String, String> geneIDs = toGeneIDs();
 		Hashtable<String, String> geneNames = toGeneNames();
 		Hashtable<String, String> events = toEvents();
@@ -220,7 +219,6 @@ public class XBlock {
 
 		String genomicSequence = Global.SEQUENCE_ARRAYLIST.get(this.genomicSequenceIdx);
 		String referenceSequence = Global.SEQUENCE_ARRAYLIST.get(this.referenceSequenceIdx);
-		StringBuilder stripSequence = new StringBuilder();
 		
 		if(psmStatus == Constants.PSM_STATUS_DECOY) {
 
@@ -231,15 +229,8 @@ public class XBlock {
 
 			String thisPeptide = new StringBuilder(peptideSequence).reverse().toString();
 			// remove unimod and mass relating patterns
-			thisPeptide = thisPeptide.replaceAll(Parameters.ptmParserRegExr, "");
-			
-			// find peptide strip sequence
-			Matcher matcher = peptideRegExr.matcher(thisPeptide);
+			String stripSequence = thisPeptide.replaceAll(Parameters.ptmParserRegExr, "");
 
-			while(matcher.find()) {
-				stripSequence.append(matcher.group());
-			}
-			
 			return stripSequence.length()
 					+"\t"+thisPeptide
 					+"\t"+stripSequence
@@ -269,14 +260,7 @@ public class XBlock {
 
 			String thisPeptide = peptideSequence;
 			// remove unimod and mass relating patterns
-			thisPeptide = thisPeptide.replaceAll(Parameters.ptmParserRegExr, "");
-			
-			// find peptide strip sequence
-			Matcher matcher = peptideRegExr.matcher(thisPeptide);
-
-			while(matcher.find()) {
-				stripSequence.append(matcher.group());
-			}
+			String stripSequence = thisPeptide.replaceAll(Parameters.ptmParserRegExr, "");
 			
 			return 
 					stripSequence.length()

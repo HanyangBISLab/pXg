@@ -47,9 +47,8 @@ public class Parameters {
 	public static int chargeColumnIndex				=	-1;
 	public static int[] additionalFeatureIndices	=	null;
 	public static int psmRank						=	100;
-	public static String peptideParserRegExr		=	"[A-Z]"; // read sequence matched to the RegExr.
-	// FINDA FOLLOWING PATTERNS: AGBD[UNIMOD:35]AMDK+358AMKS(+382)AMDK[+382]AADDK+358.3AMKS(+382.1)AMDK[+382.2]AADM[Oxidation]DM(Oxidation)
-	public static String ptmParserRegExr			=	"(\\[\\w+:\\d+\\]|\\([+-]?\\d+\\.*\\d+\\)|[+-]?\\d+\\.*\\d+|\\[[+-]?\\d+\\.*\\d+\\]|\\[\\w+\\]|\\(\\w+\\))";
+	// FINDA FOLLOWING PATTERNS: -AGBD[UNIMOD:35]AMDK+358AMKS(+382)AMDK[+382]AADDK+358.3AMKS(+382.1)AMDK[+382.2]AADM[Oxidation]DM(Oxidation)
+	public static String ptmParserRegExr			=	"(\\[[^\\[^\\]]*\\]|\\([^\\(^\\)]*\\)|[^A-Z])";
 	public static Hashtable<String, Boolean> detectedPTMTable	=	new Hashtable<String, Boolean>();
 	
 	
