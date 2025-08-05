@@ -218,6 +218,12 @@ public class XBlock {
 		String genomicSequence = Global.SEQUENCE_ARRAYLIST.get(this.genomicSequenceIdx);
 		String referenceSequence = Global.SEQUENCE_ARRAYLIST.get(this.referenceSequenceIdx);
 		
+		/**TODO
+		 *  peptideSequence is from the translated nucleotide.
+		 *  Therefore, this sequence does not have any PTM / AAvariant information.
+		 *  Although this information is added in the merging step (pXgParser class), it should be consistent.
+		 */
+		
 		if(psmStatus == Constants.PSM_STATUS_DECOY) {
 
 			double qScore = this.decoyQScore;
