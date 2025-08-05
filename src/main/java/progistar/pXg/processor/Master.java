@@ -134,11 +134,11 @@ public class Master {
 						readCount = 0;
 					}
 					
-					//// DEBUG
+					//// DEBUG for short test
 					///
-					if(RunInfo.totalProcessedReads > 100000) {
-						break;
-					}
+					//if(RunInfo.totalProcessedReads > 100000) {
+					//	break;
+					//}
 					////
 	            }
 
