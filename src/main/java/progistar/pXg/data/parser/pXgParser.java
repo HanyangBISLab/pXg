@@ -20,7 +20,7 @@ import progistar.pXg.data.pXgRecord;
 
 public class pXgParser {
 
-	public static ArrayList<String> header = new ArrayList<String>();;
+	public static ArrayList<String> header = new ArrayList<String>();
 
 	private pXgParser() {}
 
@@ -32,8 +32,11 @@ public class pXgParser {
 
 		BufferedReader BR = new BufferedReader(new FileReader(file));
 		String[] fields = BR.readLine().split("\t");
-		for(int i=0; i<fields.length; i++) {
-			pXgParser.header.add(fields[i]);
+		// if the header is not defined:
+		if(pXgParser.header.size() == 0) {
+			for(int i=0; i<fields.length; i++) {
+				pXgParser.header.add(fields[i]);
+			}
 		}
 		
 		String line = null;

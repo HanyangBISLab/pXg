@@ -21,9 +21,13 @@ public class PIN {
 	private static String PIN_HEADER = "SpecId\tLabel\tScanNr\tScore\tLog2Reads\tLength6\tLength7\tLength8\tLength>8";
 	// note that the gemomicID is assigned to proteinIds
 	public static String[] pXgADDED_HEADERS = {"SpecID", "GenomicID", "Label"};
-	private static String[] pXg_DEFAULT_FEATURES = {Constants.DELTA_SCORE_COLUMN_NAME,"Reads",
-			//"MeanQScore", disable MQScore 
-			Constants.INFERRED_PEPTIDE_COLUMN_NAME, Constants.CLASS_COLUMN_NAME, Constants.AA_VARIANT_COLUMN_NAME, Constants.PEPTIDE_LENGTH_COLUMN_NAME};
+	private static String[] pXg_DEFAULT_FEATURES = {
+			Constants.DELTA_SCORE_COLUMN_NAME,
+			"Reads", //"MeanQScore", disable MQScore 
+			Constants.INFERRED_PEPTIDE_COLUMN_NAME, 
+			Constants.CLASS_COLUMN_NAME, 
+			Constants.AA_VARIANT_COLUMN_NAME, 
+			Constants.PEPTIDE_LENGTH_COLUMN_NAME };
 
 	private PIN() {}
 
@@ -45,7 +49,6 @@ public class PIN {
 
 			/// Find pXg default features
 			// find InferredPeptide index
-			// find Rank index
 			// find Reads
 			int[] pXgDefaultFeatIdices = new int[pXg_DEFAULT_FEATURES.length];
 			for(int fIdx=0; fIdx<pXg_DEFAULT_FEATURES.length; fIdx++) {
@@ -66,7 +69,7 @@ public class PIN {
 			int peptideLengthIdx = pXgDefaultFeatIdices[5];
 
 			// to adjust index caused by appending "UniqueID" and "Label" to the original input,
-			// the original index must be shifted by 2.
+			// the original index must be shifted by 3.
 			int indexShiftSize = pXgADDED_HEADERS.length;
 
 			// find min-max charge
@@ -106,7 +109,7 @@ public class PIN {
 				PIN_HEADER += additionalFeatureHeader.toString();
 			}
 			// PIN_HEADER += "\tnDeltaScore\tMeanQScore";
-			PIN_HEADER += "\tnDeltaScore";
+			PIN_HEADER += "\t"+Constants.DELTA_SCORE_COLUMN_NAME;
 			// AA variants
 			ArrayList<String> aaVariants = new ArrayList<String>();
 			int aaVarSize = AAVariantTable.getSize();

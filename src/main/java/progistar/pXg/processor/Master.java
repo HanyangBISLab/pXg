@@ -133,6 +133,13 @@ public class Master {
 						RunInfo.totalProcessedReads += readCount;
 						readCount = 0;
 					}
+					
+					//// DEBUG
+					///
+					if(RunInfo.totalProcessedReads > 100000) {
+						break;
+					}
+					////
 	            }
 
 	            // do last tasks
