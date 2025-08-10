@@ -65,7 +65,7 @@ public class PeptideAnnotation {
 		
 		for(int i=0; i<initSize; i++) {
 			PBlock initBlock = pBlocks.get(i);
-			String initPeptide = initBlock.getPeptideSequence(Parameters.leucineIsIsoleucine);
+			String initPeptide = initBlock.getPeptideSequence(false);
 			// check if the block has aa variant
 			/**
 			 * Allow only single AAVar per peptide.
@@ -81,7 +81,7 @@ public class PeptideAnnotation {
 				String leftPeptide = initPeptide.substring(0, aaVar.pos);
 				String rightPeptide = initPeptide.substring(aaVar.pos).replaceFirst(aaPeptide, aaRNA);
 				
-				PBlock aaVarBlock = initBlock.deepCopy(leftPeptide+rightPeptide);
+				PBlock aaVarBlock = initBlock.deepCopy(leftPeptide+rightPeptide, initPeptide);
 				aaVarBlock.aaVariant = aaVar;
 				
 				// add aaVarBlock

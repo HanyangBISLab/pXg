@@ -112,7 +112,7 @@ public class PeptideParser {
 					// remove unimod and mass relating patterns
 					peptide = peptide.replaceAll(Parameters.ptmParserRegExr, "");
 
-					PBlock pBlock = new PBlock(record, peptide, recordCount);
+					PBlock pBlock = new PBlock(record, peptide, peptide, recordCount);
 
 					// only psms passing the minimum threshold are further considered.
 					if(pBlock.score > Parameters.minScoreThreshold) {

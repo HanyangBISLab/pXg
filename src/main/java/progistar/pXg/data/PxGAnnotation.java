@@ -88,7 +88,7 @@ public class PxGAnnotation {
 
 		// assign fasta IDs to pBlock
 		for(PBlock pBlock : PeptideAnnotation.pBlocks) {
-			ArrayList<String> ids = matchedList.get(pBlock.getPeptideSequence(Parameters.leucineIsIsoleucine));
+			ArrayList<String> ids = matchedList.get(pBlock.getOriginalDeNovoSequence(Parameters.leucineIsIsoleucine));
 			if(ids != null) {
 				pBlock.fastaIDs = new String[ids.size()];
 				for(int i=0; i<pBlock.fastaIDs.length; i++) {

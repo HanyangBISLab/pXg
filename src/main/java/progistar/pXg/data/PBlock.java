@@ -15,6 +15,13 @@ public class PBlock implements Comparable<PBlock> {
 	 * 
 	 */
 	private String pSeq; 
+	
+	/**
+	 * This sequence is not affected by AAVariant.
+	 * In other words, it is the original de novo peptide.
+	 * 
+	 */
+	private String pOriginalSeq;
 
 	public String[] fastaIDs;
 	public double score;
@@ -35,9 +42,10 @@ public class PBlock implements Comparable<PBlock> {
 	// allow single user-defined aa variant per peptide.
 	public AAVariant aaVariant = null;
 
-	public PBlock (String[] record, String pSeq, int recordId) {
+	public PBlock (String[] record, String pSeq, String pOriginalSeq, int recordId) {
 		this.record = record;
 		this.pSeq = pSeq;
+		this.pOriginalSeq = pOriginalSeq;
 		this.fastaIDs = new String[0]; // zero size, initially.
 		this.score = Double.parseDouble(record[Parameters.scoreColumnIndex]);
 		this.recordId = recordId;
@@ -48,16 +56,16 @@ public class PBlock implements Comparable<PBlock> {
 	 * record, score, deltaScore, rank
 	 * 
 	 * 
-	 * @param newSequence
+	 * @param pSeq
 	 * @return
 	 */
-	public PBlock deepCopy (String newSequence) {
+	public PBlock deepCopy (String pSeq, String pOriginalSeq) {
 		String[] nRecord = new String[this.record.length];
 		for(int i=0; i<nRecord.length; i++) {
 			nRecord[i] = this.record[i];
 		}
 		
-		PBlock newBlock = new PBlock(nRecord, newSequence, this.recordId);
+		PBlock newBlock = new PBlock(nRecord, pSeq, pOriginalSeq, this.recordId);
 		
 		newBlock.score = this.score;
 		newBlock.deltaScore = this.deltaScore;
@@ -81,6 +89,19 @@ public class PBlock implements Comparable<PBlock> {
 		}
 	}
 	
+	/**
+	 * It is used for matching to protein sequences.
+	 * 
+	 * @param isReplaceIL
+	 * @return
+	 */
+	public String getOriginalDeNovoSequence (boolean isReplaceIL) {
+		if(isReplaceIL) {
+			return this.pOriginalSeq.replace("I", "L");
+		} else {
+			return this.pOriginalSeq;
+		}
+	}
 	
 	
 	public String getSpecID () {
