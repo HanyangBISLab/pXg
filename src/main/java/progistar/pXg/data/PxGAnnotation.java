@@ -234,21 +234,7 @@ public class PxGAnnotation {
 							// For additional information, 
 							// decoy information is neglected.
 							
-							// if this is unmapped, then store.
-							if(xBlock.isMappedAmbiguous() && isTarget[0] && Parameters.EXPORT_UNMAPPED_SEQ) {
-								ArrayList<XBlock> unmappedXBlocks = new ArrayList<>();
-								unmappedXBlocks.add(xBlock);
-								unmappedXBlocks.addAll(xBlock.siblingXBlocks);
-
-								BWUnmapped.append(">"+xBlock.peptideSequence);
-								BWUnmapped.newLine();
-								for(XBlock thisXBlock : unmappedXBlocks) {
-									BWUnmapped.append(thisXBlock.sequenceID).append("\t")
-									.append(thisXBlock.fullReadSequence).append("\t")
-									.append(Global.SEQUENCE_ARRAYLIST.get(thisXBlock.genomicSequenceIdx));
-									BWUnmapped.newLine();
-								}
- 							} else if(isTarget[0]){
+							if(isTarget[0]){
  								// SAM ID Mapper
  								if(Parameters.EXPORT_SAM) {
  									if(		(Parameters.EXPORT_REFERENCE && pBlock.isReference) ||

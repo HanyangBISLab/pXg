@@ -34,7 +34,6 @@ public class XBlock {
 	public String peptideSequence	=	null;
 	public String tAnnotations		=	null; // transcript and additional annotations
 	public String[] fastaIDs		=	new String[0];
-	public String fullReadSequence	=	null; // for unmapped read
 	public double bestRegionPriority 	= 	Double.MAX_VALUE;
 	public double targetQScore		=	0;
 	public double decoyQScore		=	0;

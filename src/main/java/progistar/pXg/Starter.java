@@ -67,7 +67,7 @@ public class Starter
     			File tmpOutput = new File(Parameters.tmpOutputFilePaths[i]);
 				tmpOutputs[i] = pXgParser.parse(tmpOutput, false);
 				// delete tmp file
-				 tmpOutput.delete();
+				tmpOutput.delete();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

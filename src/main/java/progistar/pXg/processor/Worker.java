@@ -127,11 +127,6 @@ public class Worker extends Thread {
 
 			// for unmapped/softclip we need more sequence information
 			char mappingStatus = gSeq.getMappingStatus();
-			if(Parameters.EXPORT_UNMAPPED_SEQ && (mappingStatus == Constants.MARK_UNMAPPED || mappingStatus == Constants.MARK_SOFTCLIP)) {
-				BW.append(Constants.OUTPUT_G_SEQUENCE).append("\t").append(gSeq.getNucleotideString());
-				BW.newLine();
-			}
-
 			// write average QScore.
 			BW.append(Constants.OUTPUT_G_QSCORE+"\t"+gSeq.meanQScore);
 			BW.newLine();

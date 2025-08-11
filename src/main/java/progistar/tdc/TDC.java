@@ -228,6 +228,7 @@ public class TDC {
 			}
 		}
 		
+		/*
 		for(int i=0; i<=boundIdx; i++) {
 			pXgRecord record = records.get(i);
 			if(record.isTarget()) {
@@ -236,6 +237,25 @@ public class TDC {
 			} else {
 				passedDecoy++;
 			}
+		}*/
+		
+		for(int i=0; i<records.size(); i++) {
+			pXgRecord record = records.get(i);
+			
+			if(i <= boundIdx) {
+				record.setValueByFieldName("FDRFilter", "Pass");
+				if(record.isTarget()) {
+					passedTarget++;
+					passedPSMs.add(record);
+				} else {
+					passedDecoy++;
+				}
+			} else {
+				record.setValueByFieldName("FDRFilter", "Fail");
+				passedPSMs.add(record);
+			}
+			
+			
 		}
 		
 		System.out.println(" "+title);
@@ -277,7 +297,7 @@ public class TDC {
 				.longOpt("output").argName("tsv")
 				.hasArg()
 				.required(true)
-				.desc("fdr output file")
+				.desc("fdr output file.")
 				.build();
 		
 		Option optionFDR = Option.builder("f")

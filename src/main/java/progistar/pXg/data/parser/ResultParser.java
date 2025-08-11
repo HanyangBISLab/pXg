@@ -30,13 +30,13 @@ public class ResultParser {
 				double meanQScore = 0;
 
 				// for unmapped reads
-				String fullReads = null;
 				StringBuilder transcriptsWithOutBANlist = new StringBuilder();
 
 				String[] field = null;
 				while((line = BR.readLine()) != null) {
 					// initialize transcript buffer
 					transcriptsWithOutBANlist.setLength(0);
+					System.out.println(line);
 
 					field = line.split("\t");
 					if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_UNIQUE_ID)) {
@@ -47,16 +47,10 @@ public class ResultParser {
 						} else {
 							isDecoy = false;
 						}
-
-						fullReads = null;
-
 					} else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_QSCORE)) {
 						meanQScore = Double.parseDouble(field[1]);
 					} 
-					// there is no OUTPUT_G_SEQUENCE field if Parameters.isOutputUnamppedReads turns off.
-					else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_SEQUENCE)) {
-						fullReads = field[1];
-					} else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_PEPTIDE)) {
+					else if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_PEPTIDE)) {
 
 						try {
 							String pSeq = field[1]; // peptide sequence without I/L consideration
@@ -83,9 +77,7 @@ public class ResultParser {
 							String[] fromStartDistances = field[17].split("\\|");
 							String[] fromStopDistances = field[18].split("\\|");
 
-							xBlock.fullReadSequence = fullReads;
 							// If unmapped reads, merging xBlocks and making a single contig xBlock.
-
 							// antisense checker if three-frame
 							/**
 							 * Antisense event is not allowed.
