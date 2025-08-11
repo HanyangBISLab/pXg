@@ -36,7 +36,6 @@ public class ResultParser {
 				while((line = BR.readLine()) != null) {
 					// initialize transcript buffer
 					transcriptsWithOutBANlist.setLength(0);
-					System.out.println(line);
 
 					field = line.split("\t");
 					if(field[0].equalsIgnoreCase(Constants.OUTPUT_G_UNIQUE_ID)) {

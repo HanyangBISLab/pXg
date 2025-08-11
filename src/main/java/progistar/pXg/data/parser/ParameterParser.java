@@ -178,12 +178,6 @@ public class ParameterParser {
 				.required(false)
 				.desc("How many candidates will be considered per scan. Default is 100 (in other words, use all candidates).")
 				.build();
-		Option optionUnmappedReads = Option.builder("ou")
-				.longOpt("output_unmapped_reads").argName("optional, true|false")
-				.hasArg()
-				.required(false)
-				.desc("Report matched unmapped reads as an additional output file (true or false). Default is false.")
-				.build();
 		Option optionOutputSAM = Option.builder("os")
 				.longOpt("output_sam").argName("optional, true|false")
 				.hasArg()
@@ -314,7 +308,6 @@ public class ParameterParser {
 		.addOption(optionMaxFlankSize)
 		.addOption(optionRank)
 		.addOption(optionAAVariant)
-		.addOption(optionUnmappedReads)
 		.addOption(optionOutputSAM)
 		.addOption(optionOutputNonreference)
 		.addOption(optionOutputReference)
@@ -345,7 +338,6 @@ public class ParameterParser {
 		    	String[] paths = cmd.getOptionValue("b").split(",");
 				Parameters.NUM_OF_SAM_FILES = paths.length;
 				Parameters.sequenceFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
-				Parameters.unmappedFilePaths = new String[Parameters.NUM_OF_SAM_FILES];
 				Parameters.exportSAMPaths	 = new String[Parameters.NUM_OF_SAM_FILES];
 				Parameters.tmpOutputFilePaths= new String[Parameters.NUM_OF_SAM_FILES];
 
@@ -364,7 +356,6 @@ public class ParameterParser {
 					
 					int lastIdx = Parameters.sequenceFilePaths[idx].lastIndexOf(".");
 					
-					Parameters.unmappedFilePaths[idx] = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".unknown.seq";
 					Parameters.exportSAMPaths[idx]	  = Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + ".ided.sam";
 					Parameters.tmpOutputFilePaths[idx]= Parameters.sequenceFilePaths[idx].substring(0, lastIdx) + "."+Constants.UNIQUE_RUN_ID;
 					
@@ -442,10 +433,7 @@ public class ParameterParser {
 				// rename and relocation of sam/bam-related outputs
 				for(int idx=0; idx < Parameters.NUM_OF_SAM_FILES; idx++) {
 					
-					File file = new File(Parameters.unmappedFilePaths[idx]);
-					Parameters.unmappedFilePaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
-					
-					file = new File(Parameters.exportSAMPaths[idx]);
+					File file = new File(Parameters.exportSAMPaths[idx]);
 					Parameters.exportSAMPaths[idx] = basePath +"/"+outputFileWOExtension.getName()+"."+file.getName();
 					
 					file = new File(Parameters.tmpOutputFilePaths[idx]);
@@ -553,13 +541,6 @@ public class ParameterParser {
 		    // --rank
 		    if(cmd.hasOption("r")) {
 		    	Parameters.psmRank = Integer.parseInt(cmd.getOptionValue("r"));
-		    }
-		    
-		    // --output_unmapped_reads
-		    if(cmd.hasOption("ou")) {
-		    	if(cmd.getOptionValue("ou").equalsIgnoreCase("true")) {
-		    		Parameters.EXPORT_UNMAPPED_SEQ = true;
-		    	}
 		    }
 		    
 		    // --output_sam
@@ -802,7 +783,6 @@ public class ParameterParser {
 		System.out.println("  MAX_FLANK_SIZE: "+Parameters.maxFlankNSize);
 		System.out.println(" OUT_RESULT: "+Parameters.outputFilePath);
 		System.out.println("  OUT_PIN.: "+Parameters.pinFilePath);
-		System.out.println("  OUT_UNKNOWN: "+Parameters.EXPORT_UNMAPPED_SEQ);
 		System.out.println("  OUT_SAM: "+Parameters.EXPORT_SAM);
 		System.out.println("  OUT_REFERENCE: "+Parameters.EXPORT_REFERENCE);
 		System.out.println("  OUT_NON_REFERENCE: "+Parameters.EXPORT_NON_REFERENCE);
@@ -868,8 +848,6 @@ public class ParameterParser {
 		Logger.append(" OUT_RESULT: "+Parameters.outputFilePath);
 		Logger.newLine();
 		Logger.append("  OUT_PIN: "+Parameters.pinFilePath);
-		Logger.newLine();
-		Logger.append("  OUT_UNMAPPED: "+Parameters.EXPORT_UNMAPPED_SEQ);
 		Logger.newLine();
 		Logger.append("  OUT_SAM: "+Parameters.EXPORT_SAM);
 		Logger.newLine();

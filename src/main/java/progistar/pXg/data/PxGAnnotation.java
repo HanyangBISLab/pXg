@@ -167,9 +167,6 @@ public class PxGAnnotation {
 			BW.append(Constants.CLASS_COLUMN_NAME);
 			BW.newLine();
 
-			File outFile = new File(Parameters.unmappedFilePaths[Parameters.CURRENT_FILE_INDEX]);
-			BufferedWriter BWUnmapped = new BufferedWriter(new FileWriter(outFile));
-
 			// calculate genomic ID
 			// The combination of genomic loci + strand + nucleotide sequence is mapping to unique gneomic ID.
 			Hashtable<String, Integer> genomicIDMapper = new Hashtable<>();
@@ -252,12 +249,6 @@ public class PxGAnnotation {
 
 			// write exportSAM
 			BW.close();
-			BWUnmapped.close();
-			
-			// if we do not want to generate additional file for unmapped reads
-			if(!Parameters.EXPORT_UNMAPPED_SEQ) {
-				outFile.delete();
-			}
 			
 			if(Parameters.EXPORT_SAM) {
 				SAMExportor.writeSAM(BWSAM);
