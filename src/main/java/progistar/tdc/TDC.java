@@ -160,10 +160,10 @@ public class TDC {
 				}
 			}
 			
-			referencePSMsLenShort = getPassedPSMs(referencePSMsLenShort, "Reference target PSMs (short peptides)");
-			referencePSMsLenLong = getPassedPSMs(referencePSMsLenLong, "Reference target PSMs (long peptides)");
-			nonreferencePSMsLenShort = getPassedPSMs(nonreferencePSMsLenShort, "Non-reference target PSMs (short peptides)");
-			nonreferencePSMsLenLong = getPassedPSMs(nonreferencePSMsLenLong, "Non-reference target PSMs (long peptides)");
+			referencePSMsLenShort = getMarkedPSMFilter(referencePSMsLenShort, "Reference target PSMs (short peptides)", fdr);
+			referencePSMsLenLong = getMarkedPSMFilter(referencePSMsLenLong, "Reference target PSMs (long peptides)", fdr);
+			nonreferencePSMsLenShort = getMarkedPSMFilter(nonreferencePSMsLenShort, "Non-reference target PSMs (short peptides)", fdr);
+			nonreferencePSMsLenLong = getMarkedPSMFilter(nonreferencePSMsLenLong, "Non-reference target PSMs (long peptides)", fdr);
 			
 			// add all
 			passedPSMs.addAll(referencePSMsLenShort);
@@ -175,8 +175,8 @@ public class TDC {
 			
 			System.out.println("Passed PSMs: "+passedPSMs.size());
 		} else {
-			referencePSMs = getPassedPSMs(referencePSMs, "Reference target PSMs");
-			nonreferencePSMs = getPassedPSMs(nonreferencePSMs, "Non-reference target PSMs");
+			referencePSMs = getMarkedPSMFilter(referencePSMs, "Reference target PSMs", fdr);
+			nonreferencePSMs = getMarkedPSMFilter(nonreferencePSMs, "Non-reference target PSMs", fdr);
 			
 			passedPSMs.addAll(referencePSMs);
 			passedPSMs.addAll(nonreferencePSMs);
@@ -202,7 +202,7 @@ public class TDC {
 		BW.close();
 	}
 	
-	public static ArrayList<pXgRecord> getPassedPSMs (ArrayList<pXgRecord> records, String title) {
+	public static ArrayList<pXgRecord> getMarkedPSMFilter (ArrayList<pXgRecord> records, String title, double fdr) {
 		ArrayList<pXgRecord> passedPSMs = new ArrayList<pXgRecord>();
 		
 		double numTarget = 0;
@@ -244,9 +244,9 @@ public class TDC {
 			
 			if(i <= boundIdx) {
 				record.setValueByFieldName("FDRFilter", "Pass");
+				passedPSMs.add(record);
 				if(record.isTarget()) {
 					passedTarget++;
-					passedPSMs.add(record);
 				} else {
 					passedDecoy++;
 				}
