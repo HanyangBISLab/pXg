@@ -27,7 +27,7 @@ public class TDC {
 	public static File pXgFile			= null;
 	public static double fdr			= 0.01;
 	public static boolean isLengthSpecific = false;
-	public static File outputFile		= null;
+	public static File prefixOfOutputFile		= null;
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(Constants.VERSION+" "+Constants.RELEASE);
@@ -185,7 +185,7 @@ public class TDC {
 		}
 		
 		// write output
-		BufferedWriter BW = new BufferedWriter(new FileWriter(outputFile));
+		BufferedWriter BW = new BufferedWriter(new FileWriter(prefixOfOutputFile.getAbsolutePath()+".fdr.tsv"));
 		
 		BW.append(pXgParser.header.get(0));
 		for(int i=1; i<pXgParser.header.size(); i++) {
@@ -227,17 +227,6 @@ public class TDC {
 				numDecoy++;
 			}
 		}
-		
-		/*
-		for(int i=0; i<=boundIdx; i++) {
-			pXgRecord record = records.get(i);
-			if(record.isTarget()) {
-				passedTarget++;
-				passedPSMs.add(record);
-			} else {
-				passedDecoy++;
-			}
-		}*/
 		
 		for(int i=0; i<records.size(); i++) {
 			pXgRecord record = records.get(i);
@@ -297,7 +286,7 @@ public class TDC {
 				.longOpt("output").argName("tsv")
 				.hasArg()
 				.required(true)
-				.desc("fdr output file.")
+				.desc("specifies the output file prefix, generating the final result as [prefix].fdr.tsv.")
 				.build();
 		
 		Option optionFDR = Option.builder("f")
@@ -347,7 +336,7 @@ public class TDC {
 		    	isLengthSpecific = true;
 		    }
 		    if(cmd.hasOption("o")) {
-		    	outputFile = new File(cmd.getOptionValue("o"));
+		    	prefixOfOutputFile = new File(cmd.getOptionValue("o"));
 		    }
 		} catch (ParseException e) {
 			System.out.println(e.getMessage());
