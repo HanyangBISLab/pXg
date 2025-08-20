@@ -420,6 +420,8 @@ public class ParameterParser {
 				if(isExist(Parameters.outputFilePath)) {
 					printAlreadyExistFileOrDirectory(Parameters.outputFilePath);
 					isFail = true;
+					// direct exit
+					System.exit(1);
 				}
 				
 				File baseFile = new File(Parameters.outputFilePath);
