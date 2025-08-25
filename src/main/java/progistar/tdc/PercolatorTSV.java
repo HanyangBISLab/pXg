@@ -30,6 +30,7 @@ public class PercolatorTSV {
 
 	public static final String PROTEIN_IDS	= "proteinids";
 	public static final String PSM_ID		= "psmid";
+	public static final String SCORE		= "score";
 	public static final String PEPTIDE		= "peptide";
 	
 	public ArrayList<PercolatorRecord> records = new ArrayList<PercolatorRecord>();
@@ -51,7 +52,7 @@ public class PercolatorTSV {
 				proteinIdsIdx = i;
 			} else if(fields[i].equalsIgnoreCase(PSM_ID)) {
 				psmIdIdx = i;
-			} else if(fields[i].equalsIgnoreCase(TDC.scoreName)) {
+			} else if(fields[i].equalsIgnoreCase(SCORE)) {
 				scoreIdx = i;
 			} else if(fields[i].equalsIgnoreCase(PEPTIDE)) {
 				peptideIdx = i;
