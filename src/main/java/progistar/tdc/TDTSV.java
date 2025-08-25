@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 class TDRecord {
@@ -75,12 +77,6 @@ public class TDTSV {
 		
 		// check and remove decoy prefix.
 		checkAndRemoveDecoyPrefix();
-		
-		// generate mapper
-		for(int i=0; i<records.size(); i++) {
-			TDRecord pr = records.get(i);
-			keyToRecordMapper.put(pr.getKey(), pr);
-		}
 	}
 	
 	public String parseProteinId (String proteinId) {
@@ -120,6 +116,59 @@ public class TDTSV {
 			
 		} else {
 			System.out.println("No decoy prefix found. It should be target PSMs.");
+		}
+	}
+	
+	public static void refineTargetDecoyPSMs (TDTSV targetTSV, TDTSV decoyTSV) {
+		ArrayList<TDRecord> allTSV = new ArrayList<TDRecord>();
+		allTSV.addAll(targetTSV.records);
+		allTSV.addAll(decoyTSV.records);
+
+		// remove duplicated spectrum
+		Collections.sort(allTSV, new Comparator<TDRecord>() {
+			@Override
+			public int compare(TDRecord o1, TDRecord o2) {
+				double s1 = Double.parseDouble(o1.score);
+				double s2 = Double.parseDouble(o2.score);
+				
+				if(s1 > s2) {
+					return -1;
+				} else if(s1 < s2) {
+					return 1;
+				} else if(o1.isDecoy && (!o2.isDecoy)) {
+					return 1;
+				}  else if((!o1.isDecoy) && o2.isDecoy) {
+					return -1;
+				}
+				
+				return 0;
+			}
+		});
+		Hashtable<String, Boolean> checks = new Hashtable<String, Boolean>();
+		targetTSV.records = new ArrayList<TDRecord>();
+		decoyTSV.records = new ArrayList<TDRecord>();
+		
+		for(TDRecord pr : allTSV) {
+			String psmId = pr.psmId;
+			if(checks.get(psmId) == null) {
+				checks.put(psmId, true);
+				if(pr.isDecoy) {
+					decoyTSV.records.add(pr);			
+				} else {
+					targetTSV.records.add(pr);
+				}
+			}
+		}
+		
+
+		// generate mapper
+		for(int i=0; i<targetTSV.records.size(); i++) {
+			TDRecord pr = targetTSV.records.get(i);
+			targetTSV.keyToRecordMapper.put(pr.getKey(), pr);
+		}
+		for(int i=0; i<decoyTSV.records.size(); i++) {
+			TDRecord pr = decoyTSV.records.get(i);
+			decoyTSV.keyToRecordMapper.put(pr.getKey(), pr);
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,6 +31,7 @@ public class TDC {
 	public static File pXgFile			= null;
 	public static double fdr			= 0.01;
 	public static boolean isLengthSpecific = false;
+	public static boolean isPeptideLevel   = false;
 	public static File prefixOfOutputFile		= null;
 	public static String software		= PERCOLATOR;
 	
@@ -50,6 +52,9 @@ public class TDC {
 			targetTSV = new MokapotTSV(targetTSVFile);
 			decoyTSV = new MokapotTSV(decoyTSVFile);
 		}
+		
+		// remove redundant psm_id
+		TDTSV.refineTargetDecoyPSMs(targetTSV, decoyTSV);
 		
 		ArrayList<pXgRecord> records = pXgParser.parse(pXgFile, false);
 		
@@ -76,7 +81,7 @@ public class TDC {
 			}
 			
 			if( pr != null ) {
-				record.setValueByFieldName("PercolatorScore", pr.score);
+				record.setValueByFieldName("Rescore", pr.score);
 				if(record.isReference()) {
 					referencePSMs.add(record);
 					
@@ -107,8 +112,8 @@ public class TDC {
 		Collections.sort(referencePSMs, new Comparator<pXgRecord>() {
 			@Override
 			public int compare(pXgRecord o1, pXgRecord o2) {
-				double s1 = Double.parseDouble(o1.getValueByFieldName("percolatorscore"));
-				double s2 = Double.parseDouble(o2.getValueByFieldName("percolatorscore"));
+				double s1 = Double.parseDouble(o1.getValueByFieldName("Rescore"));
+				double s2 = Double.parseDouble(o2.getValueByFieldName("Rescore"));
 				
 				if(s1 > s2) {
 					return -1;
@@ -127,8 +132,8 @@ public class TDC {
 		Collections.sort(nonreferencePSMs, new Comparator<pXgRecord>() {
 			@Override
 			public int compare(pXgRecord o1, pXgRecord o2) {
-				double s1 = Double.parseDouble(o1.getValueByFieldName("percolatorscore"));
-				double s2 = Double.parseDouble(o2.getValueByFieldName("percolatorscore"));
+				double s1 = Double.parseDouble(o1.getValueByFieldName("Rescore"));
+				double s2 = Double.parseDouble(o2.getValueByFieldName("Rescore"));
 				
 				if(s1 > s2) {
 					return -1;
@@ -143,6 +148,53 @@ public class TDC {
 				return 0;
 			}
 		});
+		
+		if(isPeptideLevel) {
+			
+			numReferenceTargetPSMs = 0;
+			numReferenceDecoyPSMs = 0;
+			numNonreferenceTargetPSMs = 0;
+			numNonreferenceDecoyPSMs = 0;
+			
+			ArrayList<pXgRecord> peptides = referencePSMs;
+			referencePSMs = new ArrayList<pXgRecord>();
+			Hashtable<String, Boolean> checks  = new Hashtable<String, Boolean>();
+			for(pXgRecord record : peptides) {
+				String peptide = record.getValueByFieldName("InferredPeptide");
+				if(checks.get(peptide) == null) {
+					checks.put(peptide, true);
+					referencePSMs.add(record);
+					
+					if(record.isTarget()) {
+						numReferenceTargetPSMs++;
+					} else {
+						numReferenceDecoyPSMs++;
+					}
+				}
+			}
+			
+			checks.clear();
+			peptides = nonreferencePSMs;
+			nonreferencePSMs = new ArrayList<pXgRecord>();
+			
+			for(pXgRecord record : peptides) {
+				String peptide = record.getValueByFieldName("InferredPeptide");
+				if(checks.get(peptide) == null) {
+					checks.put(peptide, true);
+					nonreferencePSMs.add(record);
+					
+					if(record.isTarget()) {
+						numNonreferenceTargetPSMs++;
+					} else {
+						numNonreferenceDecoyPSMs++;
+					}
+				}
+			}
+			
+			System.out.println("  -Reference target/decoy peptides: "+numReferenceTargetPSMs+"/"+numReferenceDecoyPSMs);
+			System.out.println("  -Non-reference target/decoy peptides: "+numNonreferenceTargetPSMs+"/"+numNonreferenceDecoyPSMs);
+			
+		}
 		
 		// do FDR
 		ArrayList<pXgRecord> passedPSMs = new ArrayList<pXgRecord>();
@@ -231,13 +283,13 @@ public class TDC {
 			if(record.isTarget()) {
 				numTarget++;
 				
-				if(numDecoy/numTarget < fdr) {
-					thisFDR = numDecoy/numTarget;
-					boundIdx = i;
-				}
-				
 			} else {
 				numDecoy++;
+			}
+			
+			if(numTarget != 0 && numDecoy/numTarget < fdr) {
+				thisFDR = numDecoy/numTarget;
+				boundIdx = i;
 			}
 		}
 		
@@ -315,6 +367,12 @@ public class TDC {
 				.desc("Calculate a length-specific FDR")
 				.build();
 		
+		Option optionPeptideFDR = Option.builder("p")
+				.longOpt("peptide")
+				.required(false)
+				.desc("Calculate a peptide level FDR")
+				.build();
+		
 		Option optionSoftware = Option.builder("s")
 				.longOpt("software").argName("percolator|mokapot")
 				.hasArg()
@@ -322,9 +380,12 @@ public class TDC {
 				.desc("Specify the software tool used to generate target and decoy rescoring PSMs. The default is percolator.")
 				.build();
 		
+		
+		
 		options.addOption(optionInput)
 		.addOption(optionTargetTSV)
 		.addOption(optionDecoyTSV)
+		.addOption(optionPeptideFDR)
 		.addOption(optionFDR)
 		.addOption(optionOutput)
 		.addOption(optionLengthSpecificFDR)
@@ -347,6 +408,10 @@ public class TDC {
 		    
 		    if(cmd.hasOption("d")) {
 		    	decoyTSVFile = new File(cmd.getOptionValue("d"));
+		    }
+		    
+		    if(cmd.hasOption("p")) {
+		    	isPeptideLevel = true;
 		    }
 		    
 		    if(cmd.hasOption("f")) {
