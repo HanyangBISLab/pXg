@@ -26,6 +26,7 @@ public class TDC {
 	public static File decoyTSVFile 	= null;
 	public static File pXgFile			= null;
 	public static double fdr			= 0.01;
+	public static String scoreName		= "score";
 	public static boolean isLengthSpecific = false;
 	public static File prefixOfOutputFile		= null;
 	
@@ -296,6 +297,13 @@ public class TDC {
 				.desc("FDR value. Default value is 0.01.")
 				.build();
 		
+		Option optionScoreName = Option.builder("s")
+				.longOpt("score").argName("string")
+				.hasArg()
+				.required(false)
+				.desc("Specifies the name of score column. Default is score.")
+				.build();
+		
 		Option optionLengthSpecificFDR = Option.builder("l")
 				.longOpt("length_specific")
 				.required(false)
@@ -306,6 +314,7 @@ public class TDC {
 		.addOption(optionTargetTSV)
 		.addOption(optionDecoyTSV)
 		.addOption(optionFDR)
+		.addOption(optionScoreName)
 		.addOption(optionOutput)
 		.addOption(optionLengthSpecificFDR);
 		
@@ -330,6 +339,10 @@ public class TDC {
 		    
 		    if(cmd.hasOption("f")) {
 		    	fdr = Double.parseDouble(cmd.getOptionValue("f"));
+		    }
+		    
+		    if(cmd.hasOption("s")) {
+		    	scoreName = cmd.getOptionValue("s");
 		    }
 		    
 		    if(cmd.hasOption("l")) {
