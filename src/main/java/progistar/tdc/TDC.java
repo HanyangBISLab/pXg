@@ -21,6 +21,9 @@ import progistar.pXg.data.pXgRecord;
 import progistar.pXg.data.parser.pXgParser;
 
 public class TDC {
+	
+	public static final String PERCOLATOR	= "percolator";
+	public static final String MOKAPOT		= "mokapot";
 
 	public static File targetTSVFile	= null;
 	public static File decoyTSVFile 	= null;
@@ -28,6 +31,7 @@ public class TDC {
 	public static double fdr			= 0.01;
 	public static boolean isLengthSpecific = false;
 	public static File prefixOfOutputFile		= null;
+	public static String software		= PERCOLATOR;
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(Constants.VERSION+" "+Constants.RELEASE);
@@ -36,8 +40,17 @@ public class TDC {
 		
 		parseOptions(args);
 		
-		PercolatorTSV targetTSV = new PercolatorTSV(targetTSVFile);
-		PercolatorTSV decoyTSV = new PercolatorTSV(decoyTSVFile);
+		TDTSV targetTSV = null;
+		TDTSV decoyTSV = null;
+		
+		if(software.equalsIgnoreCase(PERCOLATOR)) {
+			targetTSV = new PercolatorTSV(targetTSVFile);
+			decoyTSV = new PercolatorTSV(decoyTSVFile);
+		} else if(software.equalsIgnoreCase(MOKAPOT)) {
+			targetTSV = new MokapotTSV(targetTSVFile);
+			decoyTSV = new MokapotTSV(decoyTSVFile);
+		}
+		
 		ArrayList<pXgRecord> records = pXgParser.parse(pXgFile, false);
 		
 		// connect between pXg and percolator results
@@ -57,7 +70,7 @@ public class TDC {
 			
 			String key = specId + "@" +genomicId + "@" +peptide;
 			
-			PercolatorRecord pr = targetTSV.keyToRecordMapper.get(key);
+			TDRecord pr = targetTSV.keyToRecordMapper.get(key);
 			if(pr == null) {
 				pr = decoyTSV.keyToRecordMapper.get(key);
 			}
@@ -272,14 +285,14 @@ public class TDC {
 				.longOpt("target").argName("tsv")
 				.hasArg()
 				.required(true)
-				.desc("A list of target PSMs reported by Percolator.")
+				.desc("A list of target PSMs reported by Percolator or Mokapot.")
 				.build();
 		
 		Option optionDecoyTSV = Option.builder("d")
 				.longOpt("decoy").argName("tsv")
 				.hasArg()
 				.required(true)
-				.desc("A list of decoy PSMs reported by Percolator.")
+				.desc("A list of decoy PSMs reported by Percolator or Mokapot.")
 				.build();
 		
 		Option optionOutput = Option.builder("o")
@@ -296,11 +309,17 @@ public class TDC {
 				.desc("FDR value. Default value is 0.01.")
 				.build();
 		
-		
 		Option optionLengthSpecificFDR = Option.builder("l")
 				.longOpt("length_specific")
 				.required(false)
 				.desc("Calculate a length-specific FDR")
+				.build();
+		
+		Option optionSoftware = Option.builder("s")
+				.longOpt("software").argName("percolator|mokapot")
+				.hasArg()
+				.required(false)
+				.desc("Specify the software tool used to generate target and decoy rescoring PSMs. The default is percolator.")
 				.build();
 		
 		options.addOption(optionInput)
@@ -308,7 +327,8 @@ public class TDC {
 		.addOption(optionDecoyTSV)
 		.addOption(optionFDR)
 		.addOption(optionOutput)
-		.addOption(optionLengthSpecificFDR);
+		.addOption(optionLengthSpecificFDR)
+		.addOption(optionSoftware);
 		
 		CommandLineParser parser = new DefaultParser();
 	    HelpFormatter helper = new HelpFormatter();
@@ -331,6 +351,10 @@ public class TDC {
 		    
 		    if(cmd.hasOption("f")) {
 		    	fdr = Double.parseDouble(cmd.getOptionValue("f"));
+		    }
+		    
+		    if(cmd.hasOption("s")) {
+		    	software = cmd.getOptionValue("s");
 		    }
 		    
 		    if(cmd.hasOption("l")) {
