@@ -101,39 +101,42 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 
 ### Command-line interface
 #### List of Parameters
-|Option    | Description    | Mandatory   |
-| :---:   | :---:       | :---:     |
-| gtf       | GTF file path. We recommand to use the same gtf corresponding to alignment |Yes   |
-| bam       | SAM/BAM file path. The file must be sorted by coordinate. Multiple SAM/BAM files should be separated by comma (,) |Yes   |
-| psm       | PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine |Yes   |
-| identifier_index       | File name index in the psm file |Yes   |
-| peptide_index       | Peptide index in the psm file |Yes   |
-| charge_index     | Charge state index in the psm file |Yes   |
-| output         | Base output name of pXg |Yes   |
-| sep            | Specify the column separator. Possible values are csv or tsv. Default is tsv |No   |
-| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness |No   |
-| add_index  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|No  |
-| il_equivalent           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |No   |
-| lengths        | Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13 |No   |
-| fasta     | Canonical sequence database to report conservative assignment of noncanonical PSMs |No   |
-| rank           | How many candidates will be considered per a scan. Default is 100 (in other words, use all ranked candidates) |No   |
-| output_sam        | Report matched reads as SAM format (true or false). Default is false |No   |
-| output_canonical  | Report caonical peptides in the out_sam file (true or false). Default is true |No   |
-| output_noncanonical| Report noncaonical peptides in the out_sam file (true or false). Default is true |No   |
-| penalty_mutation   | Penalty per a mutation. Default is 1 |No   |
-| penalty_alternative_splicing         | Penalty for alternative splicing. Default is 10 |No   |
-| penalty_5utr       | Penalty for 5`-UTR. Default is 20 |No   |
-| penalty_3utr       | Penalty for 3`-UTR. Default is 20 |No   |
-| penalty_ncrna      | Penalty for noncoding RNA. Default is 20 |No   |
-| penalty_frameshift         | Penalty for frame shift. Default is 20 |No   |
-| penalty_intron_retention         | Penalty for intron region. Default is 30 |No   |
-| penalty_intergenic_region        | Penalty for intergenic region. Default is 30 |No   |
-| penalty_asrna      | Penalty for antisense RNA. Default is 30 |No   |
-| penalty_softclip      | Penalty for softclip reads. Default is 50 |No   |
-| penalty_unknown    | Penalty for unmapped reads. Default is 100 |No   |
-| gtf_partition_size*       | The size of treating genomic region at once. Default is 5000000 |No   |
-| sam_partition_size*       | The size of treating number of reads at once. Default is 1000000 |No   |
-| threads*                  | The number of threads. Default is 4|No   |
+|Option    | Description    | Value   | Mandatory   |
+| :---:   | :---:       | :---:     | :---:     |
+| gtf       | GTF file path. We recommand to use the same gtf corresponding to alignment | string |Yes   |
+| bam       | SAM/BAM file path. The file must be sorted by coordinate. Multiple SAM/BAM files should be separated by comma (,) | string |Yes   |
+| psm       | PSM file path. It is expected that the psm file is derived from proteomics search by de novo or database search engine |string |Yes   |
+| identifier_index       | PSM identifier indicies (one-based). One or more indicies can be specified by comma separated. ex> 3,5,7 |integer|Yes   |
+| peptide_index       | Peptide index in the psm file |integer|Yes   |
+| charge_index     | Charge state index in the psm file |integer|Yes   |
+| output         | Base output name of pXg |string|Yes   |
+| comment     | Specify the starting characters of comment lines to be ignored during processing. Lines beginning with these characters will be skipped. The default value is #\|@\|%\|MTD |string|No   |
+| min_score            | Specify the minimum score threshold for peptide-spectrum matches (PSMs) to be included. The default value is 0 |float|No   |
+| count            | Specify which reads to consider for counting. The default is primary |primary \| all |No   |
+| sep            | Specify the column separator. Possible values are csv or tsv. Default is tsv |tsv\|csv|No   |
+| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness |f\|r\|fr\|rf\|auto|No   |
+| add_index  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|integer|No  |
+| il_equivalent           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |true\|false|No   |
+| lengths        | Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13 |integer|No   |
+| fasta     | Canonical sequence database to report conservative assignment of noncanonical PSMs |string|No   |
+| rank           | How many candidates will be considered per a scan. Default is 100 (in other words, use all ranked candidates) |integer|No   |
+| output_sam        | Report matched reads as SAM format (true or false). Default is false |true\|false|No   |
+| output_canonical  | Report caonical peptides in the out_sam file (true or false). Default is true |true\|false|No   |
+| output_noncanonical| Report noncaonical peptides in the out_sam file (true or false). Default is true |true\|false|No   |
+| penalty_mutation   | Penalty per a mutation. Default is 1 |integer|No   |
+| penalty_alternative_splicing         | Penalty for alternative splicing. Default is 10 |integer|No   |
+| penalty_5utr       | Penalty for 5`-UTR. Default is 20 |integer|No   |
+| penalty_3utr       | Penalty for 3`-UTR. Default is 20 |integer|No   |
+| penalty_ncrna      | Penalty for noncoding RNA. Default is 20 |integer|No   |
+| penalty_frameshift         | Penalty for frame shift. Default is 20 |integer|No   |
+| penalty_intron_retention         | Penalty for intron region. Default is 30 |integer|No   |
+| penalty_intergenic_region        | Penalty for intergenic region. Default is 30 |integer|No   |
+| penalty_asrna      | Penalty for antisense RNA. Default is 30 |integer|No   |
+| penalty_softclip      | Penalty for softclip reads. Default is 50 |integer|No   |
+| penalty_unknown    | Penalty for unmapped reads. Default is 100 |integer|No   |
+| gtf_partition_size*       | The size of treating genomic region at once. Default is 5000000 |integer|No   |
+| sam_partition_size*       | The size of treating number of reads at once. Default is 1000000 |integer|No   |
+| threads*                  | The number of threads. Default is 4|integer|No   |
 
 *size parameters can effect memory usage and time. If your machine does not have enough memory, then decrease those values.
 
