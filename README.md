@@ -9,9 +9,9 @@ Thank you, <a href="https://www.bcm.edu/people-search/jong-min-choi-19517" targe
 - [Usage](#usage)
   - [Input](#input)
   - [Output](#output)
+      - [pXg result](#pxg-result)
+      - [Unknown sequences](#unknown-sequences)
   - [Amino acid variant table format](#amino-acid-variant-table-format)
-    - [pXg result](#pxg-result)
-    - [Unknown sequences](#unknown-sequences)
   - [Command-line interface](#command-line-interface)
     - [List of parameters](#list-of-parameters)
     - [Basic command](#basic-command)
@@ -57,16 +57,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 *Although the pXg result contains PSM information with corresponding RNA-Seq counts, it is not suitable for visualization. <br>
  Two output files (matched reads and peptides) are available for direct use in <a href="https://software.broadinstitute.org/software/igv/" target="_blank">IGV</a>, making visualization easier. <br>
 
- ### Amino acid variant table format
-|aaRNA    | aaPeptide|
-| :---:   | :---:    |
-| W | F |
-| W | M |
-Single amino acid variants (SAAVs) can arise after translation and therefore cannot always be detected at the RNA level.<br>
-pXg allows for the consideration of SAAVs based on de novo peptide sequencing results.<br>
-As an example, we illustrate two SAAVs: W→F and W→M.<br>
-
- #### pXg Result
+#### pXg Result
 |Field    | Description    | Value   |
 | :---:   | :---:       | :---:     |
 | SpecID | Identifier of a spectrum | String         |
@@ -106,8 +97,18 @@ As an example, we illustrate two SAAVs: W→F and W→M.<br>
 | SAM/BAM file name | The number of matched reads in each SAM/BAM file |  Integer  |
 
 
- #### Unknown sequences
+#### Unknown sequences
  Unknown sequences include sequence information from "unknown" events. The header line begins with ">[PEPTIDE]". Following the header line is the matched read information, which includes the sequence identifier, genomic location (if available), full sequence, and matched sequence.
+
+### Amino acid variant table format
+|aaRNA    | aaPeptide|
+| :---:   | :---:    |
+| W | F |
+| W | M |
+Single amino acid variants (SAAVs) can arise after translation and therefore cannot always be detected at the RNA level.<br>
+pXg allows for the consideration of SAAVs based on de novo peptide sequencing results.<br>
+As an example, we illustrate two SAAVs: W→F and W→M.<br>
+
 
 ### Command-line interface
 #### List of Parameters
