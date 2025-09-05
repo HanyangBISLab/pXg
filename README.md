@@ -106,6 +106,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | :---:   | :---:    |
 | W | F |
 | W | M |
+
 Single amino acid variants (SAAVs) can arise after translation and therefore cannot always be detected at the RNA level.<br>
 pXg allows for the consideration of SAAVs based on de novo peptide sequencing results.<br>
 As an example, we illustrate two SAAVs: W→F and W→M.<br>
