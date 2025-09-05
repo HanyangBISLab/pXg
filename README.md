@@ -7,8 +7,9 @@ Thank you, <a href="https://www.bcm.edu/people-search/jong-min-choi-19517" targe
 ---
 - [About pXg](#about-pxg)
 - [Usage](#usage)
-  - [Input format](#input-format)
-  - [Output format](#output-format)
+  - [Input](#input)
+  - [Output](#output)
+  - [Amino acid variant table format](#amino-acid-variant-table-format)
     - [pXg result](#pxg-result)
     - [Unknown sequences](#unknown-sequences)
   - [Command-line interface](#command-line-interface)
@@ -34,7 +35,7 @@ pXg (proteomics X genomics), a software tool that enables the reliable identific
 ## Usage
 pXg can be integrated with any search engines such as PEAKS and pNovo3.
 It was developed for the reliable identification of noncanonical MAPs from de novo peptide sequencing; however, it can also be used to capture the number of reads mapped to each peptide sequence.
-### Input format
+### Input
 |Input    | Description    | Format    | Mandatory   |
 | :---:   | :---:       | :---:     | :---:       |
 | Searh result       | A list of PSMs identified from a search engine (e.g. <a href="https://www.bioinfor.com/peaks-studio/" target="_blank">PEAKS</a>, <a href="http://pfind.org/software/pNovo/index.html" target="_blank">pNovo3</a>, <a href="https://github.com/Noble-Lab/casanovo" target="_blank">Casanovo</a>)     | TSV or CSV | Yes   |
@@ -45,7 +46,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 *pXg is not applicable to the flat formatted output in pNovo3. A user must convert the flat format to CSV or TSV.<br>
 *Since version 2.3.0, pXg can support multiple SAM/BAM files. "Reads" column indicates sum of reads from multiple SAM/BAM files. Reads in each SAM/BAM file is appended to the last columns. <br>
 
-### Output format
+### Output
 |Output    | Description    | Format   | Mandatory   |
 | :---:   | :---:       | :---:     | :---:       |
 | pXg result                | This is a main output file and contains a list of identification as TSV format         | TSV         | Yes   |
@@ -54,7 +55,16 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | Matched reads*             | Matched reads to peptides passing all filters                            | SAM         | No    |
 
 *Although the pXg result contains PSM information with corresponding RNA-Seq counts, it is not suitable for visualization. <br>
- Two output files (matched reads and peptides) are available for direct use in <a href="https://software.broadinstitute.org/software/igv/" target="_blank">IGV</a>, making visualization easier.
+ Two output files (matched reads and peptides) are available for direct use in <a href="https://software.broadinstitute.org/software/igv/" target="_blank">IGV</a>, making visualization easier. <br>
+
+ ### Amino acid variant table format
+|aaRNA    | aaPeptide|
+| :---:   | :---:    |
+| W | F |
+| W | M |
+Single amino acid variants (SAAVs) can arise after translation and therefore cannot always be detected at the RNA level.<br>
+pXg allows for the consideration of SAAVs based on de novo peptide sequencing results.<br>
+As an example, we illustrate two SAAVs: W→F and W→M.<br>
 
  #### pXg Result
 |Field    | Description    | Value   |
@@ -112,28 +122,29 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | output         | Base output name of pXg |string|Yes   |
 | comment     | Specify the starting characters of comment lines to be ignored during processing. Lines beginning with these characters will be skipped. The default value is #\|@\|%\|MTD |string|No   |
 | min_score            | Specify the minimum score threshold for peptide-spectrum matches (PSMs) to be included. The default value is 0 |float|No   |
-| count            | Specify which reads to consider for counting. The default is primary |primary \| all |No   |
+| count            | Specify which reads to consider for counting. The default is primary |primary\|all |No   |
 | sep            | Specify the column separator. Possible values are csv or tsv. Default is tsv |tsv\|csv|No   |
-| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness |f\|r\|fr\|rf\|auto|No   |
+| mode           | Specify strandedness (default is auto). auto: auto-detection. only available in paired-ends. fr: first-forward second-reverse. rf: first-reverse second-forward. r: reverse single end. f: forward single end. none: non-strandedness |f\|r\|fr\|rf\|auto\|none|No   |
 | add_index  | Specify the indices for additional features to generate PIN file. Several features can be added by comma separator. ex> 5,6,7|integer|No  |
 | il_equivalent           | Controls whether pXg treats isoleucine (I) and leucine (L) as the same/equivalent with respect to a peptide identification. Default is true |true\|false|No   |
 | lengths        | Range of peptide length to consider. Default is 8-15. You can write in this way (min-max, both inclusive) : 8-13 |integer|No   |
 | fasta     | Canonical sequence database to report conservative assignment of noncanonical PSMs |string|No   |
 | rank           | How many candidates will be considered per a scan. Default is 100 (in other words, use all ranked candidates) |integer|No   |
+| aa_variant           | File path of amino acid variant table |string|No   |
 | output_sam        | Report matched reads as SAM format (true or false). Default is false |true\|false|No   |
 | output_canonical  | Report caonical peptides in the out_sam file (true or false). Default is true |true\|false|No   |
 | output_noncanonical| Report noncaonical peptides in the out_sam file (true or false). Default is true |true\|false|No   |
-| penalty_mutation   | Penalty per a mutation. Default is 1 |integer|No   |
-| penalty_alternative_splicing         | Penalty for alternative splicing. Default is 10 |integer|No   |
-| penalty_5utr       | Penalty for 5`-UTR. Default is 20 |integer|No   |
-| penalty_3utr       | Penalty for 3`-UTR. Default is 20 |integer|No   |
-| penalty_ncrna      | Penalty for noncoding RNA. Default is 20 |integer|No   |
-| penalty_frameshift         | Penalty for frame shift. Default is 20 |integer|No   |
-| penalty_intron_retention         | Penalty for intron region. Default is 30 |integer|No   |
-| penalty_intergenic_region        | Penalty for intergenic region. Default is 30 |integer|No   |
-| penalty_asrna      | Penalty for antisense RNA. Default is 30 |integer|No   |
-| penalty_softclip      | Penalty for softclip reads. Default is 50 |integer|No   |
-| penalty_unknown    | Penalty for unmapped reads. Default is 100 |integer|No   |
+| penalty_mutation   | Penalty per a mutation. Default is 1 |float|No   |
+| penalty_alternative_splicing         | Penalty for alternative splicing. Default is 10 |float|No   |
+| penalty_5utr       | Penalty for 5`-UTR. Default is 20 |float|No   |
+| penalty_3utr       | Penalty for 3`-UTR. Default is 20 |float|No   |
+| penalty_ncrna      | Penalty for noncoding RNA. Default is 20 |float|No   |
+| penalty_frameshift         | Penalty for frame shift. Default is 20 |float|No   |
+| penalty_intron_retention         | Penalty for intron region. Default is 30 |float|No   |
+| penalty_intergenic_region        | Penalty for intergenic region. Default is 30 |float|No   |
+| penalty_asrna      | Penalty for antisense RNA. Default is 30 |float|No   |
+| penalty_softclip      | Penalty for softclip reads. Default is 50 |float|No   |
+| penalty_unknown    | Penalty for unmapped reads. Default is 100 |float|No   |
 | gtf_partition_size*       | The size of treating genomic region at once. Default is 5000000 |integer|No   |
 | sam_partition_size*       | The size of treating number of reads at once. Default is 1000000 |integer|No   |
 | threads*                  | The number of threads. Default is 4|integer|No   |
