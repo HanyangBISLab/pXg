@@ -61,7 +61,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | :---:   | :---:       | :---:     |
 | SpecID | Identifier of a spectrum | String         |
 | GenomicID | Identifier of genomic sequence | Integer         |
-| Label | Target (1) and decoy (-1) labels | 1 or -1         |
+| Label | Target (1) and decoy (-1) labels | 1\|-1         |
 | nDeltaScore | Normalized difference between main scores of current rank and top-rank peptides | Float       |
 | Rank | Rank of candidate peptides | Integer       |
 | GenomicLociCount | The number of genomic locations | Integer       |
@@ -69,7 +69,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | InferredPeptide | Translated nucleotide sequence with a PTM annotation | String       |
 | InferredSequence | Translated nucleotide sequence without a PTM annotation | String       |
 | GenomicLoci | Genomic location of the peptide | String       |
-| Strand | Strand of matched sequence | + or -       |
+| Strand | Strand of matched sequence | +\|-       |
 | ObservedLeftFlankNucleotide | Nucleotide sequence of the left flank of the peptide | String       |
 | ObservedNucleotide | Nucleotide sequence of the peptide | String       |
 | ObservedRightFlankNucleotide | Nucleotide sequence of the right flank of the peptide | String       |
@@ -77,7 +77,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | ReferenceNucleotide | Reference nucleotide sequence of the peptide | String       |
 | ReferenceRightFlankNucleotide | Reference nucleotide sequence of the right flank of the peptide | String       |
 | Mutations | Genomic information of mutations in the peptide | String       |
-| MutationStatus | Indication of alteration caused by the mutations | Altered or Same    |
+| MutationStatus | Indication of alteration caused by the mutations | Altered\|Same    |
 | TranscriptIDs | Matched transcript IDs | String    |
 | GeneIDs | Matched gene IDs | String    |
 | GeneIDCount | The number of matched gene IDs | Integer    |
@@ -92,7 +92,7 @@ It was developed for the reliable identification of noncanonical MAPs from de no
 | EventCount | The number of events |  Integer    |
 | FastaIDs | Matched identifiers in a given fasta sequences |  String   |
 | FastaIDCount | The number of FastaIDs |  Integer   |
-| Reads | Sum of matched reads (or RPHM) from all SAM/BAM files |  Float   |
+| Reads | Geometirc mean of matched reads (or RPHM) from all SAM/BAM files |  Float   |
 | MeanQScore | Mean of Phred scores |  Float   |
 | IsReference | Reference (true) or non-reference (false) status |  true\|false  |
 | SAM/BAM file name | The number of matched reads (or RPHM) in each SAM/BAM file |  Float  |
