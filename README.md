@@ -5,7 +5,7 @@
 Thank you, <a href="https://www.bcm.edu/people-search/jong-min-choi-19517" target="_blank">Dr. Jongmin Choi</a>, for designing the logo!
 
 <br>
-Please note that we are temporarily sharing the pXg-GUI version. It is still undergoing further enhancements, and the final version will be released in the future <a href="https://drive.google.com/drive/folders/1mE22dbbVIPevHXrgEqlYOeyK7MoqKdP_?usp=drive_link " target="_blank">download</a>.
+Please note that we are temporarily sharing the pXg-GUI version. It is still undergoing further enhancements, and the final version will be released in the future <<a href="https://drive.google.com/drive/folders/1mE22dbbVIPevHXrgEqlYOeyK7MoqKdP_?usp=drive_link " target="_blank">download</a>>.
 
 ---
 - [About pXg](#about-pxg)
